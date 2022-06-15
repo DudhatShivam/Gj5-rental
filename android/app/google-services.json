@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "124824952931",
+    "project_id": "gj5-rental",
+    "storage_bucket": "gj5-rental.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124824952931:android:c2425b776669588bcfd856",
+        "android_client_info": {
+          "package_name": "com.example.gj5_rental"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124824952931-5h5ea2g6t1j89r5prpncmsp8bv4v9c2t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gj5_rental",
+            "certificate_hash": "a132911213ed26afab9260ee13332d898f0eb24b"
+          }
+        },
+        {
+          "client_id": "124824952931-2vfjvjldn8ceilj8rdbc6iof1neq9o73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeykKJl0HPDvyqQEhY3b9xXGaHRiaGZag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124824952931-2vfjvjldn8ceilj8rdbc6iof1neq9o73.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
