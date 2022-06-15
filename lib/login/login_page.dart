@@ -159,8 +159,7 @@ class _LogInPageState extends State<LogInPage> {
               InkWell(
                   onTap: () {
                     FocusScope.of(context).unfocus();
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AddAccount()));
+                    pushMethod(context, AddAccount());
                   },
                   child: Text(
                     "switch account",
