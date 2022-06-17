@@ -54,6 +54,11 @@ dependencies:
   animated_background: ^2.0.0
   dropdown_button2: ^1.5.3
   animations: ^2.0.3
+  local_auth: ^2.1.0
+  cached_network_image: ^3.2.1
+  flutter_cache_manager: ^3.3.0
+  image_gallery_saver: ^1.7.1
+  dio: ^4.0.6
 
 dev_dependencies:
   flutter_test:
