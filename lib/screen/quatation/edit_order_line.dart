@@ -15,19 +15,23 @@ import '../../constant/constant.dart';
 import '../booking status/booking_status.dart';
 
 class EditOrderLine extends StatefulWidget {
-  const EditOrderLine({
-    Key? key,
-    this.lineId,
-    this.deliveryDate,
-    this.returnDate,
-    this.remark,
-    this.wholeSubProductList,
-  }) : super(key: key);
+  const EditOrderLine(
+      {Key? key,
+      this.lineId,
+      this.deliveryDate,
+      this.returnDate,
+      this.remark,
+      this.wholeSubProductList,
+      required this.productCode,
+      required this.productName})
+      : super(key: key);
   final int? lineId;
   final String? deliveryDate;
   final String? returnDate;
   final String? remark;
   final List<dynamic>? wholeSubProductList;
+  final String productCode;
+  final String productName;
 
   @override
   State<EditOrderLine> createState() => _EditOrderLineState();
@@ -65,7 +69,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
         scrollDirection: Axis.vertical,
         reverse: true,
         child: GestureDetector(
-          onTap: (){
+          onTap: () {
             FocusScope.of(context).unfocus();
           },
           behavior: HitTestBehavior.translucent,
@@ -84,6 +88,57 @@ class _EditOrderLineState extends State<EditOrderLine> {
               ),
               SizedBox(
                 height: 15,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  children: [
+                    Text(
+                      "Code  : ",
+                      style: TextStyle(
+                          color: Colors.teal,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18),
+                    ),
+                    Text(
+                      widget.productCode.toString(),
+                      style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Name : ",
+                      style: TextStyle(
+                          color: Colors.teal,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18),
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.productName.toString(),
+                        style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -213,27 +268,29 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                         ),
                                         searchStyle: primaryStyle,
                                         searchInputDecoration: InputDecoration(
-                                            suffixIcon: productControllers[index]
-                                                    .text
-                                                    .isNotEmpty
-                                                ? InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        productControllers[index]
-                                                            .clear();
-                                                      });
-                                                      FocusScope.of(context)
-                                                          .unfocus();
-                                                    },
-                                                    child: Container(
-                                                      child: Icon(
-                                                        Icons.cancel,
-                                                        color: primaryColor,
-                                                        size: 30,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : null,
+                                            suffixIcon:
+                                                productControllers[index]
+                                                        .text
+                                                        .isNotEmpty
+                                                    ? InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            productControllers[
+                                                                    index]
+                                                                .clear();
+                                                          });
+                                                          FocusScope.of(context)
+                                                              .unfocus();
+                                                        },
+                                                        child: Container(
+                                                          child: Icon(
+                                                            Icons.cancel,
+                                                            color: primaryColor,
+                                                            size: 30,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : null,
                                             hintText: "Search Product",
                                             hintStyle: TextStyle(
                                                 color: Colors.grey.shade400),
@@ -241,16 +298,16 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                             fillColor:
                                                 Colors.grey.withOpacity(0.1),
                                             border: OutlineInputBorder(
-                                              borderSide:
-                                                  BorderSide(color: Colors.white),
+                                              borderSide: BorderSide(
+                                                  color: Colors.white),
                                             ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderSide:
-                                                  BorderSide(color: Colors.white),
+                                              borderSide: BorderSide(
+                                                  color: Colors.white),
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderSide:
-                                                  BorderSide(color: Colors.teal),
+                                              borderSide: BorderSide(
+                                                  color: Colors.teal),
                                             )),
                                         onSuggestionTap: (val) {
                                           FocusScope.of(context).unfocus();

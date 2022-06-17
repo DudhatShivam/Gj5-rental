@@ -42,7 +42,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
         child: SwipeActionCell(
           controller: controller,
           key: ObjectKey(list[index]),
-          trailingActions: <SwipeAction>[
+          trailingActions:isDeliveryScreen == false ?  <SwipeAction>[
             SwipeAction(
                 title: "Delete",
                 onTap: (CompletionHandler handler) async {
@@ -65,7 +65,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                 },
                 closeOnTap: false,
                 color: Colors.blue),
-          ],
+          ] : [],
           child: Container(
             padding: EdgeInsets.all(15),
             margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -263,13 +263,6 @@ class OrderQuatationCommanCard extends StatelessWidget {
                     )
                   ],
                 ),
-                isDeliveryScreen == true
-                    ? Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                      onPressed: () {}, child: Text("Deliver")),
-                )
-                    : Container()
               ],
             ),
           ),

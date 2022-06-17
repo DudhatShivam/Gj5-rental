@@ -96,7 +96,7 @@ class _OrderDetailState extends State<OrderDetail> {
                           index: index,
                           productDetail: myGetxController.orderLineProductList,
                           isOrderScreen: true,
-                          orderId: widget.id ?? 0);
+                          orderId: widget.id ?? 0,isDeliveryScreen: false,);
                     }),
               )
             : Container()),

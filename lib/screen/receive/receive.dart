@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../Utils/utils.dart';
+
 class ReceiveScreen extends StatefulWidget {
   const ReceiveScreen({Key? key}) : super(key: key);
 
@@ -9,12 +11,21 @@ class ReceiveScreen extends StatefulWidget {
 }
 
 class _RceiveScreenState extends State<ReceiveScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("Receive Screen"),
+        child: Text(
+          "Coming Soon",
+          style: primaryStyle,
+        ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+
   }
 }

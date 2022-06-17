@@ -44,9 +44,6 @@ class _CreateOrderState extends State<CreateOrder> {
   @override
   void initState() {
     super.initState();
-    nameController.text="jenil";
-    numberController.text="9925283071";
-    addressController.text="varachha";
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
@@ -9,6 +10,7 @@ import 'package:gj5_rental/login/login_page.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddAccount extends StatefulWidget {
@@ -116,14 +118,14 @@ class _AddAccountState extends State<AddAccount> {
           if (result == ConnectivityResult.wifi) {
             checkAccountData(index, serverUrl, username, password);
           } else {
-            dialog(context,"Connect to Showroom Network");
+            dialog(context, "Connect to Showroom Network");
           }
         });
       } else {
         checkAccountData(index, serverUrl, username, password);
       }
     } on SocketException catch (err) {
-      dialog(context,"Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network");
     }
   }
 
@@ -147,17 +149,23 @@ class _AddAccountState extends State<AddAccount> {
         if (response.statusCode == 200) {
           removePreference().whenComplete(() {
             final data = jsonDecode(response.body);
-            setLogIn(true);
-            setLogInData(
-                    serverUrl,
-                    data['access_token'],
-                    data['uid'].toString(),
-                    data['partner_id'].toString(),
-                    data['name'].toString(),
-                    data['image'].toString(),
-                    data['branch_name'])
-                .whenComplete(() {
-              pushRemoveUntilMethod(context, HomeScreen());
+            checkForBioMatrics().then((value) {
+              if (value == true) {
+                setLogIn(true);
+                setLogInData(
+                        serverUrl,
+                        data['access_token'],
+                        data['uid'].toString(),
+                        data['partner_id'].toString(),
+                        data['name'].toString(),
+                        data['image'].toString(),
+                        data['branch_name'],
+                        data['past_day_order'].toString(),
+                        data['next_day_order'].toString())
+                    .whenComplete(() {
+                  pushRemoveUntilMethod(context, HomeScreen());
+                });
+              }
             });
           });
         } else {
@@ -171,7 +179,27 @@ class _AddAccountState extends State<AddAccount> {
       }
     } on SocketException catch (err) {
       print(err);
-      dialog(context,"Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network");
+    }
+  }
+
+  Future<bool> checkForBioMatrics() async {
+    final LocalAuthentication auth = LocalAuthentication();
+    bool isDeviceSupport = await auth.canCheckBiometrics;
+    bool isAvailableBioMetrics = await auth.isDeviceSupported();
+    if (isAvailableBioMetrics && isDeviceSupport) {
+      print(await auth.getAvailableBiometrics());
+      final bool didAuthenticate = await auth.authenticate(
+        localizedReason: 'Please authenticate to Logged In',
+        options: AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),
+      );
+      if (didAuthenticate) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
     }
   }
 }

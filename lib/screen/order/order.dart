@@ -13,6 +13,7 @@ import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/order/order_detail.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../home/home.dart';
@@ -25,6 +26,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderState extends State<OrderScreen> {
+
   List status = [
     'New',
     'Confirmed',
@@ -48,6 +50,7 @@ class _OrderState extends State<OrderScreen> {
   @override
   void initState() {
     super.initState();
+    myGetxController.orderData.clear();
     getData();
   }
 
@@ -240,11 +243,10 @@ class _OrderState extends State<OrderScreen> {
                       backGroundColor: Colors.white,
                       index: index,
                       isDeliveryScreen: false,
-                      onTap: ()=> pushMethod(
+                      onTap: () => pushMethod(
                           context,
                           OrderDetail(
                               id: myGetxController.orderData[index]['id'])),
-
                     );
                   })
               : Container(
@@ -280,19 +282,31 @@ class _OrderState extends State<OrderScreen> {
     });
   }
 
-  getOrderData(String apiUrl, String accessToken) async {
-    String domain = "[('state' , 'not in' , ('draft','cancel','done'))]";
-    var params = {'filters': domain.toString()};
-    Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
-    final finalUri = uri.replace(queryParameters: params);
-    final response = await http.get(finalUri, headers: {
-      'Access-Token': accessToken,
-      'Content-Type': 'application/http',
-      'Connection': 'keep-alive'
+  getOrderData(String apiUrl, String accessToken) {
+    getStringPreference('pastDayOrder').then((past) {
+      getStringPreference('nextDayOder').then((next) async {
+        DateTime dateTime1 =
+            DateTime.now().subtract(Duration(days: int.parse(past)));
+        DateTime dateTime2 =
+            DateTime.now().add(Duration(days: int.parse(next)));
+        String bookingDate = DateFormat('MM/dd/yyyy').format(dateTime1);
+        String deliveryDate = DateFormat('MM/dd/yyyy').format(dateTime2);
+
+        String domain =
+            "[('state' , 'not in' , ('draft','cancel','done')), ('date' , '>=' , '$bookingDate'), ('delivery_date' , '<=' , '$deliveryDate')]";
+        var params = {'filters': domain.toString()};
+        Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
+        final finalUri = uri.replace(queryParameters: params);
+        final response = await http.get(finalUri, headers: {
+          'Access-Token': accessToken,
+          'Content-Type': 'application/http',
+          'Connection': 'keep-alive'
+        });
+        print(response.statusCode);
+        Map<String, dynamic> data = await jsonDecode(response.body);
+        myGetxController.orderData.value = data['results'];
+      });
     });
-    print(response.statusCode);
-    Map<String, dynamic> data = await jsonDecode(response.body);
-    myGetxController.orderData.value = data['results'];
   }
 
   searchProduct() {

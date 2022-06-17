@@ -16,7 +16,12 @@ class _ExtraProductState extends State<ExtraProduct> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          body: Center(child: Text("extra product"),)),
+          body: Center(
+        child:Text(
+          "Coming Soon",
+          style: primaryStyle,
+        ),
+      )),
     );
   }
 }

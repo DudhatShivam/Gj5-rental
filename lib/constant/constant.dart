@@ -235,7 +235,6 @@ textFieldWidget(
   );
 }
 
-
 numberValidatorTextfield(
     TextEditingController textEditingController, String hint) {
   return TextFormField(
@@ -518,7 +517,8 @@ Future getDraftOrderData(
       'Connection': 'keep-alive'
     });
     Map<String, dynamic> data = await jsonDecode(response.body);
-    myGetxController.quotationData.addAll(data['results']);
+    myGetxController.quotationData.clear();
+    myGetxController.quotationData.value = data['results'];
     if (id != 0) {
       for (int i = 0; i < myGetxController.quotationData.length; i++) {
         if (myGetxController.quotationData[i]['id'] == id) {
@@ -725,7 +725,9 @@ checkWlanForConfirmOrderThumbAndWaiting(
     BuildContext context,
     bool isIconThumb,
     String dropDownValue,
-    String reason) {
+    String reason,
+    String productCode,
+    String productName) {
   getStringPreference('apiUrl').then((apiUrl) async {
     try {
       getStringPreference('accessToken').then((token) async {
@@ -733,8 +735,8 @@ checkWlanForConfirmOrderThumbAndWaiting(
           showConnectivity().then((result) async {
             if (result == ConnectivityResult.wifi) {
               isIconThumb == true
-                  ? confirmOrderThumb(
-                      orderId, productDetailId, apiUrl, token, context)
+                  ? orderReadyConfirmationDialog(context, productCode,
+                      productName, orderId, productDetailId, apiUrl, token)
                   : submitReasonForWaiting(orderId, productDetailId, apiUrl,
                       token, context, dropDownValue, reason);
             } else {
@@ -743,8 +745,8 @@ checkWlanForConfirmOrderThumbAndWaiting(
           });
         } else {
           isIconThumb == true
-              ? confirmOrderThumb(
-                  orderId, productDetailId, apiUrl, token, context)
+              ? orderReadyConfirmationDialog(context, productCode, productName,
+                  orderId, productDetailId, apiUrl, token)
               : submitReasonForWaiting(orderId, productDetailId, apiUrl, token,
                   context, dropDownValue, reason);
         }
@@ -764,14 +766,15 @@ confirmOrderThumb(int orderId, int productDetailId, String apiUrl, String token,
         'Access-Token': token,
       });
   if (response.statusCode == 200) {
+    Navigator.pop(context);
     checkWlanForDataOrderDetailScreen(context, orderId);
   } else {
     dialog(context, "Something went wrong");
   }
 }
 
-popUpForWaitingThumbInOrderScreen(
-    BuildContext context, int productDetailId, int orderId) {
+popUpForWaitingThumbInOrderScreen(BuildContext context, int productDetailId,
+    int orderId, String productCode, String productName) {
   MyGetxController myGetxController = Get.find();
 
   TextEditingController reasonController = TextEditingController(
@@ -872,7 +875,9 @@ popUpForWaitingThumbInOrderScreen(
                                 false,
                                 myGetxController
                                     .waitingThumbPopUpSelectedValue.value,
-                                reasonController.text);
+                                reasonController.text,
+                                productCode,
+                                productName);
                           },
                           child: Text("Submit"))
                     ],

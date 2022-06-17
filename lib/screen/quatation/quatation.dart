@@ -17,6 +17,7 @@ import 'package:gj5_rental/screen/quatation/create_order.dart';
 import 'package:gj5_rental/screen/quatation/quatation_cart.dart';
 import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -42,7 +43,7 @@ class _QuatationScreenState extends State<QuatationScreen>
   void initState() {
     super.initState();
     animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 2));
+        AnimationController(vsync: this, duration: Duration(seconds: 1));
     animatedOpacity = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
         parent: animationController,
         curve: Interval(0.75, 1.0, curve: Curves.easeOut)));

@@ -24,16 +24,11 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + 10,
-          ),
-          ScreenAppBar(screenName: "Product Detail"),
-          SizedBox(
-            height: 10,
-          ),
-        ],
+      body: Center(
+        child: Text(
+          "Coming Soon",
+          style: primaryStyle,
+        ),
       ),
     );
   }

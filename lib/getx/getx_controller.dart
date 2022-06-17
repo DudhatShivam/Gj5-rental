@@ -10,18 +10,19 @@ class MyGetxController extends GetxController {
   RxString pName = "".obs;
   RxString branchName = "".obs;
   RxString logInPageError = "".obs;
-  RxBool isLoggedIn=false.obs;
+  RxBool isLoggedIn = false.obs;
   RxBool isSetTextFieldData = false.obs;
 
   //orderScreen
   RxList<dynamic> orderData = [].obs;
-  RxList<dynamic> orderLineList=[].obs;
-  RxList<dynamic> particularOrderData=[].obs;
-  RxList<dynamic> orderLineProductList=[].obs;
-  RxString waitingThumbPopUpSelectedValue="Return".obs;
-  RxBool isShowReadyIcon=false.obs;
-  RxBool isShowWaitingIcon=false.obs;
-  //
+  RxList<dynamic> orderLineList = [].obs;
+  RxList<dynamic> particularOrderData = [].obs;
+  RxList<dynamic> orderLineProductList = [].obs;
+  RxString waitingThumbPopUpSelectedValue = "Return".obs;
+  RxBool isShowReadyIcon = false.obs;
+  RxBool isShowWaitingIcon = false.obs;
+
+  //QuotationScreen
 
   RxList<dynamic> quotationData = [].obs;
   RxInt badgeText = 0.obs;
@@ -29,14 +30,21 @@ class MyGetxController extends GetxController {
   RxList<dynamic> quotationOrder = [].obs;
   RxList<dynamic> quotationDetailOrderList = [].obs;
   RxList<dynamic> quotationDetailProductDetailList = [].obs;
-  RxBool isUpdateData=false.obs;
+  RxBool isUpdateData = false.obs;
 
   //mainProductScreen
   RxList<dynamic> mainProductList = [].obs;
   RxList<dynamic> mainProductDetailList = [].obs;
 
   //delivery screen
-  RxList<dynamic> deliveryScreenProductList = [].obs;
+  RxList<dynamic> deliveryScreenOrderList = [].obs;
+  RxList<dynamic> deliveryScreenParticularOrder = [].obs;
+  RxList<dynamic> deliveryScreenParticularOrderLineList = [].obs;
+  RxList<dynamic> deliveryScreenParticularOrderLineProductList = [].obs;
+  RxList<dynamic> deliveryScreenParticularOrderLineExtraProductList = [].obs;
+  RxList<dynamic> selectedOrderLineList = [].obs;
 
+  //OrderLine Screen
+  RxList<dynamic> orderLineScreenList = [].obs;
+  RxList<dynamic> orderLineScreenProductList = [].obs;
 }
-

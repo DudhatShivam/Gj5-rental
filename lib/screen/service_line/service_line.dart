@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../Utils/utils.dart';
+
 class ServiceLineScreen extends StatefulWidget {
   const ServiceLineScreen({Key? key}) : super(key: key);
 
@@ -13,7 +15,10 @@ class _ServiceLineScreenState extends State<ServiceLineScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("Service Line Screen"),
+        child:Text(
+          "Coming Soon",
+          style: primaryStyle,
+        ),
       ),
     );
   }

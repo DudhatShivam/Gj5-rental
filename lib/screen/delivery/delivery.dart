@@ -10,7 +10,9 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:gj5_rental/screen/delivery/delivery_detail.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -37,6 +39,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
   void initState() {
     super.initState();
     checkWlanForgetDeliveryData(false);
+    myGetxController.deliveryScreenOrderList.clear();
   }
 
   @override
@@ -90,7 +93,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
               ),
               InkWell(
                   onTap: () {
-                    myGetxController.deliveryScreenProductList.clear();
+                    myGetxController.deliveryScreenOrderList.clear();
                     checkWlanForgetDeliveryData(false);
                   },
                   child: FadeInRight(
@@ -245,23 +248,24 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
           height: 10,
         ),
         Expanded(
-          child: Obx(() => myGetxController.deliveryScreenProductList.length > 0
-              ? AnimatedList(
+          child: Obx(() => myGetxController.deliveryScreenOrderList.length > 0
+              ? ListView.builder(
                   shrinkWrap: true,
-                  initialItemCount:
-                      myGetxController.deliveryScreenProductList.length,
+                  itemCount: myGetxController.deliveryScreenOrderList.length,
                   padding: EdgeInsets.zero,
-                  itemBuilder: (context, index, animation) {
+                  itemBuilder: (context, index) {
                     return OrderQuatationCommanCard(
-                        list: myGetxController.deliveryScreenProductList,
-                        backGroundColor: Colors.white,
-                        index: index,
-                        isDeliveryScreen: true);
-                    // return orderQuatationCommanCard(
-                    //     myGetxController.deliveryScreenProductList,
-                    //     Colors.white,
-                    //     index,
-                    //     context,true);
+                      list: myGetxController.deliveryScreenOrderList,
+                      backGroundColor: Colors.white,
+                      index: index,
+                      isDeliveryScreen: true,
+                      onTap: () => pushMethod(
+                          context,
+                          DeliveryDetailScreen(
+                            id: myGetxController.deliveryScreenOrderList[index]
+                                ['id'],
+                          )),
+                    );
                   },
                 )
               : Container(
@@ -275,14 +279,14 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
     ));
   }
 
-  void checkWlanForgetDeliveryData(bool issearchData) {
+  void checkWlanForgetDeliveryData(bool isSearchData) {
     getStringPreference('apiUrl').then((apiUrl) async {
       try {
         getStringPreference('accessToken').then((token) async {
           if (apiUrl.toString().startsWith("192")) {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
-                issearchData == true
+                isSearchData == true
                     ? searchProduct(apiUrl, token)
                     : getDataForDelivery(apiUrl, token);
               } else {
@@ -290,7 +294,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
               }
             });
           } else {
-            issearchData == true
+            isSearchData == true
                 ? searchProduct(apiUrl, token)
                 : getDataForDelivery(apiUrl, token);
           }
@@ -302,8 +306,10 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
   }
 
   getDataForDelivery(String apiUrl, String token) async {
+    DateTime dateTime1 = DateTime.now().subtract(Duration(days: 5));
+    String deliveryDate = DateFormat('MM/dd/yyyy').format(dateTime1);
     String domain =
-        "[('state','in',['draft', 'waiting', 'ready' ,'partially' ,'pending'])]";
+        "[('state','in',['confirm', 'waiting', 'ready' ,'partially' ,'pending','deliver']),('delivery_date' , '>=' , '$deliveryDate')]";
     var params = {'filters': domain.toString()};
     Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
@@ -315,46 +321,47 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       if (data['results'] != []) {
-        myGetxController.deliveryScreenProductList.addAll(data['results']);
+        myGetxController.deliveryScreenOrderList.addAll(data['results']);
       }
     }
   }
 
   Future<void> searchProduct(String apiUrl, String token) async {
     String? domain;
-    List datas = [];
-    myGetxController.deliveryScreenProductList.clear();
+    List domainData = [];
+    myGetxController.deliveryScreenOrderList.clear();
 
     if (nameController.text != "") {
-      datas.add("('customer_name', 'ilike', '${nameController.text}')");
+      domainData.add("('customer_name', 'ilike', '${nameController.text}')");
     }
     if (numberController.text != "") {
-      datas.add("('mobile1', 'ilike', '${numberController.text}')");
+      domainData.add("('mobile1', 'ilike', '${numberController.text}')");
     }
     if (orderNumberController.text != "") {
-      datas.add("('name', 'ilike', '${orderNumberController.text}')");
+      domainData.add("('name', 'ilike', '${orderNumberController.text}')");
     }
     if (stateController.text != "") {
-      datas.add("('state', 'ilike', '${stateController.text}')");
+      domainData.add("('state', 'ilike', '${stateController.text}')");
     }
-    if (datas.length == 1) {
-      domain = "[${datas[0]}]";
-    } else if (datas.length == 2) {
-      domain = "['|' , ${datas[0]} , ${datas[1]}]";
-    } else if (datas.length == 3) {
-      domain = "['|' , '|', ${datas[0]} , ${datas[1]} , ${datas[2]}]";
-    } else if (datas.length == 4) {
+    if (domainData.length == 1) {
+      domain = "[${domainData[0]}]";
+    } else if (domainData.length == 2) {
+      domain = "['|' , ${domainData[0]} , ${domainData[1]}]";
+    } else if (domainData.length == 3) {
       domain =
-          "['|' , '|', '|' , ${datas[0]} , ${datas[1]} , ${datas[2]} , ${datas[3]}]";
+          "['|' , '|', ${domainData[0]} , ${domainData[1]} , ${domainData[2]}]";
+    } else if (domainData.length == 4) {
+      domain =
+          "['|' , '|', '|' , ${domainData[0]} , ${domainData[1]} , ${domainData[2]} , ${domainData[3]}]";
     } else {
-      myGetxController.deliveryScreenProductList.value = [];
+      myGetxController.deliveryScreenOrderList.value = [];
     }
     var params = {'filters': domain.toString()};
-    Uri uri = Uri.parse("http://$apiUrl/api/rental.rental?limit=10");
+    Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri,
         headers: {'Access-Token': token, 'Content-Type': 'application/http'});
     Map<String, dynamic> data = jsonDecode(response.body);
-    myGetxController.deliveryScreenProductList.value = data['results'];
+    myGetxController.deliveryScreenOrderList.value = data['results'];
   }
 }

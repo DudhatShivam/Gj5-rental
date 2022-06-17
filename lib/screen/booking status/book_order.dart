@@ -33,7 +33,6 @@ class _BookOrderState extends State<BookOrder> {
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  TextEditingController qtyController = TextEditingController();
   TextEditingController rentController=TextEditingController();
   String returnDate = "";
   String deliveryDate = "";
@@ -45,10 +44,6 @@ class _BookOrderState extends State<BookOrder> {
   void initState() {
     super.initState();
     print(widget.productName);
-    qtyController.text = "1";
-    nameController.text = "Dishant";
-    numberController.text = "8511510103";
-    addressController.text = "varachha";
     deliveryDate = widget.deliveryDate ?? "";
     returnDate = widget.returnDate ?? "";
     deliveryNotFormatedDate = new DateFormat("dd/MM/yyyy").parse(deliveryDate);

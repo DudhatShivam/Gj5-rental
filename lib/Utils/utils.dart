@@ -1,9 +1,12 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gj5_rental/getx/getx_controller.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
+
+import '../constant/constant.dart';
 
 getHeight(double height, BuildContext context) {
   return MediaQuery.of(context).size.height * height;
@@ -54,95 +57,74 @@ Future showConnectivity() async {
   return results;
 }
 
-Future dialog(BuildContext context,String text) {
+Future dialog(BuildContext context, String text) {
   return showGeneralDialog(
     barrierColor: Colors.black.withOpacity(0.5),
     transitionBuilder: (context, a1, a2, widget) {
       return Transform.scale(
         scale: a1.value,
         child: Opacity(
-          opacity: a1.value,
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(25),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.white.withOpacity(0.5), width: 2),
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Error ",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.transparent),
-                          ),
-                          SizedBox(
-                            height: getHeight(0.012, context),
-                          ),
-                          Text(
-                            text,
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.transparent),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Transform.rotate(
-                      angle: -math.pi / 50,
-                      child: Container(
+            opacity: a1.value,
+            child: Dialog(
+              backgroundColor: Colors.transparent,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Stack(
+                    children: [
+                      Container(
                         padding: EdgeInsets.all(25),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            color: Colors.red.shade300,
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.5), width: 2),
                             borderRadius: BorderRadius.circular(20)),
-                        child: Transform.rotate(
-                          angle: -math.pi / -50,
-                          child: Container(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Error ",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: getHeight(0.012, context),
-                                  ),
-                                  Text(
-                                    text,
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white),
-                                  ),
-                                ],
-                              )),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              text,
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.transparent),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          )
-        ),
+                      Transform.rotate(
+                        angle: -math.pi / 50,
+                        child: Container(
+                          padding: EdgeInsets.all(25),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: Colors.red.shade300,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Transform.rotate(
+                            angle: -math.pi / -50,
+                            child: Container(
+                                child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  text,
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white),
+                                ),
+                              ],
+                            )),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            )),
       );
     },
     transitionDuration: Duration(milliseconds: 300),
@@ -204,8 +186,140 @@ Future orderDetailDialog(
       });
 }
 
+Future orderReadyConfirmationDialog(
+    BuildContext context,
+    String code,
+    String name,
+    int orderId,
+    int productDetailId,
+    String apiUrl,
+    String token) {
+  print("confirmation dialog called");
+  return showDialog(
+      context: context,
+      builder: (_) {
+        return Dialog(
+          alignment: Alignment.center,
+          child: Container(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Sure , are you want to confirm ?",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: Colors.blue),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  code,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: primaryColor),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  name,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                      color: primaryColor),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          confirmOrderThumb(
+                              orderId, productDetailId, apiUrl, token, context);
+                        },
+                        child: Text("Ok")),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Cancel")),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      });
+}
+
+Future deliverScreenOrderLineSelectionDialog(
+    BuildContext context, int orderId) {
+  MyGetxController myGetxController = Get.find();
+  return showDialog(
+      context: context,
+      builder: (_) {
+        return Dialog(
+          alignment: Alignment.center,
+          child: Container(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Do you also want to add subProduct?",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      color: Colors.blue),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          if (myGetxController.selectedOrderLineList
+                                  .contains(orderId) ==
+                              false) {
+                            myGetxController.selectedOrderLineList.add(orderId);
+                          }
+                          print(myGetxController.selectedOrderLineList);
+                        },
+                        child: Text("Ok")),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Cancel")),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      });
+}
+
 Future<void> setLogInData(String apiUrl, String accessToken, String uid,
-    String partnerId, String name, String image, String branchName) async {
+    String partnerId, String name, String image, String branchName,String pastDayOrder,String nextDayOder) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.setString('apiUrl', apiUrl);
   preferences.setString('branchName', branchName);
@@ -214,6 +328,8 @@ Future<void> setLogInData(String apiUrl, String accessToken, String uid,
   preferences.setString('partnerId', partnerId);
   preferences.setString('name', name);
   preferences.setString('image', image).whenComplete(() => print("image set"));
+  preferences.setString('pastDayOrder', pastDayOrder);
+  preferences.setString('nextDayOder', nextDayOder);
 }
 
 Future<void> removePreference() async {
@@ -226,6 +342,8 @@ Future<void> removePreference() async {
   preferences.remove('partnerId');
   preferences.remove('name');
   preferences.remove('image');
+  preferences.remove('pastDayOrder');
+  preferences.remove('nextDayOder');
   preferences.remove('LogIN');
   preferences.remove('cartList');
 }

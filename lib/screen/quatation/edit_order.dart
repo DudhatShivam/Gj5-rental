@@ -327,6 +327,7 @@ class _EditOrderState extends State<EditOrder> {
         body: jsonEncode(body),
         headers: {'Access-Token': token, 'Content-Type': 'text/plain'});
     var data = jsonDecode(response.body);
+    print(response.statusCode);
     print(response.body);
     if (response.statusCode == 200) {
       getDraftOrderData(context, apiUrl, token, 0,);

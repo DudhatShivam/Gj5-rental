@@ -74,7 +74,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                       ),
                       FadeInLeft(
                         child: Text(
-                          "Main Product List",
+                          "Product",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 23,

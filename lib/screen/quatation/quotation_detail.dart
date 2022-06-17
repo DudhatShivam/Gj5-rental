@@ -125,7 +125,7 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
                               productDetail: myGetxController
                                   .quotationDetailProductDetailList,
                               isOrderScreen: false,
-                              orderId: widget.id ?? 0);
+                              orderId: widget.id ?? 0,isDeliveryScreen: false,);
                         })
                     : Container())),
           ],

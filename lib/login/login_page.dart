@@ -149,7 +149,10 @@ class _LogInPageState extends State<LogInPage> {
                                           }
                                         },
                                         child: Text("LOGIN")))
-                                : CircularProgressIndicator()),
+                                : CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.teal),
+                                  )),
                       )
                     ],
                   )),
@@ -290,14 +293,16 @@ class _LogInPageState extends State<LogInPage> {
               password.trim(),
               data['branch_name'].toString());
           setLogInData(
-            serverUrl,
-            data['access_token'],
-            data['uid'].toString(),
-            data['partner_id'].toString(),
-            data['name'].toString(),
-            data['image'].toString(),
-            data['branch_name'],
-          ).whenComplete(() {
+                  serverUrl,
+                  data['access_token'],
+                  data['uid'].toString(),
+                  data['partner_id'].toString(),
+                  data['name'].toString(),
+                  data['image'].toString(),
+                  data['branch_name'],
+                  data['past_day_order'].toString(),
+                  data['next_day_order'].toString())
+              .whenComplete(() {
             setLogIn(true);
             myGetxController.isLoggedIn.value = false;
             pushRemoveUntilMethod(context, HomeScreen());
@@ -311,15 +316,18 @@ class _LogInPageState extends State<LogInPage> {
           myGetxController.logInPageError.value = "user not found";
         } else {
           myGetxController.isLoggedIn.value = false;
-          myGetxController.logInPageError.value = "something went wrong";
+          myGetxController.logInPageError.value =
+              "logIn response statusCode different then 200,400,401";
         }
       } else {
         myGetxController.isLoggedIn.value = false;
-        myGetxController.logInPageError.value = "something went wrong";
+        myGetxController.logInPageError.value =
+            "dbList response statusCode different then 200";
       }
     } on SocketException catch (err) {
       myGetxController.isLoggedIn.value = false;
-      myGetxController.logInPageError.value = "something went wrong";
+      myGetxController.logInPageError.value =
+          "something went wrong in socket exception";
     }
   }
 }

@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:flutter_swipe_action_cell/core/controller.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../Utils/utils.dart';
@@ -17,15 +20,19 @@ class OrderQuotationDetailCard extends StatelessWidget {
   final List productDetail;
   final bool isOrderScreen;
   final int orderId;
+  final bool isDeliveryScreen;
 
-  const OrderQuotationDetailCard(
-      {Key? key,
-      required this.orderDetailsList,
-      required this.index,
-      required this.productDetail,
-      required this.isOrderScreen,
-      required this.orderId})
-      : super(key: key);
+  OrderQuotationDetailCard({
+    Key? key,
+    required this.orderDetailsList,
+    required this.index,
+    required this.productDetail,
+    required this.isOrderScreen,
+    required this.orderId,
+    required this.isDeliveryScreen,
+  }) : super(key: key);
+
+  MyGetxController myGetxController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -37,35 +44,77 @@ class OrderQuotationDetailCard extends StatelessWidget {
     return SwipeActionCell(
       controller: controller,
       key: ObjectKey(orderDetailsList[index]),
-      trailingActions: <SwipeAction>[
-        SwipeAction(
-            title: "Delete",
-            onTap: (CompletionHandler handler) async {
-              controller.closeAllOpenCell();
-              productDeleteDialog(orderDetailsList[index]['id'], index,
-                  orderDetailsList, context);
-            },
-            color: Colors.red),
-        SwipeAction(
-            title: "Edit",
-            onTap: (CompletionHandler handler) async {
-              controller.closeAllOpenCell();
-              await addWholeSubProductInList(orderDetailsList[index]['id'])
-                  .then((value) {
-                pushMethod(
-                    context,
-                    EditOrderLine(
-                      lineId: orderDetailsList[index]['id'],
-                      deliveryDate: orderDetailsList[index]['delivery_date'],
-                      returnDate: orderDetailsList[index]['return_date'],
-                      remark: orderDetailsList[index]['remarks'],
-                      wholeSubProductList: value,
-                    ));
-              });
-            },
-            closeOnTap: false,
-            color: Colors.blue),
-      ],
+      trailingActions: isDeliveryScreen == false
+          ? <SwipeAction>[
+              SwipeAction(
+                  title: "Delete",
+                  onTap: (CompletionHandler handler) async {
+                    controller.closeAllOpenCell();
+                    productDeleteDialog(orderDetailsList[index]['id'], index,
+                        orderDetailsList, context);
+                  },
+                  color: Colors.red),
+              SwipeAction(
+                  title: "Edit",
+                  onTap: (CompletionHandler handler) async {
+                    controller.closeAllOpenCell();
+                    await addWholeSubProductInList(
+                            orderDetailsList[index]['id'])
+                        .then((value) {
+                      pushMethod(
+                          context,
+                          EditOrderLine(
+                            lineId: orderDetailsList[index]['id'],
+                            deliveryDate: orderDetailsList[index]
+                                ['delivery_date'],
+                            returnDate: orderDetailsList[index]['return_date'],
+                            remark: orderDetailsList[index]['remarks'],
+                            wholeSubProductList: value,
+                            productName: orderDetailsList[index]['product_id']
+                                ['name'],
+                            productCode: orderDetailsList[index]['product_id']
+                                ['default_code'],
+                          ));
+                    });
+                  },
+                  closeOnTap: false,
+                  color: Colors.blue),
+            ]
+          : orderDetailsList[index]['state'] == "ready"
+              ? [
+                  SwipeAction(
+                      title: "Select",
+                      onTap: (CompletionHandler handler) async {
+                        controller.closeAllOpenCell();
+                        if (myGetxController.selectedOrderLineList
+                                .contains(orderDetailsList[index]['id']) ==
+                            false) {
+                          myGetxController.selectedOrderLineList
+                              .add(orderDetailsList[index]['id']);
+                        }
+                        print(myGetxController.selectedOrderLineList);
+                      },
+                      color: Colors.blue),
+                ]
+              : [],
+      leadingActions: isDeliveryScreen == true &&
+              orderDetailsList[index]['state'] == "ready"
+          ? <SwipeAction>[
+              SwipeAction(
+                  title: "Deselect",
+                  onTap: (CompletionHandler handler) async {
+                    controller.closeAllOpenCell();
+                    if (myGetxController.selectedOrderLineList
+                            .contains(orderDetailsList[index]['id']) ==
+                        true) {
+                      myGetxController.selectedOrderLineList
+                          .remove(orderDetailsList[index]['id']);
+                    }
+                    print(myGetxController.selectedOrderLineList);
+                  },
+                  color: Colors.red.shade400),
+            ]
+          : [],
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         padding: EdgeInsets.all(15),
@@ -81,6 +130,18 @@ class OrderQuotationDetailCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            isDeliveryScreen == true
+                ? Obx(() => myGetxController.selectedOrderLineList
+                            .contains(orderDetailsList[index]['id']) ==
+                        true
+                    ? Container(
+                        width: double.infinity,
+                        height: 3,
+                        color: Colors.blue.shade400,
+                        margin: EdgeInsets.only(bottom: 10),
+                      )
+                    : Container())
+                : Container(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -274,7 +335,11 @@ class OrderQuotationDetailCard extends StatelessWidget {
                                     context,
                                     true,
                                     "",
-                                    "");
+                                    "",
+                                    orderDetailsList[index]['product_id']
+                                        ['default_code'],
+                                    orderDetailsList[index]['product_id']
+                                        ['name']);
                               },
                               child: Icon(
                                 Icons.thumb_up_alt_rounded,
@@ -291,8 +356,14 @@ class OrderQuotationDetailCard extends StatelessWidget {
                               orderDetailsList[index]['state'] != "cancel"
                           ? InkWell(
                               onTap: () {
-                                popUpForWaitingThumbInOrderScreen(context,
-                                    orderDetailsList[index]['id'], orderId);
+                                popUpForWaitingThumbInOrderScreen(
+                                    context,
+                                    orderDetailsList[index]['id'],
+                                    orderId,
+                                    orderDetailsList[index]['product_id']
+                                        ['default_code'],
+                                    orderDetailsList[index]['product_id']
+                                        ['name']);
                               },
                               child: Icon(
                                 Icons.lock_clock,

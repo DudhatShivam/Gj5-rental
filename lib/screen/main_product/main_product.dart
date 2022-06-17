@@ -37,7 +37,7 @@ class _MainProductScreenState extends State<MainProductScreen> {
           height: MediaQuery.of(context).padding.top + 10,
         ),
         ScreenAppBar(
-          screenName: "Main Product",
+          screenName: "Product Type",
         ),
         Obx(() => myGetxController.mainProductList.isNotEmpty
             ? Expanded(
@@ -118,5 +118,4 @@ class _MainProductScreenState extends State<MainProductScreen> {
     }
   }
 
-  getData(String apiUrl, String token) {}
 }

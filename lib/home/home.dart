@@ -1,9 +1,10 @@
 import 'dart:typed_data';
-
 import 'package:animated_background/animated_background.dart';
+import 'package:dio/dio.dart';
 import 'package:fancy_drawer/fancy_drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
@@ -21,11 +22,14 @@ import 'package:gj5_rental/screen/service/service.dart';
 import 'package:gj5_rental/screen/service_line/service_line.dart';
 import 'package:gj5_rental/screen/service_status/service_status.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:local_auth/local_auth.dart';
 import 'dart:io' as Io;
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../screen/Order_line/order_line.dart';
 import '../screen/booking status/booking_status.dart';
 import '../screen/receive/receive.dart';
 
@@ -61,9 +65,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   List<String> serviceName = [
     'Booking Status',
-    'Quatation',
+    'Quotation',
     'Order',
-    'Main Product',
+    'Order Line',
     'Product Detail',
     'Extra Product',
     'Service',
@@ -72,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     'Change Product',
     'Delivery',
     'Receive',
+    'Product'
   ];
 
   @override
@@ -182,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     },
                   ),
                   GridView.builder(
-                    physics: BouncingScrollPhysics(),
+                      physics: BouncingScrollPhysics(),
                       padding:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       shrinkWrap: true,
@@ -202,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             } else if (index == 2) {
                               pushMethod(context, OrderScreen());
                             } else if (index == 3) {
-                              pushMethod(context, MainProductScreen());
+                              pushMethod(context, OrderLineScreen());
                             } else if (index == 4) {
                               pushMethod(context, ProductDetail());
                             } else if (index == 5) {
@@ -219,6 +224,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               pushMethod(context, DeliveryScreen());
                             } else if (index == 11) {
                               pushMethod(context, ReceiveScreen());
+                            } else if (index == 12) {
+                              pushMethod(context, MainProductScreen());
                             }
                           },
                           child: Card(
@@ -346,5 +353,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         thickness: 2,
       ),
     );
+  }
+
+  void checkForBioMatrics() async {
+    final LocalAuthentication auth = LocalAuthentication();
+    bool isDeviceSupport = await auth.canCheckBiometrics;
+    bool isAvailableBioMetrics = await auth.isDeviceSupported();
+    if (isAvailableBioMetrics && isDeviceSupport) {
+      print(await auth.getAvailableBiometrics());
+      try {
+        final bool didAuthenticate = await auth.authenticate(
+          localizedReason: 'Please authenticate to Go Inside',
+          options:
+              AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),
+        );
+        if (didAuthenticate) {
+          pushMethod(context, ReceiveScreen());
+        }
+        // ···
+      } on PlatformException catch (e) {
+        pushMethod(context, ReceiveScreen());
+      }
+    } else {
+      pushMethod(context, ReceiveScreen());
+    }
+  }
+
+  _save() async {
+    var response = await Dio().get(
+        "https://pbs.twimg.com/profile_images/1479443900368519169/PgOyX1vt_400x400.jpg",
+        options: Options(responseType: ResponseType.bytes));
+    final result = await ImageGallerySaver.saveImage(
+        Uint8List.fromList(response.data),
+        quality: 60,
+        name: "hello");
+    print(result);
   }
 }
