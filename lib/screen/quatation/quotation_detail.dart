@@ -90,6 +90,7 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
               () => myGetxController.quotationOrder.isNotEmpty
                   ? OrderQuatationCommanCard(
                       list: myGetxController.quotationOrder,
+                      isOrderScreen: false,
                       backGroundColor: Colors.grey.withOpacity(0.1),
                       index: 0,
                       isDeliveryScreen: false)
@@ -119,13 +120,15 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return OrderQuotationDetailCard(
-                              orderDetailsList:
-                                  myGetxController.quotationDetailOrderList,
-                              index: index,
-                              productDetail: myGetxController
-                                  .quotationDetailProductDetailList,
-                              isOrderScreen: false,
-                              orderId: widget.id ?? 0,isDeliveryScreen: false,);
+                            orderDetailsList:
+                                myGetxController.quotationDetailOrderList,
+                            index: index,
+                            productDetail: myGetxController
+                                .quotationDetailProductDetailList,
+                            isOrderScreen: false,
+                            orderId: widget.id ?? 0,
+                            isDeliveryScreen: false,
+                          );
                         })
                     : Container())),
           ],

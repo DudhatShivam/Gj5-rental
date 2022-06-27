@@ -42,6 +42,9 @@ pushRemoveUntilMethod(BuildContext context, Widget name) {
       (Route<dynamic> route) => false);
 }
 
+TextStyle dialogTitleStyle =
+    TextStyle(color: Colors.teal, fontWeight: FontWeight.w500, fontSize: 24);
+
 TextStyle primaryStyle = TextStyle(
     fontSize: 17,
     color: primaryColor.withOpacity(0.6),
@@ -168,10 +171,10 @@ Future orderDetailDialog(
                       fontSize: 18,
                       color: primaryColor),
                 ),
-                remark == ""
+                remark != null
                     ? FittedBox(
                         child: Text(
-                          remark ?? "",
+                          remark,
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 18,
@@ -193,36 +196,41 @@ Future orderReadyConfirmationDialog(
     int orderId,
     int productDetailId,
     String apiUrl,
-    String token) {
-  print("confirmation dialog called");
+    String token,
+    bool isOrderLineScreen,
+    int index,
+    bool isShowFromGroupBy,
+    int groupByMainListIndex) {
   return showDialog(
       context: context,
       builder: (_) {
         return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(32.0))),
           alignment: Alignment.center,
           child: Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(15),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Sure , are you want to confirm ?",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
-                      color: Colors.blue),
+                  "This product is ready ?",
+                  style: dialogTitleStyle,
                 ),
                 SizedBox(
                   height: 5,
                 ),
-                Text(
-                  code,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
-                      color: primaryColor),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    code,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
+                        color: primaryColor),
+                  ),
                 ),
                 SizedBox(
                   height: 5,
@@ -232,28 +240,40 @@ Future orderReadyConfirmationDialog(
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 18,
-                      color: primaryColor),
+                      color: Colors.grey.shade500),
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.green.shade300),
                         onPressed: () {
                           confirmOrderThumb(
-                              orderId, productDetailId, apiUrl, token, context);
+                              orderId,
+                              productDetailId,
+                              apiUrl,
+                              token,
+                              context,
+                              isOrderLineScreen,
+                              index,
+                              isShowFromGroupBy,
+                              groupByMainListIndex);
                         },
-                        child: Text("Ok")),
+                        child: Text("Yes")),
                     SizedBox(
                       width: 5,
                     ),
                     ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.red.shade300),
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text("Cancel")),
+                        child: Text("No")),
                   ],
                 )
               ],
@@ -318,8 +338,16 @@ Future deliverScreenOrderLineSelectionDialog(
       });
 }
 
-Future<void> setLogInData(String apiUrl, String accessToken, String uid,
-    String partnerId, String name, String image, String branchName,String pastDayOrder,String nextDayOder) async {
+Future<void> setLogInData(
+    String apiUrl,
+    String accessToken,
+    String uid,
+    String partnerId,
+    String name,
+    String image,
+    String branchName,
+    String pastDayOrder,
+    String nextDayOder) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.setString('apiUrl', apiUrl);
   preferences.setString('branchName', branchName);

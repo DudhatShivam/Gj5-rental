@@ -26,20 +26,22 @@ class CreateOrder extends StatefulWidget {
 class _CreateOrderState extends State<CreateOrder> {
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+  TextEditingController number2Controller = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
   MyGetxController myGetxController = Get.find();
   final _formKey = GlobalKey<FormState>();
   String returnDate = "";
   String deliveryDate = "";
-  String DformatedDate="";
-  String RformatedDate="";
+  String DformatedDate = "";
+  String RformatedDate = "";
   DateTime? returnNotFormatedDate;
   DateTime deliveryNotFormatedDate = DateTime.now();
   bool initialValidDDate = true;
   bool initialValidRDate = true;
   bool isValidDDate = true;
   bool isValidRDate = true;
+  bool isBtnLoading = false;
 
   @override
   void initState() {
@@ -101,26 +103,6 @@ class _CreateOrderState extends State<CreateOrder> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Number : ",
-                          style: primaryStyle,
-                        ),
-                        Container(
-                          width: getWidth(0.33, context),
-                          child: numberValidatorTextfield(numberController, "Mobile number"),
-                        )
-                      ],
-                    ),
-                  ), //number
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                        horizontal: getWidth(0.02, context)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
                           "Address : ",
                           style: primaryStyle,
                         ),
@@ -139,7 +121,51 @@ class _CreateOrderState extends State<CreateOrder> {
                         )
                       ],
                     ),
-                  ), //address
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                        horizontal: getWidth(0.02, context)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Mobile : ",
+                          style: primaryStyle,
+                        ),
+                        Container(
+                          width: getWidth(0.33, context),
+                          child: numberValidatorTextfield(
+                              numberController, "Mobile number"),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  //number
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Mobile2 : ",
+                    style: primaryStyle,
+                  ),
+                  FittedBox(
+                    child: Container(
+                      width: getWidth(0.33, context),
+                      child: numberValidatorTextfield(
+                          number2Controller, "Mobile number2"),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -152,8 +178,7 @@ class _CreateOrderState extends State<CreateOrder> {
               height: 25,
             ),
             Container(
-              margin:
-                  EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
+              margin: EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -214,8 +239,7 @@ class _CreateOrderState extends State<CreateOrder> {
               height: 25,
             ),
             Container(
-              margin:
-                  EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
+              margin: EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -272,22 +296,27 @@ class _CreateOrderState extends State<CreateOrder> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 25,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() == true &&
-                        nameController.text.isNotEmpty &&
-                        numberController.text.isNotEmpty &&
-                        addressController.text.isNotEmpty) {
-                      checkValidation();
-                    }
-                  },
-                  child: Text("Create Order")),
-            ),
+            isBtnLoading == false
+                ? Container(
+                    width: double.infinity,
+                    height: 45,
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 25),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() == true &&
+                              nameController.text.isNotEmpty &&
+                              numberController.text.isNotEmpty &&
+                              addressController.text.isNotEmpty) {
+                            checkValidation();
+                          }
+                        },
+                        child: Text("CREATE ORDER")),
+                  )
+                : Padding(
+                    padding: EdgeInsets.all(25),
+                    child: CircularProgressIndicator(),
+                  ),
             Padding(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom + 10))
@@ -309,7 +338,6 @@ class _CreateOrderState extends State<CreateOrder> {
       if (deliveryNotFormatedDate
               .isBefore(returnNotFormatedDate ?? DateTime.now()) ==
           true) {
-        print("all set");
         checkWifiForCreateOrder();
         // saveInCart();
         // myGetxController.badgeText.value++;
@@ -363,8 +391,9 @@ class _CreateOrderState extends State<CreateOrder> {
   }
 
   Future<void> createOrder(String apiUrl, String token) async {
-    print(deliveryDate);
-    print(returnDate);
+    setState(() {
+      isBtnLoading = true;
+    });
     final partnerIdResponse =
         await http.post(Uri.parse("http://$apiUrl/api/res.customer"),
             headers: {'Access-Token': token},
@@ -377,6 +406,7 @@ class _CreateOrderState extends State<CreateOrder> {
     var body = {
       'partner_id': data['id'],
       'mobile1': numberController.text,
+      'mobile2': number2Controller.text,
       'delivery_address': addressController.text,
       'delivery_date': deliveryDate,
       'return_date': returnDate,
@@ -388,9 +418,11 @@ class _CreateOrderState extends State<CreateOrder> {
               'Access-Token': token,
             },
             body: jsonEncode(body));
-    print(response.body);
 
     Map datas = jsonDecode(response.body);
     getDraftOrderData(context, apiUrl, token, datas['id']);
+    setState(() {
+      isBtnLoading = false;
+    });
   }
 }

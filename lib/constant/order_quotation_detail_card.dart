@@ -44,14 +44,14 @@ class OrderQuotationDetailCard extends StatelessWidget {
     return SwipeActionCell(
       controller: controller,
       key: ObjectKey(orderDetailsList[index]),
-      trailingActions: isDeliveryScreen == false
+      trailingActions: isDeliveryScreen == false && isOrderScreen == false
           ? <SwipeAction>[
               SwipeAction(
                   title: "Delete",
                   onTap: (CompletionHandler handler) async {
                     controller.closeAllOpenCell();
                     productDeleteDialog(orderDetailsList[index]['id'], index,
-                        orderDetailsList, context);
+                        orderDetailsList, context,false);
                   },
                   color: Colors.red),
               SwipeAction(
@@ -80,7 +80,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                   closeOnTap: false,
                   color: Colors.blue),
             ]
-          : orderDetailsList[index]['state'] == "ready"
+          : orderDetailsList[index]['state'] == "ready" && isOrderScreen == false && isDeliveryScreen == true
               ? [
                   SwipeAction(
                       title: "Select",
@@ -319,61 +319,6 @@ class OrderQuotationDetailCard extends StatelessWidget {
                 }).toList(),
               ),
             ),
-            isOrderScreen == true
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      orderDetailsList[index]['state'] != "ready" &&
-                              orderDetailsList[index]['state'] != "deliver" &&
-                              orderDetailsList[index]['state'] != "receive" &&
-                              orderDetailsList[index]['state'] != "cancel"
-                          ? InkWell(
-                              onTap: () {
-                                checkWlanForConfirmOrderThumbAndWaiting(
-                                    orderId,
-                                    orderDetailsList[index]['id'],
-                                    context,
-                                    true,
-                                    "",
-                                    "",
-                                    orderDetailsList[index]['product_id']
-                                        ['default_code'],
-                                    orderDetailsList[index]['product_id']
-                                        ['name']);
-                              },
-                              child: Icon(
-                                Icons.thumb_up_alt_rounded,
-                                size: 28,
-                              ),
-                            )
-                          : Container(),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      orderDetailsList[index]['state'] != "waiting" &&
-                              orderDetailsList[index]['state'] != "deliver" &&
-                              orderDetailsList[index]['state'] != "receive" &&
-                              orderDetailsList[index]['state'] != "cancel"
-                          ? InkWell(
-                              onTap: () {
-                                popUpForWaitingThumbInOrderScreen(
-                                    context,
-                                    orderDetailsList[index]['id'],
-                                    orderId,
-                                    orderDetailsList[index]['product_id']
-                                        ['default_code'],
-                                    orderDetailsList[index]['product_id']
-                                        ['name']);
-                              },
-                              child: Icon(
-                                Icons.lock_clock,
-                                size: 28,
-                              ),
-                            )
-                          : Container()
-                    ],
-                  )
-                : Container(),
             isOrderScreen == true &&
                     orderDetailsList[index]['state'] == "waiting"
                 ? Row(

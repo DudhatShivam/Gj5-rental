@@ -33,7 +33,6 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   TextEditingController rentController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
   MyGetxController myGetxController = Get.find();
-  List<dynamic> gotProductListFromPreferences = [];
   String returnDate = "";
   String deliveryDate = "";
   DateTime? returnNotFormatedDate;
@@ -47,13 +46,9 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   void initState() {
     super.initState();
     orderId = widget.orderId;
-    getStringPreference('ProductList').then((value) {
-      Map<String, dynamic> data = jsonDecode(value);
-      gotProductListFromPreferences = data['results'];
-    });
+    getPreferenceProductList();
     deliveryDate = widget.deliveryDate ?? "";
     returnDate = widget.returnDate ?? "";
-    print(deliveryDate);
     deliveryNotFormatedDate = new DateFormat("dd/MM/yyyy").parse(deliveryDate);
     returnNotFormatedDate = DateFormat("dd/MM/yyyy").parse(returnDate);
   }
@@ -257,61 +252,62 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   productSearchTextField() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10),
-      child: SearchField(
-        controller: productSearchController,
-        suggestionsDecoration: BoxDecoration(
-          border: Border.all(color: Colors.teal.shade400),
-        ),
-        searchStyle: primaryStyle,
-        searchInputDecoration: InputDecoration(
-            suffixIcon: productSearchController.text.isNotEmpty
-                ? InkWell(
-                    onTap: () {
-                      myGetxController.isSetTextFieldData.value = false;
-                      productSearchController.clear();
-                      FocusScope.of(context).unfocus();
-                      setState(() {
-                        isDisplayResponseApiList = false;
-                      });
-                    },
-                    child: Container(
-                      child: Icon(
-                        Icons.cancel,
-                        color: primaryColor,
-                        size: 30,
-                      ),
-                    ),
-                  )
-                : null,
-            hintText: "Search Product",
-            hintStyle: TextStyle(color: Colors.grey.shade400),
-            filled: true,
-            fillColor: Colors.grey.withOpacity(0.1),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
+      child: Obx(() => SearchField(
+            controller: productSearchController,
+            suggestionsDecoration: BoxDecoration(
+              border: Border.all(color: Colors.teal.shade400),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.teal),
-            )),
-        onSuggestionTap: (val) {
-          getResponseProductApiList();
-        },
-        itemHeight: 45,
-        suggestions: gotProductListFromPreferences.map((e) {
-          String search = e['default_code'] + " - " + e['name'];
-          return SearchFieldListItem(search);
-        }).toList(),
-        suggestionAction: SuggestionAction.next,
-      ),
+            searchStyle: primaryStyle,
+            searchInputDecoration: InputDecoration(
+                suffixIcon: productSearchController.text.isNotEmpty
+                    ? InkWell(
+                        onTap: () {
+                          myGetxController.isSetTextFieldData.value = false;
+                          productSearchController.clear();
+                          FocusScope.of(context).unfocus();
+                          setState(() {
+                            isDisplayResponseApiList = false;
+                          });
+                        },
+                        child: Container(
+                          child: Icon(
+                            Icons.cancel,
+                            color: primaryColor,
+                            size: 30,
+                          ),
+                        ),
+                      )
+                    : null,
+                hintText: "Search Product",
+                hintStyle: TextStyle(color: Colors.grey.shade400),
+                filled: true,
+                fillColor: Colors.grey.withOpacity(0.1),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.teal),
+                )),
+            onSuggestionTap: (val) {
+              getResponseProductApiList();
+            },
+            itemHeight: 45,
+            suggestions:
+                myGetxController.isMainProductFalseProductList.map((e) {
+              String search = "${e['default_code']} -  ${e['name']}";
+              return SearchFieldListItem(search);
+            }).toList(),
+            suggestionAction: SuggestionAction.next,
+          )),
     );
   }
 
   getResponseProductApiList() {
     String value = productSearchController.text.split(' ').first;
-    gotProductListFromPreferences.forEach((element) {
+    myGetxController.isMainProductFalseProductList.forEach((element) {
       if (element['default_code'] == value) {
         productId = element['id'];
         rentController.text = element['rent'].toString();
@@ -340,6 +336,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   }
 
   getData(String apiUrl, int id, String token) async {
+    print(id);
     final response = await http.put(
         Uri.parse("http://$apiUrl/api/product.product/$id/get_booking_status"),
         headers: {
@@ -399,6 +396,21 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
       Navigator.pop(context);
     } else {
       dialog(context, data['msg'] ?? "Some thing went wrong");
+    }
+  }
+
+  void getPreferenceProductList() {
+    if (myGetxController.isMainProductFalseProductList.isEmpty == true) {
+      getStringPreference('ProductList').then((value) async {
+        Map<String, dynamic> data = await jsonDecode(value);
+        print(data['count']);
+        List<dynamic> lst = await data['results'];
+        lst.forEach((element) {
+          if (element['is_main_product'] == true) {
+            myGetxController.isMainProductFalseProductList.add(element);
+          }
+        });
+      });
     }
   }
 

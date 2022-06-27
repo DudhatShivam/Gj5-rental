@@ -26,7 +26,6 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderState extends State<OrderScreen> {
-
   List status = [
     'New',
     'Confirmed',
@@ -50,8 +49,10 @@ class _OrderState extends State<OrderScreen> {
   @override
   void initState() {
     super.initState();
-    myGetxController.orderData.clear();
-    getData();
+    myGetxController.filteredOrderList.clear();
+    if (myGetxController.orderData.isEmpty) {
+      getData();
+    }
   }
 
   @override
@@ -107,10 +108,11 @@ class _OrderState extends State<OrderScreen> {
               InkWell(
                   onTap: () {
                     myGetxController.orderData.clear();
+                    myGetxController.filteredOrderList.clear();
                     getData();
                   },
                   child: FadeInRight(
-                      child: Icon(Icons.cancel, size: 30, color: Colors.teal)))
+                      child: Icon(Icons.refresh, size: 30, color: Colors.teal)))
             ],
           ),
           elevation: 0,
@@ -231,7 +233,7 @@ class _OrderState extends State<OrderScreen> {
         ),
         Expanded(
           child: Obx(() => myGetxController.orderData.isNotEmpty
-              ? ListView.builder(
+              ? myGetxController.filteredOrderList.isEmpty   ? ListView.builder(
                   padding: EdgeInsets.zero,
                   physics: BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
@@ -243,12 +245,31 @@ class _OrderState extends State<OrderScreen> {
                       backGroundColor: Colors.white,
                       index: index,
                       isDeliveryScreen: false,
+                      isOrderScreen: true,
                       onTap: () => pushMethod(
                           context,
                           OrderDetail(
                               id: myGetxController.orderData[index]['id'])),
                     );
-                  })
+                  }) : ListView.builder(
+              padding: EdgeInsets.zero,
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: myGetxController.filteredOrderList.length,
+              itemBuilder: (context, index) {
+                return OrderQuatationCommanCard(
+                  list: myGetxController.filteredOrderList,
+                  backGroundColor: Colors.white,
+                  index: index,
+                  isDeliveryScreen: false,
+                  isOrderScreen: true,
+                  onTap: () => pushMethod(
+                      context,
+                      OrderDetail(
+                          id: myGetxController.filteredQuotationData[index]['id'])),
+                );
+              })
               : Container(
                   child: Center(
                       child: CircularProgressIndicator(
@@ -283,6 +304,7 @@ class _OrderState extends State<OrderScreen> {
   }
 
   getOrderData(String apiUrl, String accessToken) {
+    myGetxController.orderData.clear();
     getStringPreference('pastDayOrder').then((past) {
       getStringPreference('nextDayOder').then((next) async {
         DateTime dateTime1 =
@@ -291,7 +313,6 @@ class _OrderState extends State<OrderScreen> {
             DateTime.now().add(Duration(days: int.parse(next)));
         String bookingDate = DateFormat('MM/dd/yyyy').format(dateTime1);
         String deliveryDate = DateFormat('MM/dd/yyyy').format(dateTime2);
-
         String domain =
             "[('state' , 'not in' , ('draft','cancel','done')), ('date' , '>=' , '$bookingDate'), ('delivery_date' , '<=' , '$deliveryDate')]";
         var params = {'filters': domain.toString()};
@@ -302,7 +323,6 @@ class _OrderState extends State<OrderScreen> {
           'Content-Type': 'application/http',
           'Connection': 'keep-alive'
         });
-        print(response.statusCode);
         Map<String, dynamic> data = await jsonDecode(response.body);
         myGetxController.orderData.value = data['results'];
       });
@@ -353,15 +373,22 @@ class _OrderState extends State<OrderScreen> {
     } else if (datas.length == 3) {
       domain = "['|' , '|', ${datas[0]} , ${datas[1]} , ${datas[2]}]";
     } else {
-      myGetxController.orderData.value = [];
+      myGetxController.filteredOrderList.value = [];
     }
     var params = {'filters': domain.toString()};
     Uri uri = Uri.parse("http://$apiUrl/api/rental.rental?limit=10");
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri,
         headers: {'Access-Token': token, 'Content-Type': 'application/http'});
-    myGetxController.orderData.clear();
-    Map<String, dynamic> data = jsonDecode(response.body);
-    myGetxController.orderData.value = data['results'];
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      if (data['count'] != 0) {
+        myGetxController.filteredOrderList.addAll(data['results']);
+      } else {
+        dialog(context, "No Order Found");
+      }
+    } else {
+      dialog(context, "Something Went Wrong");
+    }
   }
 }

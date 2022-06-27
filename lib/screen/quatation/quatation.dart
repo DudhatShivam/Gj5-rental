@@ -36,247 +36,250 @@ class _QuatationScreenState extends State<QuatationScreen>
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
-  late AnimationController animationController;
   Animation? animatedOpacity;
 
   @override
   void initState() {
     super.initState();
-    animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    animatedOpacity = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: animationController,
-        curve: Interval(0.75, 1.0, curve: Curves.easeOut)));
-    animationController.forward();
-    getData();
+    myGetxController.filteredQuotationData.clear();
+    if (myGetxController.quotationData.isEmpty) {
+      getData();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () => pushRemoveUntilMethod(context, HomeScreen()),
-      child: AnimatedBuilder(
-        animation: animationController,
-        builder: (context, _) {
-          return Scaffold(
-              floatingActionButton: FadeInRight(
-                child: CustomFABWidget(
-                  isCreateOrder: true,
-                  transitionType: ContainerTransitionType.fade,
-                ),
+      child: Scaffold(
+          floatingActionButton: FadeInRight(
+            child: CustomFABWidget(
+              isCreateOrder: true,
+              transitionType: ContainerTransitionType.fade,
+            ),
+          ),
+          body: Column(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).padding.top + 10,
               ),
-              body: Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).padding.top + 10,
+              ExpansionTileCard(
+                trailing: FadeInRight(
+                  child: Icon(
+                    Icons.search,
+                    size: 30,
+                    color: Colors.teal,
                   ),
-                  ExpansionTileCard(
-                    trailing: FadeInRight(
-                      child: Icon(
-                        Icons.search,
-                        size: 30,
-                        color: Colors.teal,
-                      ),
-                    ),
-                    key: findCard,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              InkWell(
-                                  onTap: () {
-                                    pushRemoveUntilMethod(
-                                        context, HomeScreen());
-                                  },
-                                  child: FadeInLeft(
-                                    child: Icon(
-                                      Icons.arrow_back,
-                                      size: 30,
-                                      color: Colors.teal,
-                                    ),
-                                  )),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              FadeInLeft(
-                                child: Text(
-                                  "Quotation",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 23,
-                                      color: Colors.teal),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                            onTap: () {
-                              myGetxController.quotationData.clear();
-                              getData();
-                            },
-                            child: FadeInRight(
-                                child: Icon(Icons.cancel,
-                                    size: 30, color: Colors.teal))),
-                        // SizedBox(
-                        //   width: 5,
-                        // ),
-                        // Obx(() => InkWell(
-                        //       onTap: () {
-                        //         pushMethod(context, QuotationCart());
-                        //       },
-                        //       child: FadeInRight(
-                        //         child: Badge(
-                        //           badgeContent: Text(
-                        //             myGetxController.quotationCartList.length
-                        //                 .toString()
-                        //                 .toString(),
-                        //             style: TextStyle(color: Colors.white),
-                        //           ),
-                        //           badgeColor: Colors.red,
-                        //           child: Icon(
-                        //             Icons.shopping_cart,
-                        //             color: Colors.teal,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     )),
-                      ],
-                    ),
-                    elevation: 0,
-                    shadowColor: Colors.white,
-                    initialElevation: 0,
-                    borderRadius: BorderRadius.circular(0),
-                    baseColor: Colors.transparent,
-                    expandedColor: Colors.transparent,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+                key: findCard,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 8),
+                          InkWell(
+                              onTap: () {
+                                pushRemoveUntilMethod(context, HomeScreen());
+                              },
+                              child: FadeInLeft(
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  size: 30,
+                                  color: Colors.teal,
+                                ),
+                              )),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          FadeInLeft(
                             child: Text(
-                              "Find Order :",
+                              "Quotation",
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 20,
-                                  color: Colors.blueGrey),
+                                  fontSize: 23,
+                                  color: Colors.teal),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Customer : ",
-                                  style: primaryStyle,
-                                ),
-                                Container(
-                                  width: getWidth(0.30, context),
-                                  child: textFieldWidget(
-                                      "Customer Name",
-                                      nameController,
-                                      false,
-                                      false,
-                                      Colors.greenAccent.withOpacity(0.3),
-                                      TextInputType.text,
-                                      0,
-                                      Colors.greenAccent,
-                                      1),
-                                )
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Mobile :",
-                                  style: primaryStyle,
-                                ),
-                                Container(
-                                  width: getWidth(0.30, context),
-                                  child: textFieldWidget(
-                                      "Mobile number",
-                                      numberController,
-                                      false,
-                                      false,
-                                      Colors.greenAccent.withOpacity(0.3),
-                                      TextInputType.number,
-                                      0,
-                                      Colors.greenAccent,
-                                      1),
-                                )
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 8),
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  findCard.currentState?.toggleExpansion();
-                                  searchProduct();
-                                },
-                                child: Text("Search")),
                           ),
                         ],
-                      )
-                    ],
-                  ),
-                  Expanded(
-                    child: Obx(() => myGetxController.quotationData.length > 0
-                        ? Transform.scale(
-                            scale: animatedOpacity?.value,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: myGetxController.quotationData.length,
-                              padding: EdgeInsets.zero,
-                              itemBuilder: (context, index) {
-                                return OpenContainer(
-                                  transitionDuration:
-                                      Duration(milliseconds: 800),
-                                  transitionType: ContainerTransitionType.fade,
-                                  closedBuilder:
-                                      (context, VoidCallback opencontainer) =>
-                                          OrderQuatationCommanCard(
-                                    index: index,
-                                    backGroundColor: Colors.white,
-                                    isDeliveryScreen: false,
-                                    list: myGetxController.quotationData,
-                                    onTap: opencontainer,
-                                  ),
-                                  openBuilder: (context, _) =>
-                                      QuatationDetailScreen(
-                                          id: myGetxController
-                                              .quotationData[index]['id']),
-                                );
-                              },
+                      ),
+                    ),
+                    InkWell(
+                        onTap: () {
+                          myGetxController.quotationData.clear();
+                          getData();
+                        },
+                        child: FadeInRight(
+                            child: Icon(Icons.refresh,
+                                size: 30, color: Colors.teal))),
+                    // SizedBox(
+                    //   width: 5,
+                    // ),
+                    // Obx(() => InkWell(
+                    //       onTap: () {
+                    //         pushMethod(context, QuotationCart());
+                    //       },
+                    //       child: FadeInRight(
+                    //         child: Badge(
+                    //           badgeContent: Text(
+                    //             myGetxController.quotationCartList.length
+                    //                 .toString()
+                    //                 .toString(),
+                    //             style: TextStyle(color: Colors.white),
+                    //           ),
+                    //           badgeColor: Colors.red,
+                    //           child: Icon(
+                    //             Icons.shopping_cart,
+                    //             color: Colors.teal,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     )),
+                  ],
+                ),
+                elevation: 0,
+                shadowColor: Colors.white,
+                initialElevation: 0,
+                borderRadius: BorderRadius.circular(0),
+                baseColor: Colors.transparent,
+                expandedColor: Colors.transparent,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: Text(
+                          "Find Order :",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: Colors.blueGrey),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Customer : ",
+                              style: primaryStyle,
                             ),
-                          )
-                        : Container(
-                            child: Center(
-                                child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.teal))),
-                          )),
+                            Container(
+                              width: getWidth(0.30, context),
+                              child: textFieldWidget(
+                                  "Customer Name",
+                                  nameController,
+                                  false,
+                                  false,
+                                  Colors.greenAccent.withOpacity(0.3),
+                                  TextInputType.text,
+                                  0,
+                                  Colors.greenAccent,
+                                  1),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Mobile :",
+                              style: primaryStyle,
+                            ),
+                            Container(
+                              width: getWidth(0.30, context),
+                              child: textFieldWidget(
+                                  "Mobile number",
+                                  numberController,
+                                  false,
+                                  false,
+                                  Colors.greenAccent.withOpacity(0.3),
+                                  TextInputType.number,
+                                  0,
+                                  Colors.greenAccent,
+                                  1),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              findCard.currentState?.toggleExpansion();
+                              searchProduct();
+                            },
+                            child: Text("Search")),
+                      ),
+                    ],
                   )
                 ],
-              ));
-        },
-      ),
+              ),
+              Expanded(
+                child: Obx(() => myGetxController.quotationData.isNotEmpty
+                    ? myGetxController.filteredQuotationData.isEmpty
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: myGetxController.quotationData.length,
+                            padding: EdgeInsets.zero,
+                            itemBuilder: (context, index) {
+                              return OrderQuatationCommanCard(
+                                index: index,
+                                backGroundColor: Colors.white,
+                                isOrderScreen: false,
+                                isDeliveryScreen: false,
+                                list: myGetxController.quotationData,
+                                onTap: () => pushMethod(
+                                    context,
+                                    QuatationDetailScreen(
+                                        id: myGetxController
+                                            .quotationData[index]['id'])),
+                              );
+                            },
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount:
+                                myGetxController.filteredQuotationData.length,
+                            padding: EdgeInsets.zero,
+                            itemBuilder: (context, index) {
+                              return OrderQuatationCommanCard(
+                                index: index,
+                                backGroundColor: Colors.white,
+                                isOrderScreen: false,
+                                isDeliveryScreen: false,
+                                list: myGetxController.filteredQuotationData,
+                                onTap: () => pushMethod(
+                                    context,
+                                    QuatationDetailScreen(
+                                        id: myGetxController
+                                                .filteredQuotationData[index]
+                                            ['id'])),
+                              );
+                            },
+                          )
+                    : Container(
+                        child: Center(
+                            child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.teal))),
+                      )),
+              )
+            ],
+          )),
     );
   }
 
@@ -340,22 +343,23 @@ class _QuatationScreenState extends State<QuatationScreen>
     } else if (datas.length == 2) {
       domain = "[('state','=','draft'), '|' , ${datas[0]} , ${datas[1]}]";
     } else {
-      myGetxController.quotationData.value = [];
+      myGetxController.filteredQuotationData.value = [];
     }
     var params = {'filters': domain.toString()};
     Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
-    final response = await http.get(finalUri, headers: {
-      'Access-Token': token,
-      'Content-Type': 'application/http'
-    }).whenComplete(() async {
-      // if (myGetxController.quotationCartList.isEmpty) {
-      //   SharedPreferences preferences = await SharedPreferences.getInstance();
-      //   String? data = await preferences.getString('cartList');
-      //   myGetxController.quotationCartList.value = jsonDecode(data ?? "");
-      // }
-    });
-    Map<String, dynamic> data = jsonDecode(response.body);
-    myGetxController.quotationData.value = data['results'];
+    final response = await http.get(finalUri,
+        headers: {'Access-Token': token, 'Content-Type': 'application/http'});
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      if (data['count'] != 0) {
+        myGetxController.filteredQuotationData.addAll(data['results']);
+      } else {
+        dialog(context, "No Order Found");
+      }
+    } else {
+      dialog(context, "Something Went Wrong");
+    }
   }
 }

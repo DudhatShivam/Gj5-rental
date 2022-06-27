@@ -28,6 +28,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
   TextEditingController codeController = TextEditingController();
   TextEditingController productNameController = TextEditingController();
   final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
+  bool noData = false;
 
   @override
   void initState() {
@@ -90,7 +91,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                     },
                     child: FadeInRight(
                         child:
-                            Icon(Icons.cancel, size: 30, color: Colors.teal))),
+                            Icon(Icons.refresh, size: 30, color: Colors.teal))),
               ],
             ),
             elevation: 0,
@@ -278,16 +279,20 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                     },
                   ),
                 )
-              : Expanded(
-                  child: Center(
+              : noData == true
+                  ? Expanded(
+                      child: Center(
                       child: Text(
-                    "No Product !",
-                    style: TextStyle(
-                        color: Colors.grey.shade300,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500),
-                  )),
-                )),
+                        "No Product !",
+                        style: TextStyle(
+                            color: Colors.grey.shade300,
+                            fontSize: 25,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ))
+                  : Expanded(
+                      child: Center(child: CircularProgressIndicator()),
+                    )),
         ],
       ),
     );
@@ -329,15 +334,17 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
     print(response.body);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-
       if (data['count'] != 0) {
         myGetxController.mainProductDetailList.addAll(data['results']);
+      } else {
+        setState(() {
+          noData = true;
+        });
       }
     }
   }
 
   Future<void> searchProduct(String apiUrl, String token) async {
-    myGetxController.mainProductDetailList.clear();
     String code = widget.productTypeCode;
 
     String? domain;
@@ -369,7 +376,10 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
     print(response.body);
     Map<String, dynamic> data = jsonDecode(response.body);
     if (data['count'] != 0) {
+      myGetxController.mainProductDetailList.clear();
       myGetxController.mainProductDetailList.value = data['results'];
+    } else {
+      dialog(context, "Product Not Found");
     }
   }
 }

@@ -19,6 +19,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
   final int index;
   final bool isDeliveryScreen;
   final VoidCallback? onTap;
+  final bool isOrderScreen;
 
   OrderQuatationCommanCard({
     Key? key,
@@ -27,6 +28,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
     required this.index,
     required this.isDeliveryScreen,
     this.onTap,
+    required this.isOrderScreen,
   }) : super(key: key);
 
   @override
@@ -36,36 +38,39 @@ class OrderQuatationCommanCard extends StatelessWidget {
         .format(DateTime.parse(list[index]['delivery_date']));
     String returnDate = DateFormat("dd/MM/yyyy")
         .format(DateTime.parse(list[index]['return_date']));
-    return Builder(builder: (context){
+    return Builder(builder: (context) {
       return InkWell(
         onTap: onTap,
         child: SwipeActionCell(
           controller: controller,
           key: ObjectKey(list[index]),
-          trailingActions:isDeliveryScreen == false ?  <SwipeAction>[
-            SwipeAction(
-                title: "Delete",
-                onTap: (CompletionHandler handler) async {
-                  controller.closeAllOpenCell();
-                },
-                color: Colors.red),
-            SwipeAction(
-                title: "Edit",
-                onTap: (CompletionHandler handler) async {
-                  controller.closeAllOpenCell();
-                  pushMethod(
-                      context,
-                      EditOrder(
-                          name: list[index]['customer_name'],
-                          number: list[index]['mobile1'],
-                          deliveryDate: deliveryDate,
-                          returnDate: returnDate,
-                          remarks: list[index]['remarks'],
-                          id: list[index]['id'].toString()));
-                },
-                closeOnTap: false,
-                color: Colors.blue),
-          ] : [],
+          trailingActions: isDeliveryScreen == false && isOrderScreen == false
+              ? <SwipeAction>[
+                  SwipeAction(
+                      title: "Delete",
+                      onTap: (CompletionHandler handler) async {
+                        productDeleteDialog(list[index]['id'],index,list,context,true);
+                        controller.closeAllOpenCell();
+                      },
+                      color: Colors.red),
+                  SwipeAction(
+                      title: "Edit",
+                      onTap: (CompletionHandler handler) async {
+                        controller.closeAllOpenCell();
+                        pushMethod(
+                            context,
+                            EditOrder(
+                                name: list[index]['customer_name'],
+                                number: list[index]['mobile1'],
+                                deliveryDate: deliveryDate,
+                                returnDate: returnDate,
+                                remarks: list[index]['remarks'],
+                                id: list[index]['id'].toString()));
+                      },
+                      closeOnTap: false,
+                      color: Colors.blue),
+                ]
+              : [],
           child: Container(
             padding: EdgeInsets.all(15),
             margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -114,40 +119,21 @@ class OrderQuatationCommanCard extends StatelessWidget {
                   height: 10,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Customer : ", style: primaryStyle),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          list[index]['customer_name'] ?? "",
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black),
-                        ),
-                      ],
+                    Text("Customer : ", style: primaryStyle),
+                    SizedBox(
+                      height: 5,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Amount : ", style: primaryStyle),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          list[index]['final_amount'].toString(),
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black),
-                        ),
-                      ],
-                    )
+                    Expanded(
+                      child: Text(
+                        list[index]['customer_name'] ?? "",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -155,7 +141,6 @@ class OrderQuatationCommanCard extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Text("Mobile : ", style: primaryStyle),
                     Text(
                       list[index]['mobile1'],
                       style: TextStyle(
@@ -172,11 +157,38 @@ class OrderQuatationCommanCard extends StatelessWidget {
                               list[index]['mobile1']);
                         },
                         child: CircleAvatar(
-                            radius: 15,
+                            radius: 13,
                             child: Icon(
                               Icons.call,
-                              size: 20,
-                            )))
+                              size: 17,
+                            ))),
+                    list[index]['mobile2'] != null ?
+                   Row(
+                     children: [
+                       Text(" / "),
+                       Text(
+                         list[index]['mobile2'] ?? "",
+                         style: TextStyle(
+                             fontWeight: FontWeight.bold,
+                             fontSize: 17,
+                             color: primaryColor.withOpacity(0.9)),
+                       ),
+                       SizedBox(
+                         width: 5,
+                       ),
+                       InkWell(
+                           onTap: () async {
+                             bool? res = await FlutterPhoneDirectCaller.callNumber(
+                                 list[index]['mobile2']);
+                           },
+                           child: CircleAvatar(
+                               radius: 13,
+                               child: Icon(
+                                 Icons.call,
+                                 size: 17,
+                               ))),
+                     ],
+                   ) : Container()
                   ],
                 ),
                 SizedBox(
@@ -184,7 +196,6 @@ class OrderQuatationCommanCard extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Text("Salesperson : ", style: primaryStyle),
                     Text(
                       list[index]['user_id']['name'],
                       style: TextStyle(
@@ -197,27 +208,27 @@ class OrderQuatationCommanCard extends StatelessWidget {
                 list[index]['remarks'] == null
                     ? Container()
                     : Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Remarks : ", style: primaryStyle),
-                        Expanded(
-                          child: Text(
-                            list[index]['remarks'],
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 17,
-                                color: primaryColor.withOpacity(0.9)),
+                        children: [
+                          SizedBox(
+                            height: 10,
                           ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Remarks : ", style: primaryStyle),
+                              Expanded(
+                                child: Text(
+                                  list[index]['remarks'],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 17,
+                                      color: primaryColor.withOpacity(0.9)),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
                 SizedBox(
                   height: 10,
                 ),

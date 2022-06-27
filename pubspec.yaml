@@ -59,6 +59,9 @@ dependencies:
   flutter_cache_manager: ^3.3.0
   image_gallery_saver: ^1.7.1
   dio: ^4.0.6
+  grouped_list: ^5.1.2
+  collection: ^1.16.0
+
 
 dev_dependencies:
   flutter_test:

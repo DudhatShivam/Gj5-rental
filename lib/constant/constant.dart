@@ -23,6 +23,7 @@ import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
+import '../screen/Order_line/orderline_constant/order_line_card.dart';
 import '../screen/order/order_detail.dart';
 import '../screen/quatation/edit_order.dart';
 import '../screen/quatation/quotation_const/quotation_constant.dart';
@@ -202,7 +203,7 @@ textFieldWidget(
       maxLines: maxLine,
       validator: (value) {
         if (value!.isEmpty) {
-          return "plzz fill";
+          return "Enter Value";
         }
       },
       keyboardType: textInputType,
@@ -240,9 +241,9 @@ numberValidatorTextfield(
   return TextFormField(
     validator: (value) {
       if (value == "") {
-        return "plzz fill";
+        return "Enter Value";
       } else if (value?.length != 10) {
-        return "plzz enter 10 digit number";
+        return "Enter 10 Digit Number";
       }
     },
     keyboardType: TextInputType.number,
@@ -274,8 +275,8 @@ numberValidatorTextfield(
   );
 }
 
-productDeleteDialog(
-    lineId, int index, List orderDetails, BuildContext context) async {
+productDeleteDialog(lineId, int index, List orderDetails, BuildContext context,
+    bool isDeleteOrder) async {
   return await showDialog(
       context: context,
       builder: (_) {
@@ -306,13 +307,13 @@ productDeleteDialog(
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          checkWififorDeleteProduct(
-                                  lineId, index, orderDetails, context)
+                          checkWififorDeleteProduct(lineId, index, orderDetails,
+                                  context, isDeleteOrder)
                               .then((value) {
                             Navigator.pop(context);
                           });
                         },
-                        child: Text("Ok")),
+                        child: Text("Delete")),
                   ],
                 )
               ],
@@ -322,8 +323,8 @@ productDeleteDialog(
       });
 }
 
-Future<void> checkWififorDeleteProduct(
-    lineId, int index, List orderDetails, BuildContext context) async {
+Future<void> checkWififorDeleteProduct(lineId, int index, List orderDetails,
+    BuildContext context, bool isDeleteOrder) async {
   getStringPreference('apiUrl').then((apiUrl) async {
     try {
       getStringPreference('accessToken').then((token) async {
@@ -331,14 +332,14 @@ Future<void> checkWififorDeleteProduct(
           showConnectivity().then((result) async {
             if (result == ConnectivityResult.wifi) {
               deleteProductInQuotationAndOrder(
-                  lineId, index, orderDetails, token, apiUrl);
+                  lineId, index, orderDetails, token, apiUrl, isDeleteOrder);
             } else {
               dialog(context, "Connect to Showroom Network");
             }
           });
         } else {
           deleteProductInQuotationAndOrder(
-              lineId, index, orderDetails, token, apiUrl);
+              lineId, index, orderDetails, token, apiUrl, isDeleteOrder);
         }
       });
     } on SocketException catch (err) {
@@ -347,10 +348,15 @@ Future<void> checkWififorDeleteProduct(
   });
 }
 
-deleteProductInQuotationAndOrder(
-    lineId, int index, List orderDetails, String token, String url) async {
+deleteProductInQuotationAndOrder(lineId, int index, List orderDetails,
+    String token, String url, bool isDeleteOrder) async {
+  print(lineId);
+  String uri = "";
+  isDeleteOrder == true
+      ? uri = "http://$url/api/rental.rental/$lineId"
+      : uri = "http://$url/api/rental.line/$lineId";
   final response = await http.delete(
-      Uri.parse("http://$url/api/rental.line/$lineId"),
+      Uri.parse(uri),
       headers: {'Access-Token': token});
   if (response.statusCode == 200) {
     orderDetails.removeAt(index);
@@ -727,7 +733,11 @@ checkWlanForConfirmOrderThumbAndWaiting(
     String dropDownValue,
     String reason,
     String productCode,
-    String productName) {
+    String productName,
+    bool isOrderLineScreen,
+    int index,
+    bool isShowFromGroupBy,
+    int groupByMainListIndex) {
   getStringPreference('apiUrl').then((apiUrl) async {
     try {
       getStringPreference('accessToken').then((token) async {
@@ -735,20 +745,60 @@ checkWlanForConfirmOrderThumbAndWaiting(
           showConnectivity().then((result) async {
             if (result == ConnectivityResult.wifi) {
               isIconThumb == true
-                  ? orderReadyConfirmationDialog(context, productCode,
-                      productName, orderId, productDetailId, apiUrl, token)
-                  : submitReasonForWaiting(orderId, productDetailId, apiUrl,
-                      token, context, dropDownValue, reason);
+                  ? orderReadyConfirmationDialog(
+                      context,
+                      productCode,
+                      productName,
+                      orderId,
+                      productDetailId,
+                      apiUrl,
+                      token,
+                      isOrderLineScreen,
+                      index,
+                      isShowFromGroupBy,
+                      groupByMainListIndex)
+                  : submitReasonForWaiting(
+                      orderId,
+                      productDetailId,
+                      apiUrl,
+                      token,
+                      context,
+                      dropDownValue,
+                      reason,
+                      isOrderLineScreen,
+                      index,
+                      isShowFromGroupBy,
+                      groupByMainListIndex);
             } else {
               dialog(context, "Connect to Showroom Network");
             }
           });
         } else {
           isIconThumb == true
-              ? orderReadyConfirmationDialog(context, productCode, productName,
-                  orderId, productDetailId, apiUrl, token)
-              : submitReasonForWaiting(orderId, productDetailId, apiUrl, token,
-                  context, dropDownValue, reason);
+              ? orderReadyConfirmationDialog(
+                  context,
+                  productCode,
+                  productName,
+                  orderId,
+                  productDetailId,
+                  apiUrl,
+                  token,
+                  isOrderLineScreen,
+                  index,
+                  isShowFromGroupBy,
+                  groupByMainListIndex)
+              : submitReasonForWaiting(
+                  orderId,
+                  productDetailId,
+                  apiUrl,
+                  token,
+                  context,
+                  dropDownValue,
+                  reason,
+                  isOrderLineScreen,
+                  index,
+                  isShowFromGroupBy,
+                  groupByMainListIndex);
         }
       });
     } on SocketException catch (err) {
@@ -757,8 +807,16 @@ checkWlanForConfirmOrderThumbAndWaiting(
   });
 }
 
-confirmOrderThumb(int orderId, int productDetailId, String apiUrl, String token,
-    BuildContext context) async {
+confirmOrderThumb(
+    int orderId,
+    int productDetailId,
+    String apiUrl,
+    String token,
+    BuildContext context,
+    bool isOrderLineScreen,
+    int index,
+    bool isShowFromGroupBy,
+    int groupByMainListIndex) async {
   final response = await http.put(
       Uri.parse(
           "http://$apiUrl/api/rental.line/$productDetailId/btn_ready_api"),
@@ -767,14 +825,27 @@ confirmOrderThumb(int orderId, int productDetailId, String apiUrl, String token,
       });
   if (response.statusCode == 200) {
     Navigator.pop(context);
-    checkWlanForDataOrderDetailScreen(context, orderId);
+    isOrderLineScreen == true
+        ? isShowFromGroupBy == true
+            ? setDataOfUpdatedIdInGroupByListOrderLineScreen(
+                productDetailId, index, groupByMainListIndex)
+            : setDataOfUpdatedIdInOrderLineScreen(productDetailId, index)
+        : checkWlanForDataOrderDetailScreen(context, orderId);
   } else {
-    dialog(context, "Something went wrong");
+    dialog(context, "Something Went Wrong !");
   }
 }
 
-popUpForWaitingThumbInOrderScreen(BuildContext context, int productDetailId,
-    int orderId, String productCode, String productName) {
+popUpForWaitingThumbInOrderScreen(
+    BuildContext context,
+    int productDetailId,
+    int orderId,
+    String productCode,
+    String productName,
+    bool isOrderLineScreen,
+    index,
+    bool isShowFromGroupBy,
+    int groupByMainListIndex) {
   MyGetxController myGetxController = Get.find();
 
   TextEditingController reasonController = TextEditingController(
@@ -783,21 +854,20 @@ popUpForWaitingThumbInOrderScreen(BuildContext context, int productDetailId,
       context: context,
       builder: (_) {
         return Obx(() => Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(32.0))),
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Container(
                   padding: EdgeInsets.all(10),
-                  width: double.infinity,
-                  height: getHeight(0.30, context),
-                  color: Colors.white,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
                         "Select Reason",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 18),
+                        style: dialogTitleStyle,
                       ),
                       SizedBox(
                         height: 10,
@@ -867,6 +937,8 @@ popUpForWaitingThumbInOrderScreen(BuildContext context, int productDetailId,
                         height: 10,
                       ),
                       ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.green.shade300),
                           onPressed: () {
                             checkWlanForConfirmOrderThumbAndWaiting(
                                 orderId,
@@ -877,7 +949,11 @@ popUpForWaitingThumbInOrderScreen(BuildContext context, int productDetailId,
                                     .waitingThumbPopUpSelectedValue.value,
                                 reasonController.text,
                                 productCode,
-                                productName);
+                                productName,
+                                true,
+                                index,
+                                isShowFromGroupBy,
+                                groupByMainListIndex);
                           },
                           child: Text("Submit"))
                     ],
@@ -895,7 +971,11 @@ submitReasonForWaiting(
     String token,
     BuildContext context,
     String dropDownValue,
-    String reason) async {
+    String reason,
+    bool isOrderLineScreen,
+    index,
+    bool isShowFromGroupBy,
+    int groupByMainListIndex) async {
   print(dropDownValue);
   print(reason);
   final response = await http.put(
@@ -906,10 +986,15 @@ submitReasonForWaiting(
       });
   print(response.statusCode);
   if (response.statusCode == 200) {
-    checkWlanForDataOrderDetailScreen(context, orderId);
+    isOrderLineScreen == true
+        ? isShowFromGroupBy == true
+            ? setDataOfUpdatedIdInGroupByListOrderLineScreen(
+                productDetailId, index, groupByMainListIndex)
+            : setDataOfUpdatedIdInOrderLineScreen(productDetailId, index)
+        : checkWlanForDataOrderDetailScreen(context, orderId);
     Navigator.pop(context);
   } else {
     FocusScope.of(context).unfocus();
-    dialog(context, "something went wrong");
+    dialog(context, "Something Went Wrong !");
   }
 }

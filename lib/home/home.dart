@@ -302,17 +302,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Future<void> getSyncData(String accessToken) async {
-    getStringPreference('apiUrl').then((value) async {
-      String domain =
-          "[('product_type', '=', 'rental'), ('is_main_product', '=',  True)]";
-      var params = {'filters': domain.toString()};
-      Uri uri = Uri.parse("http://$value/api/product.product");
-      final finalUri = uri.replace(queryParameters: params);
-      final response =
-          await http.get(finalUri, headers: {'Access-Token': accessToken});
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        saveProductListInPreferece(data);
+    getStringPreference('ProductList').then((value) {
+      if (value == null) {
+        getStringPreference('apiUrl').then((value) async {
+          String domain = "[('product_type', '=', 'rental')]";
+          var params = {'filters': domain.toString()};
+          Uri uri = Uri.parse("http://$value/api/product.product");
+          final finalUri = uri.replace(queryParameters: params);
+          final response =
+              await http.get(finalUri, headers: {'Access-Token': accessToken});
+          if (response.statusCode == 200) {
+            var data = jsonDecode(response.body);
+            saveProductListInPreferece(data);
+          }
+        });
       }
     });
   }
@@ -379,14 +382,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
-  _save() async {
-    var response = await Dio().get(
-        "https://pbs.twimg.com/profile_images/1479443900368519169/PgOyX1vt_400x400.jpg",
-        options: Options(responseType: ResponseType.bytes));
-    final result = await ImageGallerySaver.saveImage(
-        Uint8List.fromList(response.data),
-        quality: 60,
-        name: "hello");
-    print(result);
-  }
+// _save() async {
+//   var response = await Dio().get(
+//       "https://pbs.twimg.com/profile_images/1479443900368519169/PgOyX1vt_400x400.jpg",
+//       options: Options(responseType: ResponseType.bytes));
+//   final result = await ImageGallerySaver.saveImage(
+//       Uint8List.fromList(response.data),
+//       quality: 60,
+//       name: "hello");
+//   print(result);
+// }
 }

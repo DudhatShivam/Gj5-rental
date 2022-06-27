@@ -265,6 +265,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                             id: myGetxController.deliveryScreenOrderList[index]
                                 ['id'],
                           )),
+                      isOrderScreen: false,
                     );
                   },
                 )

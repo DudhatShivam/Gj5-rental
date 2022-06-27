@@ -13,8 +13,13 @@ class MyGetxController extends GetxController {
   RxBool isLoggedIn = false.obs;
   RxBool isSetTextFieldData = false.obs;
 
+  //booking status screen
+
+  RxList<dynamic> isMainProductTrueProductList = [].obs;
+
   //orderScreen
   RxList<dynamic> orderData = [].obs;
+  RxList<dynamic> filteredOrderList=[].obs;
   RxList<dynamic> orderLineList = [].obs;
   RxList<dynamic> particularOrderData = [].obs;
   RxList<dynamic> orderLineProductList = [].obs;
@@ -25,14 +30,16 @@ class MyGetxController extends GetxController {
   //QuotationScreen
 
   RxList<dynamic> quotationData = [].obs;
+  RxList<dynamic> filteredQuotationData=[].obs;
   RxInt badgeText = 0.obs;
   RxList<dynamic> quotationCartList = [].obs;
   RxList<dynamic> quotationOrder = [].obs;
   RxList<dynamic> quotationDetailOrderList = [].obs;
   RxList<dynamic> quotationDetailProductDetailList = [].obs;
+  RxList<dynamic> isMainProductFalseProductList = [].obs;
   RxBool isUpdateData = false.obs;
 
-  //mainProductScreen
+  //ProductScreen
   RxList<dynamic> mainProductList = [].obs;
   RxList<dynamic> mainProductDetailList = [].obs;
 
@@ -47,4 +54,12 @@ class MyGetxController extends GetxController {
   //OrderLine Screen
   RxList<dynamic> orderLineScreenList = [].obs;
   RxList<dynamic> orderLineScreenProductList = [].obs;
+  RxBool noDataInOrderLine = false.obs;
+  RxList<dynamic> groupByList=[].obs;
+  RxList<dynamic> groupByDetailList=[].obs;
+  RxList<dynamic> filteredListOrderLine=[].obs;
+  RxBool isShowFilteredDataInOrderLine=false.obs;
+
+  //productDetail screen
+  RxList<dynamic> productDetailList = [].obs;
 }

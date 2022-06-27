@@ -327,7 +327,7 @@ class _LogInPageState extends State<LogInPage> {
     } on SocketException catch (err) {
       myGetxController.isLoggedIn.value = false;
       myGetxController.logInPageError.value =
-          "something went wrong in socket exception";
+          "Something Went Wrong ! in socket exception";
     }
   }
 }

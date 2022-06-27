@@ -69,6 +69,7 @@ class _OrderDetailState extends State<OrderDetail> {
           () => myGetxController.particularOrderData.isNotEmpty
               ? OrderQuatationCommanCard(
                   list: myGetxController.particularOrderData,
+                  isOrderScreen: true,
                   backGroundColor: Colors.grey.withOpacity(0.1),
                   index: 0,
                   isDeliveryScreen: false)
