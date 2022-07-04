@@ -17,6 +17,8 @@ import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../home/home.dart';
+import '../../main.dart';
+import '../Order_line/orderline_constant/order_line_card.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key}) : super(key: key);
@@ -44,7 +46,8 @@ class _OrderState extends State<OrderScreen> {
   TextEditingController orderNumberController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
-  bool isData = false;
+  bool isSearchLoadData = false;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -53,6 +56,13 @@ class _OrderState extends State<OrderScreen> {
     if (myGetxController.orderData.isEmpty) {
       getData();
     }
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        orderScreenOffset = orderScreenOffset + 5;
+        getData();
+      }
+    });
   }
 
   @override
@@ -95,7 +105,7 @@ class _OrderState extends State<OrderScreen> {
                     ),
                     FadeInLeft(
                       child: Text(
-                        "Order Status",
+                        "Confirm Order",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 23,
@@ -107,6 +117,7 @@ class _OrderState extends State<OrderScreen> {
               ),
               InkWell(
                   onTap: () {
+                    orderScreenOffset = 0;
                     myGetxController.orderData.clear();
                     myGetxController.filteredOrderList.clear();
                     getData();
@@ -222,6 +233,9 @@ class _OrderState extends State<OrderScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: ElevatedButton(
                       onPressed: () {
+                        setState(() {
+                          isSearchLoadData = true;
+                        });
                         findCard.currentState?.toggleExpansion();
                         searchProduct();
                       },
@@ -232,44 +246,48 @@ class _OrderState extends State<OrderScreen> {
           ],
         ),
         Expanded(
-          child: Obx(() => myGetxController.orderData.isNotEmpty
-              ? myGetxController.filteredOrderList.isEmpty   ? ListView.builder(
-                  padding: EdgeInsets.zero,
-                  physics: BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: myGetxController.orderData.length,
-                  itemBuilder: (context, index) {
-                    return OrderQuatationCommanCard(
-                      list: myGetxController.orderData,
-                      backGroundColor: Colors.white,
-                      index: index,
-                      isDeliveryScreen: false,
-                      isOrderScreen: true,
-                      onTap: () => pushMethod(
-                          context,
-                          OrderDetail(
-                              id: myGetxController.orderData[index]['id'])),
-                    );
-                  }) : ListView.builder(
-              padding: EdgeInsets.zero,
-              physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: myGetxController.filteredOrderList.length,
-              itemBuilder: (context, index) {
-                return OrderQuatationCommanCard(
-                  list: myGetxController.filteredOrderList,
-                  backGroundColor: Colors.white,
-                  index: index,
-                  isDeliveryScreen: false,
-                  isOrderScreen: true,
-                  onTap: () => pushMethod(
-                      context,
-                      OrderDetail(
-                          id: myGetxController.filteredQuotationData[index]['id'])),
-                );
-              })
+          child: Obx(() => myGetxController.orderData.isNotEmpty &&
+                  isSearchLoadData == false
+              ? myGetxController.filteredOrderList.isEmpty
+                  ? ListView.builder(
+                      controller: scrollController,
+                      padding: EdgeInsets.zero,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: myGetxController.orderData.length,
+                      itemBuilder: (context, index) {
+                        return OrderQuatationCommanCard(
+                          list: myGetxController.orderData,
+                          backGroundColor: Colors.white,
+                          index: index,
+                          isDeliveryScreen: false,
+                          isOrderScreen: true,
+                          onTap: () => pushMethod(
+                              context,
+                              OrderDetail(
+                                  id: myGetxController.orderData[index]['id'])),
+                        );
+                      })
+                  : ListView.builder(
+                      padding: EdgeInsets.zero,
+                      physics: BouncingScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: myGetxController.filteredOrderList.length,
+                      itemBuilder: (context, index) {
+                        return OrderQuatationCommanCard(
+                          list: myGetxController.filteredOrderList,
+                          backGroundColor: Colors.white,
+                          index: index,
+                          isDeliveryScreen: false,
+                          isOrderScreen: true,
+                          onTap: () => pushMethod(
+                              context,
+                              OrderDetail(
+                                  id: myGetxController
+                                      .filteredOrderList[index]['id'])),
+                        );
+                      })
               : Container(
                   child: Center(
                       child: CircularProgressIndicator(
@@ -290,7 +308,7 @@ class _OrderState extends State<OrderScreen> {
               if (result == ConnectivityResult.wifi) {
                 getOrderData(apiUrl, token);
               } else {
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
               }
             });
           } else {
@@ -298,13 +316,12 @@ class _OrderState extends State<OrderScreen> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
       }
     });
   }
 
   getOrderData(String apiUrl, String accessToken) {
-    myGetxController.orderData.clear();
     getStringPreference('pastDayOrder').then((past) {
       getStringPreference('nextDayOder').then((next) async {
         DateTime dateTime1 =
@@ -315,7 +332,12 @@ class _OrderState extends State<OrderScreen> {
         String deliveryDate = DateFormat('MM/dd/yyyy').format(dateTime2);
         String domain =
             "[('state' , 'not in' , ('draft','cancel','done')), ('date' , '>=' , '$bookingDate'), ('delivery_date' , '<=' , '$deliveryDate')]";
-        var params = {'filters': domain.toString()};
+        var params = {
+          'filters': domain.toString(),
+          'limit': '5',
+          'offset': '$orderScreenOffset',
+          'order': 'id desc'
+        };
         Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
         final finalUri = uri.replace(queryParameters: params);
         final response = await http.get(finalUri, headers: {
@@ -324,7 +346,13 @@ class _OrderState extends State<OrderScreen> {
           'Connection': 'keep-alive'
         });
         Map<String, dynamic> data = await jsonDecode(response.body);
-        myGetxController.orderData.value = data['results'];
+        if(data['count'] != 0){
+          myGetxController.orderData.addAll(data['results']);
+        }else{
+          if (orderScreenOffset <= 0) {
+            dialog(context, "No Data Found !", Colors.red.shade300);
+          }
+        }
       });
     });
   }
@@ -339,7 +367,7 @@ class _OrderState extends State<OrderScreen> {
               if (result == ConnectivityResult.wifi) {
                 getSearchData(apiUrl, token);
               } else {
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
               }
             });
           } else {
@@ -347,25 +375,26 @@ class _OrderState extends State<OrderScreen> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
       }
     });
   }
 
   getSearchData(String apiUrl, String token) async {
+
     String? domain;
     List datas = [];
 
     if (nameController.text != "") {
-      datas.add("('customer_name', 'ilike', '${nameController.text}')");
+      datas.add(
+          "('customer_name', 'ilike', '${nameController.text}'),('state' , 'not in' , ('cancel','done'))");
     }
     if (numberController.text != "") {
-      datas.add("('mobile1', 'ilike', '${numberController.text}')");
+      datas.add("('mobile1', 'ilike', '${numberController.text}'),('state' , 'not in' , ('cancel','done'))");
     }
     if (orderNumberController.text != "") {
-      datas.add("('name', 'ilike', '${orderNumberController.text}')");
+      datas.add("('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done'))");
     }
-    print(datas);
     if (datas.length == 1) {
       domain = "[${datas[0]}]";
     } else if (datas.length == 2) {
@@ -376,19 +405,29 @@ class _OrderState extends State<OrderScreen> {
       myGetxController.filteredOrderList.value = [];
     }
     var params = {'filters': domain.toString()};
-    Uri uri = Uri.parse("http://$apiUrl/api/rental.rental?limit=10");
+    Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri,
         headers: {'Access-Token': token, 'Content-Type': 'application/http'});
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
+        myGetxController.filteredOrderList.clear();
+        setState(() {
+          isSearchLoadData = false;
+        });
         myGetxController.filteredOrderList.addAll(data['results']);
       } else {
-        dialog(context, "No Order Found");
+        setState(() {
+          isSearchLoadData = false;
+        });
+        dialog(context, "No Order Found",Colors.red.shade300);
       }
     } else {
-      dialog(context, "Something Went Wrong");
+      setState(() {
+        isSearchLoadData = false;
+      });
+      dialog(context, "Something Went Wrong !",Colors.red.shade300);
     }
   }
 }

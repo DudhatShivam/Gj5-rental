@@ -28,6 +28,8 @@ import '../screen/order/order_detail.dart';
 import '../screen/quatation/edit_order.dart';
 import '../screen/quatation/quotation_const/quotation_constant.dart';
 
+int editQuotationCount=0;
+
 ExitDialog(BuildContext context) {
   return showGeneralDialog(
     barrierColor: Colors.black.withOpacity(0.5),
@@ -334,7 +336,8 @@ Future<void> checkWififorDeleteProduct(lineId, int index, List orderDetails,
               deleteProductInQuotationAndOrder(
                   lineId, index, orderDetails, token, apiUrl, isDeleteOrder);
             } else {
-              dialog(context, "Connect to Showroom Network");
+              dialog(
+                  context, "Connect to Showroom Network", Colors.red.shade300);
             }
           });
         } else {
@@ -343,7 +346,7 @@ Future<void> checkWififorDeleteProduct(lineId, int index, List orderDetails,
         }
       });
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   });
 }
@@ -355,9 +358,8 @@ deleteProductInQuotationAndOrder(lineId, int index, List orderDetails,
   isDeleteOrder == true
       ? uri = "http://$url/api/rental.rental/$lineId"
       : uri = "http://$url/api/rental.line/$lineId";
-  final response = await http.delete(
-      Uri.parse(uri),
-      headers: {'Access-Token': token});
+  final response =
+      await http.delete(Uri.parse(uri), headers: {'Access-Token': token});
   if (response.statusCode == 200) {
     orderDetails.removeAt(index);
   }
@@ -514,7 +516,12 @@ Future getDraftOrderData(
   try {
     MyGetxController myGetxController = Get.find();
     String domain = "[('state','=','draft')]";
-    var params = {'filters': domain.toString()};
+    var params = {
+      'filters': domain.toString(),
+      'limit': '5',
+      'offset': '$quotationOffset',
+      'order': 'id desc'
+    };
     Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri, headers: {
@@ -523,8 +530,15 @@ Future getDraftOrderData(
       'Connection': 'keep-alive'
     });
     Map<String, dynamic> data = await jsonDecode(response.body);
-    myGetxController.quotationData.clear();
-    myGetxController.quotationData.value = data['results'];
+    if (data['count'] != 0) {
+      myGetxController.quotationData.addAll(data['results']);
+      print(myGetxController.quotationData.length);
+    } else {
+      if (quotationOffset <= 0) {
+        dialog(context, "No Data Found !", Colors.red.shade300);
+      }
+    }
+
     if (id != 0) {
       for (int i = 0; i < myGetxController.quotationData.length; i++) {
         if (myGetxController.quotationData[i]['id'] == id) {
@@ -532,12 +546,14 @@ Future getDraftOrderData(
               context,
               QuatationDetailScreen(
                 id: myGetxController.quotationData[i]['id'],
+                isFromAnotherScreen: true,
+                isFromEditScreen: false,
               ));
         }
       }
     }
   } catch (e) {
-    print(e);
+    dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }
 }
 
@@ -712,7 +728,8 @@ void checkWlanForDataOrderDetailScreen(BuildContext context, int id) {
             if (result == ConnectivityResult.wifi) {
               getOrderScreenProductDetailData(apiUrl, token, id);
             } else {
-              dialog(context, "Connect to Showroom Network");
+              dialog(
+                  context, "Connect to Showroom Network", Colors.red.shade300);
             }
           });
         } else {
@@ -720,7 +737,7 @@ void checkWlanForDataOrderDetailScreen(BuildContext context, int id) {
         }
       });
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   });
 }
@@ -770,7 +787,8 @@ checkWlanForConfirmOrderThumbAndWaiting(
                       isShowFromGroupBy,
                       groupByMainListIndex);
             } else {
-              dialog(context, "Connect to Showroom Network");
+              dialog(
+                  context, "Connect to Showroom Network", Colors.red.shade300);
             }
           });
         } else {
@@ -802,7 +820,7 @@ checkWlanForConfirmOrderThumbAndWaiting(
         }
       });
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   });
 }
@@ -832,7 +850,7 @@ confirmOrderThumb(
             : setDataOfUpdatedIdInOrderLineScreen(productDetailId, index)
         : checkWlanForDataOrderDetailScreen(context, orderId);
   } else {
-    dialog(context, "Something Went Wrong !");
+    dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }
 }
 
@@ -995,6 +1013,29 @@ submitReasonForWaiting(
     Navigator.pop(context);
   } else {
     FocusScope.of(context).unfocus();
-    dialog(context, "Something Went Wrong !");
+    dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }
+}
+
+get5daysBeforeDate() {
+  DateTime dateTime = DateTime.now().subtract(Duration(days: 5));
+  return DateFormat('MM/dd/yyyy').format(dateTime);
+}
+
+get7DaysAfterDate() {
+  DateTime dateTime2 = DateTime.now().add(Duration(days: 7));
+  return DateFormat('MM/dd/yyyy').format(dateTime2);
+}
+
+orderDetailContainer() {
+  return Padding(
+    padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+    child: FadeInLeft(
+      child: Text(
+        "Order Details : ",
+        style: TextStyle(
+            color: primaryColor, fontWeight: FontWeight.w500, fontSize: 21),
+      ),
+    ),
+  );
 }

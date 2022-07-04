@@ -11,33 +11,14 @@ class ChangeProduct extends StatefulWidget {
   State<ChangeProduct> createState() => _ChangeProductState();
 }
 
-class _ChangeProductState extends State<ChangeProduct>
-    with SingleTickerProviderStateMixin {
-  late AnimationController animationController;
-  Animation? _colorAnimation;
-  Animation<double>? sizeAnimation;
-  AnimationStatus? statuss;
-  Animation? curve;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    animationController.dispose();
-  }
-
+class _ChangeProductState extends State<ChangeProduct> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Center(
           child: Text(
-            "Coming Soon",
-            style: primaryStyle,
+            "coming soon",
           ),
         ),
       ),

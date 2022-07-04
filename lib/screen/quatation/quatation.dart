@@ -30,13 +30,13 @@ class QuatationScreen extends StatefulWidget {
   State<QuatationScreen> createState() => _QuatationScreenState();
 }
 
-class _QuatationScreenState extends State<QuatationScreen>
-    with SingleTickerProviderStateMixin {
+class _QuatationScreenState extends State<QuatationScreen> {
   MyGetxController myGetxController = Get.put(MyGetxController());
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
-  Animation? animatedOpacity;
+  ScrollController scrollController = ScrollController();
+  bool isSearchLoadData = false;
 
   @override
   void initState() {
@@ -45,6 +45,13 @@ class _QuatationScreenState extends State<QuatationScreen>
     if (myGetxController.quotationData.isEmpty) {
       getData();
     }
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        quotationOffset = quotationOffset + 5;
+        getData();
+      }
+    });
   }
 
   @override
@@ -106,35 +113,14 @@ class _QuatationScreenState extends State<QuatationScreen>
                     ),
                     InkWell(
                         onTap: () {
+                          quotationOffset = 0;
                           myGetxController.quotationData.clear();
+                          myGetxController.filteredQuotationData.clear();
                           getData();
                         },
                         child: FadeInRight(
                             child: Icon(Icons.refresh,
                                 size: 30, color: Colors.teal))),
-                    // SizedBox(
-                    //   width: 5,
-                    // ),
-                    // Obx(() => InkWell(
-                    //       onTap: () {
-                    //         pushMethod(context, QuotationCart());
-                    //       },
-                    //       child: FadeInRight(
-                    //         child: Badge(
-                    //           badgeContent: Text(
-                    //             myGetxController.quotationCartList.length
-                    //                 .toString()
-                    //                 .toString(),
-                    //             style: TextStyle(color: Colors.white),
-                    //           ),
-                    //           badgeColor: Colors.red,
-                    //           child: Icon(
-                    //             Icons.shopping_cart,
-                    //             color: Colors.teal,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     )),
                   ],
                 ),
                 elevation: 0,
@@ -219,6 +205,9 @@ class _QuatationScreenState extends State<QuatationScreen>
                             horizontal: 20, vertical: 8),
                         child: ElevatedButton(
                             onPressed: () {
+                              setState(() {
+                                isSearchLoadData = true;
+                              });
                               findCard.currentState?.toggleExpansion();
                               searchProduct();
                             },
@@ -229,24 +218,33 @@ class _QuatationScreenState extends State<QuatationScreen>
                 ],
               ),
               Expanded(
-                child: Obx(() => myGetxController.quotationData.isNotEmpty
+                child: Obx(() => myGetxController.quotationData.isNotEmpty &&
+                        isSearchLoadData == false
                     ? myGetxController.filteredQuotationData.isEmpty
                         ? ListView.builder(
+                            controller: scrollController,
                             shrinkWrap: true,
                             itemCount: myGetxController.quotationData.length,
                             padding: EdgeInsets.zero,
                             itemBuilder: (context, index) {
-                              return OrderQuatationCommanCard(
-                                index: index,
-                                backGroundColor: Colors.white,
-                                isOrderScreen: false,
-                                isDeliveryScreen: false,
-                                list: myGetxController.quotationData,
-                                onTap: () => pushMethod(
-                                    context,
-                                    QuatationDetailScreen(
+                              return InkWell(
+                                onTap: () {
+                                  editQuotationCount = 0;
+                                  pushMethod(
+                                      context,
+                                      QuatationDetailScreen(
                                         id: myGetxController
-                                            .quotationData[index]['id'])),
+                                            .quotationData[index]['id'],
+                                        isFromAnotherScreen: false,
+                                      ));
+                                },
+                                child: OrderQuatationCommanCard(
+                                  index: index,
+                                  backGroundColor: Colors.white,
+                                  isOrderScreen: false,
+                                  isDeliveryScreen: false,
+                                  list: myGetxController.quotationData,
+                                ),
                               );
                             },
                           )
@@ -265,9 +263,10 @@ class _QuatationScreenState extends State<QuatationScreen>
                                 onTap: () => pushMethod(
                                     context,
                                     QuatationDetailScreen(
-                                        id: myGetxController
-                                                .filteredQuotationData[index]
-                                            ['id'])),
+                                      id: myGetxController
+                                          .filteredQuotationData[index]['id'],
+                                      isFromAnotherScreen: false,
+                                    )),
                               );
                             },
                           )
@@ -292,7 +291,8 @@ class _QuatationScreenState extends State<QuatationScreen>
               if (result == ConnectivityResult.wifi) {
                 getDraftOrderData(context, apiUrl, token, 0);
               } else {
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -300,7 +300,7 @@ class _QuatationScreenState extends State<QuatationScreen>
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -315,7 +315,11 @@ class _QuatationScreenState extends State<QuatationScreen>
               if (result == ConnectivityResult.wifi) {
                 getSearchData(apiUrl, token);
               } else {
-                dialog(context, "Connect to Showroom Network");
+                setState(() {
+                  isSearchLoadData = false;
+                });
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -323,7 +327,10 @@ class _QuatationScreenState extends State<QuatationScreen>
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        setState(() {
+          isSearchLoadData = false;
+        });
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -333,15 +340,17 @@ class _QuatationScreenState extends State<QuatationScreen>
     List datas = [];
 
     if (nameController.text != "") {
-      datas.add("('customer_name', 'ilike', '${nameController.text}')");
+      datas.add(
+          "('customer_name', 'ilike', '${nameController.text}'),('state','=','draft')");
     }
     if (numberController.text != "") {
-      datas.add("('mobile1', 'ilike', '${numberController.text}')");
+      datas.add(
+          "('mobile1', 'ilike', '${numberController.text}'),('state','=','draft')");
     }
     if (datas.length == 1) {
       domain = "[${datas[0]},('state','=','draft')]";
     } else if (datas.length == 2) {
-      domain = "[('state','=','draft'), '|' , ${datas[0]} , ${datas[1]}]";
+      domain = "['|' , ${datas[0]} , ${datas[1]}]";
     } else {
       myGetxController.filteredQuotationData.value = [];
     }
@@ -354,12 +363,21 @@ class _QuatationScreenState extends State<QuatationScreen>
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
+        setState(() {
+          isSearchLoadData = false;
+        });
         myGetxController.filteredQuotationData.addAll(data['results']);
       } else {
-        dialog(context, "No Order Found");
+        setState(() {
+          isSearchLoadData = false;
+        });
+        dialog(context, "No Order Found", Colors.red.shade300);
       }
     } else {
-      dialog(context, "Something Went Wrong");
+      setState(() {
+        isSearchLoadData = false;
+      });
+      dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
   }
 }

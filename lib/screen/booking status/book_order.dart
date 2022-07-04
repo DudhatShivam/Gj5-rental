@@ -205,7 +205,7 @@ class _BookOrderState extends State<BookOrder> {
                               false,
                               false,
                               Colors.grey.withOpacity(0.1),
-                              TextInputType.text,
+                              TextInputType.number,
                               0,
                               Colors.greenAccent,
                               1),
@@ -365,7 +365,9 @@ class _BookOrderState extends State<BookOrder> {
         isValidRDate = false;
       });
       dialog(
-          context, "You can not select Delivery date bigger than Return Date!");
+          context,
+          "You can not select Delivery date bigger than Return Date!",
+          Colors.red.shade300);
     }
   }
 
@@ -378,7 +380,8 @@ class _BookOrderState extends State<BookOrder> {
               if (result == ConnectivityResult.wifi) {
                 bookOrder(value, token);
               } else {
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -386,7 +389,7 @@ class _BookOrderState extends State<BookOrder> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -424,13 +427,18 @@ class _BookOrderState extends State<BookOrder> {
         setState(() {
           isBtnLoading = false;
         });
-        dialog(context, data['msg']);
+        dialog(context, data['msg'], Colors.red.shade300);
       }
+    } else if (response.statusCode == 409) {
+      setState(() {
+        isBtnLoading = false;
+      });
+      dialog(context, data['error_descrip'], Colors.red.shade300);
     } else {
       setState(() {
         isBtnLoading = false;
       });
-      dialog(context, "Something Went Wrong !");
+      dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
   }
 }

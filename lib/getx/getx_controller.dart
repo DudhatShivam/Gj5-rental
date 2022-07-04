@@ -24,8 +24,6 @@ class MyGetxController extends GetxController {
   RxList<dynamic> particularOrderData = [].obs;
   RxList<dynamic> orderLineProductList = [].obs;
   RxString waitingThumbPopUpSelectedValue = "Return".obs;
-  RxBool isShowReadyIcon = false.obs;
-  RxBool isShowWaitingIcon = false.obs;
 
   //QuotationScreen
 
@@ -45,11 +43,13 @@ class MyGetxController extends GetxController {
 
   //delivery screen
   RxList<dynamic> deliveryScreenOrderList = [].obs;
+  RxList<dynamic> deliveryScreenFilteredOrderList=[].obs;
   RxList<dynamic> deliveryScreenParticularOrder = [].obs;
   RxList<dynamic> deliveryScreenParticularOrderLineList = [].obs;
   RxList<dynamic> deliveryScreenParticularOrderLineProductList = [].obs;
   RxList<dynamic> deliveryScreenParticularOrderLineExtraProductList = [].obs;
   RxList<dynamic> selectedOrderLineList = [].obs;
+  RxList<dynamic> selectedOrderLineSubProductList=[].obs;
 
   //OrderLine Screen
   RxList<dynamic> orderLineScreenList = [].obs;
@@ -62,4 +62,22 @@ class MyGetxController extends GetxController {
 
   //productDetail screen
   RxList<dynamic> productDetailList = [].obs;
+
+
+  //ReceiveScreen
+  RxList<dynamic> receiveOrderList=[].obs;
+  RxList<dynamic> receiveFilteredOrderList=[].obs;
+  RxList<dynamic> receiveParticularOrderList=[].obs;
+  RxList<dynamic> receiveOrderLineList=[].obs;
+  RxList<dynamic> receiveSubProductList=[].obs;
+  RxList<dynamic> receiveExtraProductList=[].obs;
+  RxList<dynamic> receiveSelectedOrderLineList=[].obs;
+  RxList<dynamic> receiveSelectedSubProductList=[].obs;
+
+  //ServiceScreen
+  RxList<dynamic> serviceList=[].obs;
+  RxList<dynamic> particularServiceList=[].obs;
+  RxList<dynamic> serviceLineList=[].obs;
+
+
 }

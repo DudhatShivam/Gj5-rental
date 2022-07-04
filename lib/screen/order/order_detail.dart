@@ -9,11 +9,13 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:http/http.dart' as http;
 import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
 import 'dart:math' as math;
 import 'package:gj5_rental/constant/order_quotation_detail_card.dart';
 import '../../constant/constant.dart';
+import '../../constant/order_quotation_amount_card.dart';
 import '../../constant/order_quotation_comman_card.dart';
 import '../quatation/quotation_const/quotation_constant.dart';
 import 'order.dart';
@@ -33,6 +35,7 @@ class _OrderDetailState extends State<OrderDetail> {
 
   @override
   void initState() {
+    print(widget.id);
     super.initState();
     checkWlanForDataOrderDetailScreen(context, widget.id ?? 0);
   }
@@ -47,21 +50,7 @@ class _OrderDetailState extends State<OrderDetail> {
         SizedBox(
           height: MediaQuery.of(context).padding.top + 10,
         ),
-        Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: FadeInLeft(
-              child: Icon(
-                Icons.arrow_back,
-                color: Colors.teal,
-                size: 30,
-              ),
-            ),
-          ),
-        ),
+        ScreenAppBar(screenName: "Order Detail"),
         SizedBox(
           height: 10,
         ),
@@ -83,24 +72,44 @@ class _OrderDetailState extends State<OrderDetail> {
                 color: primaryColor, fontWeight: FontWeight.w500, fontSize: 21),
           ),
         ),
-        Obx(() => myGetxController.orderLineList.isNotEmpty
-            ? Flexible(
-                child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    scrollDirection: Axis.vertical,
-                    padding: EdgeInsets.zero,
-                    itemCount: myGetxController.orderLineList.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return OrderQuotationDetailCard(
-                          orderDetailsList: myGetxController.orderLineList,
-                          index: index,
-                          productDetail: myGetxController.orderLineProductList,
-                          isOrderScreen: true,
-                          orderId: widget.id ?? 0,isDeliveryScreen: false,);
-                    }),
-              )
-            : Container()),
+        Expanded(
+          child: Obx(() => SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: [
+                    myGetxController.orderLineList.isNotEmpty
+                        ? ListView.builder(
+                            physics: BouncingScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            padding: EdgeInsets.zero,
+                            itemCount: myGetxController.orderLineList.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return OrderQuotationDetailCard(
+                                orderDetailsList:
+                                    myGetxController.orderLineList,
+                                index: index,
+                                productDetail:
+                                    myGetxController.orderLineProductList,
+                                isOrderScreen: true,
+                                orderId: widget.id ?? 0,
+                                isDeliveryScreen: false,
+                                isReceiveScreen: false,
+
+                              );
+                            })
+                        : Container(),
+                    myGetxController.particularOrderData.isNotEmpty
+                        ? OrderQuotationAmountCard(
+                            list: myGetxController.particularOrderData)
+                        : Container(),
+                    SizedBox(
+                      height: 15,
+                    )
+                  ],
+                ),
+              )),
+        ),
       ],
     ));
   }

@@ -28,6 +28,12 @@ Color partiallyReceivedStatusColor = Color(0xffFEB7E30);
 Color doneStatusColor = Colors.green;
 Color cancelledStatusColor = Color(0xffD5001A);
 
+int orderScreenOffset = 0;
+int deliverScreenOffset = 0;
+int quotationOffset = 0;
+int receiveScreenOffset = 0;
+int serviceScreenOffset = 0;
+
 pushMethod(BuildContext context, Widget name) {
   // Navigator.of(context).push(SwipeablePageRoute(
   //   canOnlySwipeFromEdge: true,
@@ -38,7 +44,7 @@ pushMethod(BuildContext context, Widget name) {
 
 pushRemoveUntilMethod(BuildContext context, Widget name) {
   Navigator.of(context).pushAndRemoveUntil(
-      SwipeablePageRoute(builder: (context) => name),
+      MaterialPageRoute(builder: (context) => name),
       (Route<dynamic> route) => false);
 }
 
@@ -55,12 +61,29 @@ TextStyle drawerTextStyle = TextStyle(
   fontWeight: FontWeight.w500,
 );
 
+TextStyle amountCardMainTextStyle = TextStyle(
+    color: Colors.black.withOpacity(0.7),
+    fontWeight: FontWeight.w500,
+    fontSize: 17);
+TextStyle amountCardSubTextStyle =
+    TextStyle(color: Colors.black54, fontWeight: FontWeight.w500, fontSize: 16);
+
+TextStyle allCardMainText = TextStyle(
+    fontSize: 17, fontWeight: FontWeight.w500, color: Colors.grey.shade600);
+TextStyle allCardSubText =
+    TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black);
+
+TextStyle deliveryDateStyle =
+    TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.green);
+TextStyle returnDateStyle =
+    TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.red);
+
 Future showConnectivity() async {
   final results = await Connectivity().checkConnectivity();
   return results;
 }
 
-Future dialog(BuildContext context, String text) {
+Future dialog(BuildContext context, String text, Color color) {
   return showGeneralDialog(
     barrierColor: Colors.black.withOpacity(0.5),
     transitionBuilder: (context, a1, a2, widget) {
@@ -103,7 +126,7 @@ Future dialog(BuildContext context, String text) {
                           padding: EdgeInsets.all(25),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                              color: Colors.red.shade300,
+                              color: color,
                               borderRadius: BorderRadius.circular(20)),
                           child: Transform.rotate(
                             angle: -math.pi / -50,

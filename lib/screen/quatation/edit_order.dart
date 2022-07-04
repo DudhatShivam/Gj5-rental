@@ -293,7 +293,7 @@ class _EditOrderState extends State<EditOrder> {
                 updateData(value, token, widget.id ?? "");
                 // updateDetail(value, token, widget.lineId);
               } else {
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
               }
             });
           } else {
@@ -301,7 +301,7 @@ class _EditOrderState extends State<EditOrder> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
       }
     });
   }
@@ -327,14 +327,12 @@ class _EditOrderState extends State<EditOrder> {
         body: jsonEncode(body),
         headers: {'Access-Token': token, 'Content-Type': 'text/plain'});
     var data = jsonDecode(response.body);
-    print(response.statusCode);
-    print(response.body);
     if (response.statusCode == 200) {
       getDraftOrderData(context, apiUrl, token, 0,);
       Navigator.pop(context);
       myGetxController.isUpdateData.value = false;
     } else {
-      dialog(context, data['error_descrip']);
+      dialog(context, data['error_descrip'],Colors.red.shade300);
       myGetxController.isUpdateData.value = false;
     }
   }

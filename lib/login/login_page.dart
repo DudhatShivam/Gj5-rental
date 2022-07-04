@@ -189,7 +189,7 @@ class _LogInPageState extends State<LogInPage> {
           if (value == ConnectivityResult.wifi) {
             getAndSetData(serverUrl, username, password);
           } else {
-            dialog(context, "Connect to Showroom Network");
+            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
             myGetxController.isLoggedIn.value = false;
           }
         });

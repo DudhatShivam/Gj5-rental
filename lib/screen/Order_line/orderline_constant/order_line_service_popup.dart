@@ -191,7 +191,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
             setState(() {});
           }
         } else {
-          dialog(context, "Something Went Wrong !");
+          dialog(context, "Something Went Wrong !",Colors.red.shade300);
         }
       });
     });
@@ -218,13 +218,13 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
             var data = jsonDecode(response.body);
             if (data['status'] == 0) {
               Navigator.pop(context);
-              dialog(context, data['msg']);
+              dialog(context, data['msg'],Colors.red.shade300);
             } else {
               widget.isShowFromGroupBy == true ?  setDataOfUpdatedIdInGroupByListOrderLineScreen(widget.orderId, widget.index,widget.groupByMainListIndex ?? 0) : setDataOfUpdatedIdInOrderLineScreen(widget.orderId, widget.index);
               Navigator.pop(context);
             }
           } else {
-            dialog(context, "Something Went Wrong !");
+            dialog(context, "Something Went Wrong !",Colors.red.shade300);
           }
         });
       });

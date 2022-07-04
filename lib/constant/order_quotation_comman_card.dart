@@ -6,6 +6,7 @@ import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:flutter_swipe_action_cell/core/controller.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Utils/utils.dart';
 import '../screen/quatation/edit_order.dart';
@@ -46,13 +47,13 @@ class OrderQuatationCommanCard extends StatelessWidget {
           key: ObjectKey(list[index]),
           trailingActions: isDeliveryScreen == false && isOrderScreen == false
               ? <SwipeAction>[
-                  SwipeAction(
-                      title: "Delete",
-                      onTap: (CompletionHandler handler) async {
-                        productDeleteDialog(list[index]['id'],index,list,context,true);
-                        controller.closeAllOpenCell();
-                      },
-                      color: Colors.red),
+                  // SwipeAction(
+                  //     title: "Delete",
+                  //     onTap: (CompletionHandler handler) async {
+                  //       productDeleteDialog(list[index]['id'],index,list,context,true);
+                  //       controller.closeAllOpenCell();
+                  //     },
+                  //     color: Colors.red),
                   SwipeAction(
                       title: "Edit",
                       onTap: (CompletionHandler handler) async {
@@ -92,7 +93,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                             list[index]['name'],
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 17,
+                                fontSize: 18,
                                 color: primaryColor.withOpacity(0.9)),
                           )
                         ],
@@ -116,28 +117,25 @@ class OrderQuatationCommanCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 7,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Customer : ", style: primaryStyle),
                     SizedBox(
-                      height: 5,
+                      height: 7,
                     ),
                     Expanded(
                       child: Text(
                         list[index]['customer_name'] ?? "",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
+                        style: allCardSubText,
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 7,
                 ),
                 Row(
                   children: [
@@ -153,8 +151,9 @@ class OrderQuatationCommanCard extends StatelessWidget {
                     ),
                     InkWell(
                         onTap: () async {
-                          bool? res = await FlutterPhoneDirectCaller.callNumber(
-                              list[index]['mobile1']);
+                          // bool? res = await FlutterPhoneDirectCaller.callNumber(
+                          //     list[index]['mobile1']);
+                          _makingPhoneCall(list[index]['mobile1'], context);
                         },
                         child: CircleAvatar(
                             radius: 13,
@@ -162,46 +161,46 @@ class OrderQuatationCommanCard extends StatelessWidget {
                               Icons.call,
                               size: 17,
                             ))),
-                    list[index]['mobile2'] != null ?
-                   Row(
-                     children: [
-                       Text(" / "),
-                       Text(
-                         list[index]['mobile2'] ?? "",
-                         style: TextStyle(
-                             fontWeight: FontWeight.bold,
-                             fontSize: 17,
-                             color: primaryColor.withOpacity(0.9)),
-                       ),
-                       SizedBox(
-                         width: 5,
-                       ),
-                       InkWell(
-                           onTap: () async {
-                             bool? res = await FlutterPhoneDirectCaller.callNumber(
-                                 list[index]['mobile2']);
-                           },
-                           child: CircleAvatar(
-                               radius: 13,
-                               child: Icon(
-                                 Icons.call,
-                                 size: 17,
-                               ))),
-                     ],
-                   ) : Container()
+                    list[index]['mobile2'] != null
+                        ? Row(
+                            children: [
+                              Text(" / "),
+                              Text(
+                                list[index]['mobile2'] ?? "",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                    color: primaryColor.withOpacity(0.9)),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              InkWell(
+                                  onTap: () async {
+                                    // bool? res = await FlutterPhoneDirectCaller
+                                    //     .callNumber(list[index]['mobile2']);
+                                    _makingPhoneCall(
+                                        list[index]['mobile2'], context);
+                                  },
+                                  child: CircleAvatar(
+                                      radius: 13,
+                                      child: Icon(
+                                        Icons.call,
+                                        size: 17,
+                                      ))),
+                            ],
+                          )
+                        : Container()
                   ],
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 7,
                 ),
                 Row(
                   children: [
                     Text(
                       list[index]['user_id']['name'],
-                      style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 17,
-                          color: primaryColor.withOpacity(0.9)),
+                      style: allCardSubText,
                     ),
                   ],
                 ),
@@ -210,19 +209,20 @@ class OrderQuatationCommanCard extends StatelessWidget {
                     : Column(
                         children: [
                           SizedBox(
-                            height: 10,
+                            height: 7,
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text("Remarks : ", style: primaryStyle),
                               Expanded(
-                                child: Text(
-                                  list[index]['remarks'],
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 17,
-                                      color: primaryColor.withOpacity(0.9)),
+                                child: SingleChildScrollView(
+                                  physics: BouncingScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    list[index]['remarks'],
+                                    style: allCardSubText,
+                                  ),
                                 ),
                               )
                             ],
@@ -230,14 +230,14 @@ class OrderQuatationCommanCard extends StatelessWidget {
                         ],
                       ),
                 SizedBox(
-                  height: 10,
+                  height: 7,
                 ),
                 Divider(
                   height: 0.5,
                   color: Colors.grey.shade400,
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 7,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -250,10 +250,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                         ),
                         Text(
                           deliveryDate,
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.green),
+                          style: deliveryDateStyle,
                         )
                       ],
                     ),
@@ -265,10 +262,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                         ),
                         Text(
                           returnDate,
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.red),
+                          style: returnDateStyle,
                         )
                       ],
                     )
@@ -280,5 +274,18 @@ class OrderQuatationCommanCard extends StatelessWidget {
         ),
       );
     });
+  }
+}
+
+_makingPhoneCall(String PhoneNumber, BuildContext context) async {
+  print(PhoneNumber);
+  try {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: PhoneNumber,
+    );
+    await launchUrl(launchUri);
+  } catch (e) {
+    dialog(context, e.toString(), Colors.red.shade300);
   }
 }

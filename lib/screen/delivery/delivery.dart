@@ -27,19 +27,28 @@ class DeliveryScreen extends StatefulWidget {
 }
 
 class _DeliveryScreebState extends State<DeliveryScreen> {
-  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   MyGetxController myGetxController = Get.find();
   final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
   TextEditingController nameController = TextEditingController();
   TextEditingController orderNumberController = TextEditingController();
   TextEditingController numberController = TextEditingController();
-  TextEditingController stateController = TextEditingController();
+  bool isSearchLoadData = false;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    checkWlanForgetDeliveryData(false);
-    myGetxController.deliveryScreenOrderList.clear();
+    myGetxController.deliveryScreenFilteredOrderList.clear();
+    if (myGetxController.deliveryScreenOrderList.isEmpty) {
+      checkWlanForgetDeliveryData(false);
+    }
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        deliverScreenOffset = deliverScreenOffset + 5;
+        checkWlanForgetDeliveryData(false);
+      }
+    });
   }
 
   @override
@@ -93,11 +102,13 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
               ),
               InkWell(
                   onTap: () {
+                    deliverScreenOffset = 0;
+                    myGetxController.deliveryScreenFilteredOrderList.clear();
                     myGetxController.deliveryScreenOrderList.clear();
                     checkWlanForgetDeliveryData(false);
                   },
                   child: FadeInRight(
-                      child: Icon(Icons.cancel, size: 30, color: Colors.teal)))
+                      child: Icon(Icons.refresh, size: 30, color: Colors.teal)))
             ],
           ),
           elevation: 0,
@@ -205,36 +216,16 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                 SizedBox(
                   height: 8,
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Status : ",
-                        style: primaryStyle,
-                      ),
-                      Container(
-                        width: getWidth(0.30, context),
-                        child: textFieldWidget(
-                            "Order Status",
-                            stateController,
-                            false,
-                            false,
-                            Colors.greenAccent.withOpacity(0.3),
-                            TextInputType.text,
-                            0,
-                            Colors.greenAccent,
-                            1),
-                      )
-                    ],
-                  ),
-                ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: ElevatedButton(
                       onPressed: () {
+                        myGetxController.deliveryScreenFilteredOrderList
+                            .clear();
+                        setState(() {
+                          isSearchLoadData = true;
+                        });
                         findCard.currentState?.toggleExpansion();
                         checkWlanForgetDeliveryData(true);
                       },
@@ -248,27 +239,55 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
           height: 10,
         ),
         Expanded(
-          child: Obx(() => myGetxController.deliveryScreenOrderList.length > 0
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: myGetxController.deliveryScreenOrderList.length,
-                  padding: EdgeInsets.zero,
-                  itemBuilder: (context, index) {
-                    return OrderQuatationCommanCard(
-                      list: myGetxController.deliveryScreenOrderList,
-                      backGroundColor: Colors.white,
-                      index: index,
-                      isDeliveryScreen: true,
-                      onTap: () => pushMethod(
-                          context,
-                          DeliveryDetailScreen(
-                            id: myGetxController.deliveryScreenOrderList[index]
-                                ['id'],
-                          )),
-                      isOrderScreen: false,
-                    );
-                  },
-                )
+          child: Obx(() => myGetxController
+                      .deliveryScreenOrderList.isNotEmpty &&
+                  isSearchLoadData == false
+              ? myGetxController.deliveryScreenFilteredOrderList.isEmpty
+                  ? ListView.builder(
+                      controller: scrollController,
+                      shrinkWrap: true,
+                      itemCount:
+                          myGetxController.deliveryScreenOrderList.length,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (context, index) {
+                        return OrderQuatationCommanCard(
+                          list: myGetxController.deliveryScreenOrderList,
+                          backGroundColor: Colors.white,
+                          index: index,
+                          isDeliveryScreen: true,
+                          onTap: () => pushMethod(
+                              context,
+                              DeliveryDetailScreen(
+                                id: myGetxController
+                                    .deliveryScreenOrderList[index]['id'],
+                              )),
+                          isOrderScreen: false,
+                        );
+                      },
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: myGetxController
+                          .deliveryScreenFilteredOrderList.length,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (context, index) {
+                        return OrderQuatationCommanCard(
+                          list:
+                              myGetxController.deliveryScreenFilteredOrderList,
+                          backGroundColor: Colors.white,
+                          index: index,
+                          isDeliveryScreen: true,
+                          onTap: () => pushMethod(
+                              context,
+                              DeliveryDetailScreen(
+                                id: myGetxController
+                                        .deliveryScreenFilteredOrderList[index]
+                                    ['id'],
+                              )),
+                          isOrderScreen: false,
+                        );
+                      },
+                    )
               : Container(
                   child: Center(
                       child: CircularProgressIndicator(
@@ -291,7 +310,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                     ? searchProduct(apiUrl, token)
                     : getDataForDelivery(apiUrl, token);
               } else {
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
               }
             });
           } else {
@@ -301,17 +320,21 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
       }
     });
   }
 
   getDataForDelivery(String apiUrl, String token) async {
-    DateTime dateTime1 = DateTime.now().subtract(Duration(days: 5));
-    String deliveryDate = DateFormat('MM/dd/yyyy').format(dateTime1);
+    String deliveryDate = get5daysBeforeDate();
     String domain =
-        "[('state','in',['confirm', 'waiting', 'ready' ,'partially' ,'pending','deliver']),('delivery_date' , '>=' , '$deliveryDate')]";
-    var params = {'filters': domain.toString()};
+        "[('state','in',('confirm', 'waiting', 'ready' ,'partially' ,'pending','deliver')),('delivery_date' , '>=' , '$deliveryDate')]";
+    var params = {
+      'filters': domain.toString(),
+      'limit': '5',
+      'offset': '$deliverScreenOffset',
+      'order': 'id desc'
+    };
     Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri, headers: {
@@ -323,26 +346,28 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
       var data = jsonDecode(response.body);
       if (data['results'] != []) {
         myGetxController.deliveryScreenOrderList.addAll(data['results']);
+      } else {
+        dialog(context, "No Data Found !",Colors.red.shade300);
       }
+    } else {
+      dialog(context, "Something Went Wrong !",Colors.red.shade300);
     }
   }
 
   Future<void> searchProduct(String apiUrl, String token) async {
+
     String? domain;
     List domainData = [];
-    myGetxController.deliveryScreenOrderList.clear();
 
     if (nameController.text != "") {
-      domainData.add("('customer_name', 'ilike', '${nameController.text}')");
+      domainData.add(
+          "('customer_name', 'ilike', '${nameController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (numberController.text != "") {
-      domainData.add("('mobile1', 'ilike', '${numberController.text}')");
+      domainData.add("('mobile1', 'ilike', '${numberController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (orderNumberController.text != "") {
-      domainData.add("('name', 'ilike', '${orderNumberController.text}')");
-    }
-    if (stateController.text != "") {
-      domainData.add("('state', 'ilike', '${stateController.text}')");
+      domainData.add("('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (domainData.length == 1) {
       domain = "[${domainData[0]}]";
@@ -351,18 +376,34 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
     } else if (domainData.length == 3) {
       domain =
           "['|' , '|', ${domainData[0]} , ${domainData[1]} , ${domainData[2]}]";
-    } else if (domainData.length == 4) {
-      domain =
-          "['|' , '|', '|' , ${domainData[0]} , ${domainData[1]} , ${domainData[2]} , ${domainData[3]}]";
     } else {
-      myGetxController.deliveryScreenOrderList.value = [];
+      myGetxController.deliveryScreenFilteredOrderList.value = [];
     }
     var params = {'filters': domain.toString()};
     Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri,
         headers: {'Access-Token': token, 'Content-Type': 'application/http'});
-    Map<String, dynamic> data = jsonDecode(response.body);
-    myGetxController.deliveryScreenOrderList.value = data['results'];
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      if (data['count'] != 0) {
+        setState(() {
+          isSearchLoadData = false;
+        });
+        myGetxController.deliveryScreenFilteredOrderList
+            .addAll(data['results']);
+      } else {
+        setState(() {
+          isSearchLoadData = false;
+        });
+        dialog(context, "No Order Found",Colors.red.shade300);
+      }
+    } else {
+      setState(() {
+        isSearchLoadData = false;
+      });
+      dialog(context, "Something Went Wrong !",Colors.red.shade300);
+    }
   }
 }

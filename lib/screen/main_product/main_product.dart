@@ -93,14 +93,14 @@ class _MainProductScreenState extends State<MainProductScreen> {
           if (result == ConnectivityResult.wifi) {
             getMainProduct(apiUrl, accessToken);
           } else {
-            dialog(context, "Connect to Showroom Network");
+            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
           }
         });
       } else {
         getMainProduct(apiUrl, accessToken);
       }
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
     }
   }
 

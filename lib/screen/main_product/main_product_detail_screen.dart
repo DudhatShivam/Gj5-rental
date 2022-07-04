@@ -309,7 +309,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                 ? getMainProductList(apiUrl, accessToken)
                 : searchProduct(apiUrl, accessToken);
           } else {
-            dialog(context, "Connect to Showroom Network");
+            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
           }
         });
       } else {
@@ -318,7 +318,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
             : searchProduct(apiUrl, accessToken);
       }
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
     }
   }
 
@@ -379,7 +379,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
       myGetxController.mainProductDetailList.clear();
       myGetxController.mainProductDetailList.value = data['results'];
     } else {
-      dialog(context, "Product Not Found");
+      dialog(context, "Product Not Found",Colors.red.shade300);
     }
   }
 }

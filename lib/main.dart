@@ -8,6 +8,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'login/login_page.dart';
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   runApp(GetMaterialApp(
     debugShowCheckedModeBanner: false,

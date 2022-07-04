@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:collection/collection.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -12,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:gj5_rental/Utils/utils.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import '../../constant/constant.dart';
 
 class OrderLineScreen extends StatefulWidget {
   const OrderLineScreen({Key? key}) : super(key: key);
@@ -28,6 +31,11 @@ class _OrderLineScreenState extends State<OrderLineScreen> {
   int? selectedIndex;
   bool isShowGroupByData = false;
   int? drawerSelectedIndex;
+  final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
+  TextEditingController orderNumberController = TextEditingController();
+  TextEditingController orderCodeController = TextEditingController();
+  String deliveryDate = "";
+  DateTime notFormatedDDate = DateTime.now();
 
   List<String> filterList = [
     'Today deliver',
@@ -40,22 +48,25 @@ class _OrderLineScreenState extends State<OrderLineScreen> {
     'Group by Bill No',
     'Group by Product',
     'Group by status',
+    'Group by Delivery Date',
+    'Group by product Type',
+    'Load All'
   ];
 
   @override
   void initState() {
     super.initState();
     if (myGetxController.orderLineScreenList.isEmpty) {
-      cheCkWlanForOrderLineData(context);
+      cheCkWlanForOrderLineData(context, false);
     }
     clearList();
-    // scrollController.addListener(() {
-    //   if (scrollController.position.pixels ==
-    //       scrollController.position.maxScrollExtent) {
-    //     orderLineOffset = orderLineOffset + 5;
-    //     setDefaultDataInDomainList(context);
-    //   }
-    // });
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        orderLineOffset = orderLineOffset + 5;
+        cheCkWlanForOrderLineData(context, false);
+      }
+    });
   }
 
   @override
@@ -95,8 +106,9 @@ class _OrderLineScreenState extends State<OrderLineScreen> {
                             setState(() {
                               isShowGroupByData = false;
                               orderLineOffset = 0;
+                              drawerSelectedIndex=null;
                             });
-                            cheCkWlanForOrderLineData(context);
+                            cheCkWlanForOrderLineData(context, false);
                           });
                         },
                         child: Container(
@@ -147,22 +159,46 @@ class _OrderLineScreenState extends State<OrderLineScreen> {
                             setState(() {
                               isShowGroupByData = true;
                             });
-                            groupByField('rental_id', 'name');
+                            groupByField('rental_id', 'name',index);
                           } else if (index == 8) {
                             setState(() {
                               isShowGroupByData = true;
                             });
-                            groupByField('product_id', 'name');
+                            groupByField('product_id', 'name',index);
                           } else if (index == 9) {
                             setState(() {
                               isShowGroupByData = true;
                             });
-                            groupByField('state', "");
+                            groupByField('state', "",index);
+                          } else if (index == 10) {
+                            setState(() {
+                              isShowGroupByData = true;
+                            });
+                            groupByField('delivery_date', "",index);
+                          }else if (index == 11) {
+                            setState(() {
+                              isShowGroupByData = true;
+                            });
+                            groupByField('product_type', "",index);
+                          }
+                          else if (index == 12) {
+                            setState(() {
+                              isShowGroupByData = false;
+                              orderLineOffset = 0;
+                            });
+                            myGetxController.groupByList.clear();
+                            myGetxController.groupByDetailList.clear();
+                            myGetxController.orderLineScreenList.clear();
+                            myGetxController.filteredListOrderLine.clear();
+                            myGetxController
+                                .isShowFilteredDataInOrderLine.value = false;
+                            cheCkWlanForOrderLineData(context, true);
+                            _key.currentState?.closeDrawer();
                           }
                         },
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 10),
+                              vertical: 12, horizontal: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -187,35 +223,210 @@ class _OrderLineScreenState extends State<OrderLineScreen> {
             SizedBox(
               height: MediaQuery.of(context).padding.top + 10,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Row(
+            ExpansionTileCard(
+              trailing: FadeInRight(
+                child: Icon(
+                  Icons.search,
+                  size: 30,
+                  color: Colors.teal,
+                ),
+              ),
+              key: findCard,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                      onTap: () {
-                        _key.currentState?.openDrawer();
-                      },
-                      child: FadeInLeft(
-                        child: Icon(
-                          Icons.menu,
-                          size: 30,
-                          color: Colors.teal,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              _key.currentState?.openDrawer();
+                            },
+                            child: FadeInLeft(
+                              child: Icon(
+                                Icons.menu,
+                                size: 30,
+                                color: Colors.teal,
+                              ),
+                            )),
+                        SizedBox(
+                          width: 15,
                         ),
-                      )),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  FadeInLeft(
-                    child: Text(
-                      "Order Line",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 23,
-                          color: Colors.teal),
+                        FadeInLeft(
+                          child: Text(
+                            "Order Line",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 23,
+                                color: Colors.teal),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
+              elevation: 0,
+              shadowColor: Colors.white,
+              initialElevation: 0,
+              borderRadius: BorderRadius.circular(0),
+              baseColor: Colors.transparent,
+              expandedColor: Colors.transparent,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
+                      child: Text(
+                        "Find Order :",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                            color: Colors.blueGrey),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Order : ",
+                            style: primaryStyle,
+                          ),
+                          Container(
+                            width: getWidth(0.30, context),
+                            child: textFieldWidget(
+                                "Order Number",
+                                orderNumberController,
+                                false,
+                                false,
+                                Colors.greenAccent.withOpacity(0.3),
+                                TextInputType.number,
+                                0,
+                                Colors.greenAccent,
+                                1),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Code :",
+                            style: primaryStyle,
+                          ),
+                          Container(
+                            width: getWidth(0.30, context),
+                            child: textFieldWidget(
+                                "Product Code",
+                                orderCodeController,
+                                false,
+                                false,
+                                Colors.greenAccent.withOpacity(0.3),
+                                TextInputType.text,
+                                0,
+                                Colors.greenAccent,
+                                1),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "D Date",
+                            style: primaryStyle,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              FocusScope.of(context).unfocus();
+                              pickedDate(context).then((value) {
+                                if (value != null) {
+                                  notFormatedDDate = value;
+                                  setState(() {
+                                    deliveryDate =
+                                        DateFormat('dd/MM/yyyy').format(value);
+                                  });
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: getWidth(0.30, context),
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: Colors.greenAccent.withOpacity(0.3),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today,
+                                        color: Colors.grey.shade400,
+                                        size: 22,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        deliveryDate,
+                                        style: primaryStyle,
+                                      ),
+                                    ],
+                                  )),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        deliveryDate = "";
+                                      });
+                                    },
+                                    child: Icon(
+                                      Icons.cancel,
+                                      size: 25,
+                                      color: Colors.grey.shade400,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            myGetxController.filteredListOrderLine.clear();
+                            checkWlanForFilteredData();
+                            findCard.currentState?.toggleExpansion();
+                          },
+                          child: Text("Search")),
+                    ),
+                  ],
+                )
+              ],
             ),
             isShowGroupByData == true
                 ? Expanded(
@@ -235,43 +446,49 @@ class _OrderLineScreenState extends State<OrderLineScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Card(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      isExpand = !isExpand;
-                                                      selectedIndex = index;
-                                                    });
-                                                  },
-                                                  child: Icon(Icons
-                                                      .arrow_drop_down_outlined),
-                                                ),
-                                                SizedBox(
-                                                  width: 5,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    myGetxController
-                                                        .groupByList[index]
-                                                            ['Name']
-                                                        .toString()
-                                                        .toUpperCase(),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            isExpand = !isExpand;
+                                            selectedIndex = index;
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 10),
+                                              child: Row(
+                                                children: [
+                                                  isExpand == true &&
+                                                          index == selectedIndex
+                                                      ? Icon(Icons
+                                                          .arrow_drop_up_outlined)
+                                                      : Icon(Icons
+                                                          .arrow_drop_down_outlined),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(
+                                                      myGetxController
+                                                          .groupByList[index]
+                                                              ['Name']
+                                                          .toString()
+                                                          .toUpperCase(),
+                                                      style: primaryStyle,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    " (${lst.length})",
                                                     style: primaryStyle,
                                                   ),
-                                                ),
-                                                Text(
-                                                  " (${lst.length})",
-                                                  style: primaryStyle,
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -386,20 +603,91 @@ class _OrderLineScreenState extends State<OrderLineScreen> {
         ));
   }
 
-  groupByField(String firstField, String secondField) {
+  checkWlanForFilteredData() {
+    getStringPreference('apiUrl').then((apiUrl) async {
+      try {
+        getStringPreference('accessToken').then((token) async {
+          if (apiUrl.toString().startsWith("192")) {
+            showConnectivity().then((result) async {
+              if (result == ConnectivityResult.wifi) {
+                searchOrderLineOrder(apiUrl, token);
+              } else {
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
+              }
+            });
+          } else {
+            searchOrderLineOrder(apiUrl, token);
+          }
+        });
+      } on SocketException catch (err) {
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
+      }
+    });
+  }
+
+  searchOrderLineOrder(String apiUrl, String token) async {
+    String? domain;
+    List datas = [];
+    String dDate = DateFormat('yyyy/MM/dd').format(notFormatedDDate);
+    if (orderNumberController.text != "") {
+      datas.add(
+          "('order_no', 'ilike', '${orderNumberController.text}'),('order_status' , 'not in' , ('cancel','done'))");
+    }
+    if (orderCodeController.text != "") {
+      datas.add(
+          "('p_default_code', 'ilike', '${orderCodeController.text}'),('order_status' , 'not in' , ('draft','cancel','done')), ('state' , 'not in' , ('cancel','receive','deliver'))");
+    }
+    if (deliveryDate != "") {
+      datas.add(
+          "('delivery_date', '=', '${dDate}'),('order_status' , 'not in' , ('cancel','done')), ('state' , 'not in' , ('cancel','receive'))");
+    }
+
+    if (datas.length == 1) {
+      domain = "[${datas[0]}]";
+    } else if (datas.length == 2) {
+      domain = "[${datas[0]},${datas[1]}]";
+    } else if (datas.length == 3) {
+      domain = "[${datas[0]},${datas[1]},${datas[2]}]";
+    } else {
+      myGetxController.filteredListOrderLine.value = [];
+    }
+
+    var params = {
+      'filters': domain.toString(),
+    };
+    Uri uri = Uri.parse("http://$apiUrl/api/rental.line");
+    final finalUri = uri.replace(queryParameters: params);
+    final response = await http.get(finalUri,
+        headers: {'Access-Token': token, 'Content-Type': 'application/http'});
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      if (data['count'] != 0) {
+        myGetxController.groupByList.clear();
+        myGetxController.groupByDetailList.clear();
+        myGetxController.filteredListOrderLine.addAll(data['results']);
+        myGetxController.isShowFilteredDataInOrderLine.value = true;
+        setState(() {
+          isShowGroupByData = false;
+        });
+      } else {
+        dialog(context, "No Order Found", Colors.red.shade300);
+      }
+    } else {
+      dialog(context, "Something Went Wrong !", Colors.red.shade300);
+    }
+  }
+
+  groupByField(String firstField, String secondField,int index) {
     myGetxController.groupByList.clear();
     if (myGetxController.orderLineScreenList.isNotEmpty) {
       _key.currentState?.closeDrawer();
-      setDataInGroupByList(firstField, secondField);
+      setDataInGroupByList(firstField, secondField,index);
     }
-    // else {
-    //   clearList();
-    //   cheCkWlanForOrderLineData(context);
-    //   setDataInGroupByList(isShowGroupByData, firstField, secondField);
-    // }
   }
 
-  setDataInGroupByList(String firstField, String secondField) {
+  setDataInGroupByList(String firstField, String secondField,int index) {
     setState(() {
       isExpand = false;
     });
@@ -411,13 +699,23 @@ class _OrderLineScreenState extends State<OrderLineScreen> {
           : groupBy<dynamic, dynamic>(myGetxController.filteredListOrderLine,
               (obj) => obj['$firstField']['$secondField']);
     } else {
-      newMap = myGetxController.isShowFilteredDataInOrderLine == false ? groupBy<dynamic, dynamic>(
-          myGetxController.orderLineScreenList, (obj) => obj['$firstField']) : groupBy<dynamic, dynamic>(
-          myGetxController.filteredListOrderLine, (obj) => obj['$firstField']);
+      newMap = myGetxController.isShowFilteredDataInOrderLine == false
+          ? groupBy<dynamic, dynamic>(
+              myGetxController.orderLineScreenList, (obj) => obj['$firstField'])
+          : groupBy<dynamic, dynamic>(myGetxController.filteredListOrderLine,
+              (obj) => obj['$firstField']);
     }
     newMap.forEach((key, value) {
-      Map a = {'Name': key, 'data': value};
-      myGetxController.groupByList.add(a);
+      if(index == 10){
+        DateTime tempDDate = DateFormat("yyyy-MM-dd")
+            .parse(key);
+        String date = DateFormat("dd/MM/yyyy").format(tempDDate);
+        Map a = {'Name': date, 'data': value};
+        myGetxController.groupByList.add(a);
+      }else{
+        Map a = {'Name': key, 'data': value};
+        myGetxController.groupByList.add(a);
+      }
     });
   }
 

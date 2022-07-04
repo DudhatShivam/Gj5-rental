@@ -118,14 +118,14 @@ class _AddAccountState extends State<AddAccount> {
           if (result == ConnectivityResult.wifi) {
             checkAccountData(index, serverUrl, username, password);
           } else {
-            dialog(context, "Connect to Showroom Network");
+            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
           }
         });
       } else {
         checkAccountData(index, serverUrl, username, password);
       }
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
     }
   }
 
@@ -179,7 +179,7 @@ class _AddAccountState extends State<AddAccount> {
       }
     } on SocketException catch (err) {
       print(err);
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
     }
   }
 

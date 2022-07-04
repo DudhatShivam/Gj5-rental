@@ -97,17 +97,11 @@ class OrderLineCard extends StatelessWidget {
                 child: isProductDetailScreen == false
                     ? Text(
                         orderList[index]['product_id']['default_code'],
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
+                        style: allCardSubText,
                       )
                     : Text(
                         orderList[index]['origin_product_id']['default_code'],
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
+                        style: allCardSubText,
                       ),
               ),
             ],
@@ -122,10 +116,7 @@ class OrderLineCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   orderList[index]['product_id']['name'] ?? "",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black),
+                  style: allCardSubText,
                 ),
               ),
             ],
@@ -144,10 +135,7 @@ class OrderLineCard extends StatelessWidget {
                             Text("Type : ", style: primaryStyle),
                             Text(
                               orderList[index]['product_type'] ?? "",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black),
+                              style: allCardSubText,
                             ),
                           ],
                         ),
@@ -155,17 +143,11 @@ class OrderLineCard extends StatelessWidget {
                           children: [
                             Text(
                                 "${orderList[index]['quantity'].toString() ?? ""}/",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black)),
+                                style: allCardSubText),
                             Text(
                               orderList[index]['qty_available'].toString() ??
                                   "",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black),
+                              style: allCardSubText,
                             ),
                           ],
                         ),
@@ -186,10 +168,7 @@ class OrderLineCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             orderList[index]['partner_id']['name'] ?? "",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black),
+                            style: allCardSubText,
                           ),
                         ),
                       ],
@@ -209,10 +188,7 @@ class OrderLineCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           orderList[index]['remarks'],
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black),
+                          style: allCardSubText,
                         ),
                       ),
                     ],
@@ -233,10 +209,7 @@ class OrderLineCard extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     orderList[index]['waiting_reason'],
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black),
+                                    style: allCardSubText,
                                   ),
                                 ),
                               ],
@@ -264,10 +237,7 @@ class OrderLineCard extends StatelessWidget {
                                   .format(DateTime.parse(
                                       orderList[index]['delivery_date']))
                                   .toString(),
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.green),
+                              style: deliveryDateStyle,
                             )
                           ],
                         ),
@@ -282,10 +252,7 @@ class OrderLineCard extends StatelessWidget {
                                   .format(DateTime.parse(
                                       orderList[index]['return_date']))
                                   .toString(),
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.red),
+                              style: returnDateStyle,
                             )
                           ],
                         )
@@ -339,6 +306,13 @@ class OrderLineCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        Icon(
+                          Icons.notifications_active,
+                          size: 28,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
                         orderList[index]['state'] != "service" &&
                                 orderList[index]['state'] != "deliver" &&
                                 orderList[index]['state'] != "receive" &&
@@ -426,24 +400,25 @@ class OrderLineCard extends StatelessWidget {
   }
 }
 
-void cheCkWlanForOrderLineData(BuildContext context) {
+void cheCkWlanForOrderLineData(BuildContext context, bool isLoadAll) {
   getStringPreference('apiUrl').then((value) async {
     try {
       getStringPreference('accessToken').then((token) async {
         if (value.toString().startsWith("192")) {
           showConnectivity().then((result) async {
             if (result == ConnectivityResult.wifi) {
-              getDataForOrderLine(value, token, context);
+              getDataForOrderLine(value, token, context, isLoadAll);
             } else {
-              dialog(context, "Connect to Showroom Network");
+              dialog(
+                  context, "Connect to Showroom Network", Colors.red.shade300);
             }
           });
         } else {
-          getDataForOrderLine(value, token, context);
+          getDataForOrderLine(value, token, context, isLoadAll);
         }
       });
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   });
 }
@@ -467,7 +442,8 @@ checkWlanForServicePopUpInOrderLine(BuildContext context, int orderId,
                     );
                   });
             } else {
-              dialog(context, "Connect to Showroom Network");
+              dialog(
+                  context, "Connect to Showroom Network", Colors.red.shade300);
             }
           });
         } else {
@@ -483,28 +459,33 @@ checkWlanForServicePopUpInOrderLine(BuildContext context, int orderId,
         }
       });
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   });
 }
 
 int orderLineOffset = 0;
 
-Future<void> getDataForOrderLine(apiUrl, token, BuildContext context) async {
-  DateTime dateTime = DateTime.now().subtract(Duration(days: 5));
-  DateTime dateTime2 = DateTime.now().add(Duration(days: 7));
-  String deliveryDate = DateFormat('MM/dd/yyyy').format(dateTime);
-  String afterDay = DateFormat('MM/dd/yyyy').format(dateTime2);
+Future<void> getDataForOrderLine(
+    apiUrl, token, BuildContext context, bool isLoadAll) async {
+  String dayBefore = get5daysBeforeDate();
+  String dayAfter = get7DaysAfterDate();
   String domain;
+  var params;
   MyGetxController myGetxController = Get.find();
   domain =
-      "[('order_status' , 'not in' , ('draft','cancel','done')), ('state' , 'not in' , ('cancel','receive','deliver')),('delivery_date' , '>=' , '$deliveryDate') , ('delivery_date' , '<=' , '$afterDay')]";
+      "[('order_status' , 'not in' , ('draft','cancel','done')), ('state' , 'not in' , ('cancel','receive','deliver')),('delivery_date' , '>=' , '$dayBefore') , ('delivery_date' , '<=' , '$dayAfter')]";
 
-  var params = {
-    'filters': domain.toString(),
-    // 'limit': '5',
-    // 'offset': '$orderLineOffset',
-  };
+  isLoadAll == false
+      ? params = {
+          'filters': domain.toString(),
+          'limit': '5',
+          'offset': '$orderLineOffset',
+          'order': 'id desc'
+        }
+      : params = {
+          'filters': domain.toString(),
+        };
   Uri uri = Uri.parse("http://$apiUrl/api/rental.line");
   final finalUri = uri.replace(queryParameters: params);
   final response = await http.get(finalUri, headers: {
@@ -516,17 +497,11 @@ Future<void> getDataForOrderLine(apiUrl, token, BuildContext context) async {
     if (data['count'] > 0) {
       myGetxController.orderLineScreenList.addAll(data['results']);
       addDataInOrderLineProductList(data['results']);
-      List list = data['results'];
-      list.forEach((element) {
-        // print(
-        //     "${element['product_id']['default_code']} ${element['rental_id']['name']}");
-        // orderLineIdList.add(element['id']);
-      });
     } else {
       myGetxController.noDataInOrderLine.value = true;
     }
   } else {
-    dialog(context, "Something Went Wrong !");
+    dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }
 }
 

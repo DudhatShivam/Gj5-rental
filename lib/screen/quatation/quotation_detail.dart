@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:gj5_rental/home/home.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:gj5_rental/screen/quatation/quatation.dart';
 import 'package:gj5_rental/screen/quatation/quotation_const/quotation_constant.dart';
@@ -17,14 +20,22 @@ import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
+import '../../constant/order_quotation_amount_card.dart';
 import '../../constant/order_quotation_comman_card.dart';
 import '../../constant/order_quotation_detail_card.dart';
 import 'create_order.dart';
 
 class QuatationDetailScreen extends StatefulWidget {
   final int? id;
+  final bool isFromAnotherScreen;
+  final bool? isFromEditScreen;
 
-  const QuatationDetailScreen({Key? key, this.id}) : super(key: key);
+  const QuatationDetailScreen(
+      {Key? key,
+      this.id,
+      required this.isFromAnotherScreen,
+      this.isFromEditScreen})
+      : super(key: key);
 
   @override
   State<QuatationDetailScreen> createState() => _QuatationDetailScreenState();
@@ -34,16 +45,14 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
   @override
   void initState() {
     super.initState();
-    print(widget.id);
     checkQuotationAndOrderDetailData(context, widget.id ?? 0, false);
   }
-
-  MyGetxController myGetxController = Get.find();
+  MyGetxController myGetxController = Get.put(MyGetxController());
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => pushRemoveUntilMethod(context, QuatationScreen()),
+      onWillPop: () => onWillPopNavigateFunction(),
       child: Scaffold(
         floatingActionButton: CustomFABWidget(
             transitionType: ContainerTransitionType.fade, isCreateOrder: false),
@@ -60,7 +69,7 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
                 ),
                 InkWell(
                     onTap: () {
-                      pushMethod(context, QuatationScreen());
+                      onWillPopNavigateFunction();
                     },
                     child: FadeInLeft(
                       child: Icon(
@@ -94,9 +103,6 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
                       backGroundColor: Colors.grey.withOpacity(0.1),
                       index: 0,
                       isDeliveryScreen: false)
-
-                  // orderQuatationCommanCard(myGetxController.quotationOrder,
-                  //         Colors.grey.withOpacity(0.1), 0, context, false)
                   : Container(),
             ),
             Padding(
@@ -110,31 +116,67 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
               ),
             ),
             Expanded(
-                child: Obx(() => myGetxController
-                        .quotationDetailOrderList.isNotEmpty
-                    ? ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        itemCount:
-                            myGetxController.quotationDetailOrderList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return OrderQuotationDetailCard(
-                            orderDetailsList:
-                                myGetxController.quotationDetailOrderList,
-                            index: index,
-                            productDetail: myGetxController
-                                .quotationDetailProductDetailList,
-                            isOrderScreen: false,
-                            orderId: widget.id ?? 0,
-                            isDeliveryScreen: false,
-                          );
-                        })
-                    : Container())),
+                child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Obx(() => Column(
+                    children: [
+                      myGetxController.quotationDetailOrderList.isNotEmpty
+                          ? ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              itemCount: myGetxController
+                                  .quotationDetailOrderList.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return OrderQuotationDetailCard(
+                                  orderDetailsList:
+                                      myGetxController.quotationDetailOrderList,
+                                  index: index,
+                                  productDetail: myGetxController
+                                      .quotationDetailProductDetailList,
+                                  isOrderScreen: false,
+                                  orderId: widget.id ?? 0,
+                                  isDeliveryScreen: false,
+                                  isReceiveScreen: false,
+                                );
+                              })
+                          : Container(),
+                      myGetxController.quotationOrder.isNotEmpty
+                          ? OrderQuotationAmountCard(
+                              list: myGetxController.quotationOrder)
+                          : Container(),
+                      SizedBox(
+                        height: 15,
+                      )
+                    ],
+                  )),
+            )),
           ],
         ),
       ),
     );
+  }
+
+  Navigate() {
+    if (editQuotationCount == 1) {
+      for (int i = 1; i <= editQuotationCount * 3; i++) {
+        Navigator.pop(context);
+      }
+    } else {
+      for (int i = 1;
+          i <= editQuotationCount * 3 - (editQuotationCount - 1);
+          i++) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  onWillPopNavigateFunction() {
+    widget.isFromAnotherScreen == false
+        ? Navigator.pop(context, true)
+        : widget.isFromEditScreen == false
+            ? pushMethod(context, QuatationScreen())
+            : Navigate();
   }
 }
 

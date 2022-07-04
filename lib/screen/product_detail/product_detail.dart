@@ -72,14 +72,14 @@ class _ProductDetailState extends State<ProductDetail> {
           if (result == ConnectivityResult.wifi) {
             getProductDetail(apiUrl, accessToken);
           } else {
-            dialog(context, "Connect to Showroom Network");
+            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
           }
         });
       } else {
         getProductDetail(apiUrl, accessToken);
       }
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network");
+      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
     }
   }
 
@@ -97,7 +97,7 @@ class _ProductDetailState extends State<ProductDetail> {
         myGetxController.productDetailList.addAll(data['results']);
       }
     } else {
-      dialog(context, "Something Went Wrong !");
+      dialog(context, "Something Went Wrong !",Colors.red.shade300);
     }
   }
 }

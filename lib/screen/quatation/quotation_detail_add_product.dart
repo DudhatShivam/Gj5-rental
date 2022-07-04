@@ -322,7 +322,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                 getData(value, productId ?? 0, token);
               } else {
                 responseOfApi.clear();
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
               }
             });
           } else {
@@ -330,7 +330,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
       }
     });
   }
@@ -362,7 +362,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                 addProduct(value, token);
               } else {
                 responseOfApi.clear();
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
               }
             });
           } else {
@@ -370,7 +370,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
       }
     });
   }
@@ -395,7 +395,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
       checkQuotationAndOrderDetailData(context, orderId ?? 0, false);
       Navigator.pop(context);
     } else {
-      dialog(context, data['msg'] ?? "Some thing went wrong");
+      dialog(context, data['msg'] ?? "Some thing went wrong",Colors.red.shade300);
     }
   }
 

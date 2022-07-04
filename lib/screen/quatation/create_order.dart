@@ -377,7 +377,7 @@ class _CreateOrderState extends State<CreateOrder> {
               if (result == ConnectivityResult.wifi) {
                 createOrder(value, token.toString());
               } else {
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
               }
             });
           } else {
@@ -385,7 +385,7 @@ class _CreateOrderState extends State<CreateOrder> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
       }
     });
   }

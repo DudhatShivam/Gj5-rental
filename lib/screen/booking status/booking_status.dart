@@ -41,7 +41,7 @@ class _BookingStatusState extends State<BookingStatus> {
   bool isDisplayResponseApiList = false;
   bool? noData;
   bool? loading;
-  bool isBtnLoading=false;
+  bool isBtnLoading = false;
   String returnDate = "";
   String deliveryDate = "";
   DateTime? returnNotFormatedDate;
@@ -53,217 +53,228 @@ class _BookingStatusState extends State<BookingStatus> {
     return Scaffold(
       backgroundColor: Color(0xffF1F5F9),
       resizeToAvoidBottomInset: false,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + 10,
-          ),
-          ScreenAppBar(screenName: "Booking Status"),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Obx(() => SearchField(
-                        controller: productSearchController,
-                        maxSuggestionsInViewPort: 8,
-                        suggestionsDecoration: BoxDecoration(
-                          border: Border.all(color: Colors.teal.shade400),
-                        ),
-                        searchStyle: primaryStyle,
-                        searchInputDecoration: InputDecoration(
-                            suffixIcon: productSearchController.text.isNotEmpty
-                                ? InkWell(
-                                    onTap: () {
-                                      myGetxController
-                                          .isSetTextFieldData.value = false;
-                                      responseOfApi.clear();
-                                      productSearchController.clear();
-                                      FocusScope.of(context).unfocus();
-                                      setState(() {
-                                        isDisplayResponseApiList = false;
-                                        noData = false;
-                                      });
-                                    },
-                                    child: Container(
-                                      child: Icon(
-                                        Icons.cancel,
-                                        color: primaryColor,
-                                        size: 30,
-                                      ),
-                                    ),
-                                  )
-                                : null,
-                            hintText: "Search Product",
-                            hintStyle: TextStyle(color: Colors.grey.shade400),
-                            filled: true,
-                            fillColor: Colors.grey.withOpacity(0.1),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.teal),
-                            )),
-                        onSuggestionTap: (val) {
-                          getResponseProductApiList();
-                        },
-                        itemHeight: 55,
-                        suggestions: myGetxController
-                            .isMainProductTrueProductList
-                            .map((e) {
-                          String search = "${e['default_code']} - ${e['name']}";
-                          return SearchFieldListItem(search);
-                        }).toList(),
-                        suggestionAction: SuggestionAction.next,
-                      )),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.translucent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).padding.top + 10,
+            ),
+            ScreenAppBar(screenName: "Booking Status"),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    child: Obx(() => SearchField(
+                          controller: productSearchController,
+                          maxSuggestionsInViewPort: 8,
+                          suggestionsDecoration: BoxDecoration(
+                            border: Border.all(color: Colors.teal.shade400),
+                          ),
+                          searchStyle: primaryStyle,
+                          searchInputDecoration: InputDecoration(
+                              suffixIcon:
+                                  productSearchController.text.isNotEmpty
+                                      ? InkWell(
+                                          onTap: () {
+                                            myGetxController.isSetTextFieldData
+                                                .value = false;
+                                            responseOfApi.clear();
+                                            productSearchController.clear();
+                                            FocusScope.of(context).unfocus();
+                                            setState(() {
+                                              isDisplayResponseApiList = false;
+                                              noData = false;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Icon(
+                                              Icons.cancel,
+                                              color: primaryColor,
+                                              size: 30,
+                                            ),
+                                          ),
+                                        )
+                                      : null,
+                              hintText: "Search Product",
+
+                              hintStyle: TextStyle(color: Colors.grey.shade400),
+                              filled: true,
+                              fillColor: Colors.grey.withOpacity(0.1),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.teal),
+                              )),
+                          onSuggestionTap: (val) {
+                            getResponseProductApiList();
+                          },
+                          itemHeight: 55,
+                          suggestions: myGetxController
+                              .isMainProductTrueProductList
+                              .map((e) {
+                            String search =
+                                "${e['default_code']} - ${e['name']}";
+                            return SearchFieldListItem(search);
+                          }).toList(),
+                          suggestionAction: SuggestionAction.next,
+                        )),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          responseOfApi.isNotEmpty || noData == true
-              ? Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          "D Date",
-                          style: TextStyle(
-                              color: primaryColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18),
-                        ),
-                        Text(
-                          "R Date",
-                          style: TextStyle(
-                              color: primaryColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              pickedDate(context).then((value) {
-                                if (value != null) {
-                                  deliveryNotFormatedDate = value;
-                                  setState(() {
-                                    deliveryDate =
-                                        DateFormat('dd/MM/yyyy').format(value);
-                                  });
-                                }
-                              });
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.symmetric(horizontal: 15),
-                              height: 48,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Text(
-                                deliveryDate,
-                                style: primaryStyle,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              pickedDate(context).then((value) {
-                                if (value != null) {
-                                  returnNotFormatedDate = value;
-                                  setState(() {
-                                    returnDate =
-                                        DateFormat('dd/MM/yyyy').format(value);
-                                  });
-                                }
-                              });
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.symmetric(horizontal: 15),
-                              height: 48,
-                              decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Text(
-                                returnDate,
-                                style: primaryStyle,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              : Container(),
-          isDisplayResponseApiList == true && responseOfApi.isNotEmpty
-              ? Flexible(
-                  child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      padding: EdgeInsets.only(top: 15),
-                      physics: BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: responseOfApi.length,
-                      itemBuilder: (context, index) {
-                        return bookingStatusResponseCard(responseOfApi, index);
-                      }),
-                )
-              : loading == true
-                  ? Expanded(child: Center(child: CircularProgressIndicator()))
-                  : noData == true
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 15),
-                          child: Text(
-                            "No Booking",
+              ],
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            responseOfApi.isNotEmpty || noData == true
+                ? Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            "D Date",
                             style: TextStyle(
-                                color: Colors.grey.shade300,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w500),
+                                color: primaryColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18),
                           ),
-                        )
-                      : Container(),
-          responseOfApi.isNotEmpty || noData == true
-              ? isBtnLoading == false
-                  ? Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 10),
-                      width: double.infinity,
-                      height: 45,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isBtnLoading = true;
-                          });
-                          checkWlanForCheckStatus();
-                        },
-                        child: Text("CHECK STATUS"),
-                      ))
-                  : Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 20),
-                    child: CircularProgressIndicator(),
+                          Text(
+                            "R Date",
+                            style: TextStyle(
+                                color: primaryColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () async {
+                                pickedDate(context).then((value) {
+                                  if (value != null) {
+                                    deliveryNotFormatedDate = value;
+                                    setState(() {
+                                      deliveryDate = DateFormat('dd/MM/yyyy')
+                                          .format(value);
+                                    });
+                                  }
+                                });
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.symmetric(horizontal: 15),
+                                height: 48,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Text(
+                                  deliveryDate,
+                                  style: primaryStyle,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () async {
+                                pickedDate(context).then((value) {
+                                  if (value != null) {
+                                    returnNotFormatedDate = value;
+                                    setState(() {
+                                      returnDate = DateFormat('dd/MM/yyyy')
+                                          .format(value);
+                                    });
+                                  }
+                                });
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.symmetric(horizontal: 15),
+                                height: 48,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Text(
+                                  returnDate,
+                                  style: primaryStyle,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   )
-              : Container()
-        ],
+                : Container(),
+            isDisplayResponseApiList == true && responseOfApi.isNotEmpty
+                ? Flexible(
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        padding: EdgeInsets.only(top: 15),
+                        physics: BouncingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: responseOfApi.length,
+                        itemBuilder: (context, index) {
+                          return bookingStatusResponseCard(
+                              responseOfApi, index);
+                        }),
+                  )
+                : loading == true
+                    ? Expanded(
+                        child: Center(child: CircularProgressIndicator()))
+                    : noData == true
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 15),
+                            child: Text(
+                              "No Booking",
+                              style: TextStyle(
+                                  color: Colors.grey.shade300,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          )
+                        : Container(),
+            responseOfApi.isNotEmpty || noData == true
+                ? isBtnLoading == false
+                    ? Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
+                        width: double.infinity,
+                        height: 45,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              isBtnLoading = true;
+                            });
+                            checkWlanForCheckStatus();
+                          },
+                          child: Text("CHECK STATUS"),
+                        ))
+                    : Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: CircularProgressIndicator(),
+                      )
+                : Container()
+          ],
+        ),
       ),
     );
   }
@@ -288,7 +299,8 @@ class _BookingStatusState extends State<BookingStatus> {
                 getData(value, id ?? 0, token);
               } else {
                 responseOfApi.clear();
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -296,7 +308,7 @@ class _BookingStatusState extends State<BookingStatus> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -311,7 +323,8 @@ class _BookingStatusState extends State<BookingStatus> {
                 checkingStatus(value, token);
                 // updateDetail(value, token, widget.lineId);
               } else {
-                dialog(context, "Connect to Showroom Network");
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -319,7 +332,7 @@ class _BookingStatusState extends State<BookingStatus> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network");
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -390,14 +403,15 @@ class _BookingStatusState extends State<BookingStatus> {
           setState(() {
             isBtnLoading = false;
           });
-          dialog(context, data['msg']);
+          dialog(context, data['msg'], Colors.red.shade300);
         }
       }
     } else {
       setState(() {
         isBtnLoading = false;
       });
-      dialog(context, "Please Select Delivery Date and Return Date!");
+      dialog(context, "Please Select Delivery Date and Return Date!",
+          Colors.red.shade300);
     }
   }
 
