@@ -226,13 +226,16 @@ textFieldWidget(
           filled: true,
           fillColor: color,
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
+            borderSide: BorderSide(color: Colors.transparent),
+            borderRadius: BorderRadius.circular(10)
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
+            borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(10)
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: focusedBorderColor),
+              borderRadius: BorderRadius.circular(10)
           )),
     ),
   );

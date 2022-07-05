@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,17 +12,22 @@ import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/home/home.dart';
 import 'package:gj5_rental/login/add_account.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utils/utils.dart';
 import '../constant/constant.dart';
-import '../myactivity.dart';
 
 class LogInPage extends StatefulWidget {
   final String? savedServerUrl;
   final String? savedUsername;
+  final bool? isAccountEmptyList;
 
-  const LogInPage({Key? key, this.savedServerUrl, this.savedUsername})
+  const LogInPage(
+      {Key? key,
+      this.savedServerUrl,
+      this.savedUsername,
+      this.isAccountEmptyList})
       : super(key: key);
 
   @override
@@ -48,132 +54,228 @@ class _LogInPageState extends State<LogInPage> {
   TextEditingController serverCode = TextEditingController();
   MyGetxController myGetxController = Get.put(MyGetxController());
   final form = GlobalKey<FormState>();
+  List<dynamic> finalData = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffEFF1F3),
       resizeToAvoidBottomInset: false,
-      body: Container(
-        child: SingleChildScrollView(
-          reverse: true,
+      body: SingleChildScrollView(
+        reverse: true,
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+            Color(0xffFB578E).withOpacity(0.25),
+            Color(0xffFEA78D).withOpacity(0.25)
+          ])),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              // SizedBox(
+              //   height: MediaQuery.of(context).padding.top +
+              //       getHeight(0.11, context),
+              //   //318172
+              // ),
+              Container(
                 height: MediaQuery.of(context).padding.top +
-                    getHeight(0.2, context),
-                //318172
-              ),
-              Text(
-                "Log In",
-                style: TextStyle(
-                    fontSize: 38,
-                    fontWeight: FontWeight.w900,
-                    fontFamily: 'Comfortaa'),
-              ),
-              SizedBox(
-                height: getHeight(0.02, context),
-              ),
-              Obx(() => Text(
-                    myGetxController.logInPageError.value,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.red),
-                  )),
-              SizedBox(
-                height: getHeight(0.02, context),
-              ),
-              Form(
-                  key: form,
-                  child: Column(
-                    children: [
-                      textFieldWidget(
-                          "Your server url",
-                          serverCode,
-                          false,
-                          false,
-                          Colors.white,
-                          TextInputType.text,
-                          25,
-                          Colors.white,
-                          1),
-                      SizedBox(
-                        height: 20,
+                    getHeight(0.25, context),
+                padding: const EdgeInsets.only(left: 25),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        FadeInLeft(
+                          child: Text(
+                            "Welcome",
+                            style: TextStyle(
+                                fontSize: 38,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xff223843)),
+                          ),
+                        ),
+                        Lottie.asset('assets/images/login_animation.json',
+                            height: 40, width: 40),
+                      ],
+                    ),
+                    FadeInLeft(
+                      child: Text(
+                        "Sign in to continue!",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xffA5ABB5),
+                        ),
                       ),
-                      textFieldWidget(
-                          "Your username ",
-                          userNameController,
-                          false,
-                          false,
-                          Colors.white,
-                          TextInputType.text,
-                          25,
-                          Colors.white,
-                          1),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      textFieldWidget(
-                          "Your password",
-                          passwordController,
-                          true,
-                          false,
-                          Colors.white,
-                          TextInputType.text,
-                          25,
-                          Colors.white,
-                          1),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 25),
-                        child:
-                            Obx(() => myGetxController.isLoggedIn.value == false
-                                ? SizedBox(
-                                    height: 60,
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          primary: Color(0xff318172),
-                                          onPrimary: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              // SizedBox(
+              //   height: getHeight(0.02, context),
+              // ),
+              Container(
+                decoration: BoxDecoration(
+                    color: Color(0xffFBF8FB),
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30),
+                        topLeft: Radius.circular(30))),
+                height: MediaQuery.of(context).size.height -
+                    (MediaQuery.of(context).padding.top +
+                        getHeight(0.25, context)),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Obx(() => Text(
+                          myGetxController.logInPageError.value,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, color: Colors.red),
+                        )),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Form(
+                        key: form,
+                        child: Column(
+                          children: [
+                            textFieldWidget(
+                                "Server Url",
+                                serverCode,
+                                false,
+                                false,
+                                Colors.white70,
+                                TextInputType.text,
+                                25,
+                                Color(0xffFB578E).withOpacity(0.3),
+                                1),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            textFieldWidget(
+                                "Username ",
+                                userNameController,
+                                false,
+                                false,
+                                Colors.white70,
+                                TextInputType.text,
+                                25,
+                                Color(0xffFB578E).withOpacity(0.3),
+                                1),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            textFieldWidget(
+                                "Password",
+                                passwordController,
+                                true,
+                                false,
+                                Colors.white70,
+                                TextInputType.text,
+                                25,
+                                Color(0xffFB578E).withOpacity(0.3),
+                                1),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 25),
+                              child: Obx(() => myGetxController
+                                          .isLoggedIn.value ==
+                                      false
+                                  ? InkWell(
+                                      onTap: () {
+                                        FocusScope.of(context).unfocus();
+                                        if (form.currentState!.validate()) {
+                                          myGetxController.isLoggedIn.value =
+                                              true;
+                                          checkLogIn(
+                                              serverCode.text,
+                                              userNameController.text,
+                                              passwordController.text);
+                                        }
+                                      },
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              gradient: LinearGradient(colors: [
+                                                Color(0xffFB578E),
+                                                Color(0xffFEA78D)
+                                              ])),
+                                          alignment: Alignment.center,
+                                          height: 60,
+                                          width: double.infinity,
+                                          child: Text(
+                                            "Login",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                letterSpacing: 1,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          )),
+                                    )
+                                  : CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color(0xffFB578E)),
+                                    )),
+                            )
+                          ],
+                        )),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    InkWell(
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+                          finalData.isNotEmpty
+                              ? pushMethod(context, AddAccount())
+                              : ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                      backgroundColor: Color(0xffFB578E),
+                                      duration: Duration(seconds: 2),
+                                      content: Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                        child: Text(
+                                          "Login First",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: 1,
+                                              fontSize: 20),
                                         ),
-                                        onPressed: () {
-                                          FocusScope.of(context).unfocus();
-                                          if (form.currentState!.validate()) {
-                                            myGetxController.isLoggedIn.value =
-                                                true;
-                                            checkLogIn(
-                                                serverCode.text,
-                                                userNameController.text,
-                                                passwordController.text);
-                                          }
-                                        },
-                                        child: Text("LOGIN")))
-                                : CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.teal),
-                                  )),
-                      )
-                    ],
-                  )),
-              SizedBox(
-                height: 15,
+                                      )));
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 25),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: LinearGradient(colors: [
+                                Color(0xffFB578E).withOpacity(0.25),
+                                Color(0xffFEA78D).withOpacity(0.25)
+                              ])),
+                          alignment: Alignment.center,
+                          height: 60,
+                          width: double.infinity,
+                          child: Text(
+                            "Switch Account",
+                            style: TextStyle(
+                              color: Color(0xffF66395),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        )),
+                  ],
+                ),
               ),
-              InkWell(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    pushMethod(context, AddAccount());
-                  },
-                  child: Text(
-                    "switch account",
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20),
-                  )),
-              Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 10))
+              MediaQuery.of(context).viewInsets.bottom > 0
+                  ? Padding(padding: EdgeInsets.only(bottom: 55))
+                  : Container()
             ],
           ),
         ),
@@ -189,7 +291,7 @@ class _LogInPageState extends State<LogInPage> {
           if (value == ConnectivityResult.wifi) {
             getAndSetData(serverUrl, username, password);
           } else {
-            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+            dialog(context, "Connect to Showroom Network", Colors.red.shade300);
             myGetxController.isLoggedIn.value = false;
           }
         });
@@ -256,8 +358,7 @@ class _LogInPageState extends State<LogInPage> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var retreiveData = preferences.getString('accountList');
     if (retreiveData?.isNotEmpty == true) {
-      List<dynamic> finalData = jsonDecode(retreiveData ?? "");
-      print("it is saved account list");
+      finalData = jsonDecode(retreiveData ?? "");
       return finalData;
     }
     return null;

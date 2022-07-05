@@ -190,19 +190,19 @@ class ServiceCard extends StatelessWidget {
                     )
                   ],
                 ),
-                Row(
-                  children: [
-                    Text(
-                      "Receive : ",
-                      style: allCardMainText,
-                    ),
-                    Text(
-                      DateFormat("dd/MM/yyyy")
-                          .format(DateTime.parse(list[index]['out_date'])),
-                      style: returnDateStyle,
-                    )
-                  ],
-                )
+                // Row(
+                //   children: [
+                //     Text(
+                //       "Receive : ",
+                //       style: allCardMainText,
+                //     ),
+                //     Text(
+                //       DateFormat("dd/MM/yyyy")
+                //           .format(DateTime.parse(list[index]['out_date'])),
+                //       style: returnDateStyle,
+                //     )
+                //   ],
+                // )
               ],
             ),
           ],

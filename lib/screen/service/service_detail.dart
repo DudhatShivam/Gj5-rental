@@ -66,7 +66,20 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               ),
             ),
           ),
-          ServiceDetailCard()
+          Expanded(
+              child: Obx(() => myGetxController.serviceLineList.isNotEmpty
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: myGetxController.serviceLineList.length,
+                      itemBuilder: (context, index) {
+                        return ServiceDetailCard(
+                          list: myGetxController.serviceLineList,
+                          index: index,
+                        );
+                      },
+                    )
+                  : Container()))
         ],
       ),
     );

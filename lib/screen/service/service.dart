@@ -194,7 +194,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
   }
 
   getDataOfServiceScreen(apiUrl, token) async {
-    String domain = "[('out_date','!=',False)]";
+    String domain = "[('out_date','=',False)]";
     var params = {
       'filters': domain.toString(),
       'limit': '10',
@@ -210,7 +210,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
       if (data['count'] != 0) {
         myGetxController.serviceList.addAll(data['results']);
       } else {
-        if (receiveScreenOffset <= 0) {
+        if (serviceScreenOffset <= 0) {
           dialog(context, "No Data Found !", Colors.red.shade300);
         }
       }

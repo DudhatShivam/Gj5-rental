@@ -32,20 +32,28 @@ class _AddAccountState extends State<AddAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: finalData.isNotEmpty
-            ? Center(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: finalData.length,
-                    itemBuilder: (context, index) {
-                      print(finalData.length);
-                      return InkWell(
-                        onTap: () {
-                          checkAccountListLoginStatus(index);
-                        },
+        body: Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+        Color(0xffFB578E).withOpacity(0.2),
+        Color(0xffFEA78D).withOpacity(0.15)
+      ])),
+      child: finalData.isNotEmpty
+          ? Center(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: finalData.length,
+                  itemBuilder: (context, index) {
+                    print(finalData.length);
+                    return InkWell(
+                      onTap: () {
+                        checkAccountListLoginStatus(index);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 15),
                         child: Card(
                           child: Container(
-                            padding: EdgeInsets.all(20),
+                            padding: EdgeInsets.all(15),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -55,45 +63,112 @@ class _AddAccountState extends State<AddAccount> {
                                   children: [
                                     Text(
                                       finalData[index]['username'].toString(),
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500),
+                                      style: allCardSubText,
                                     ),
                                     Text(
                                       finalData[index]['branchName'].toString(),
-                                      style: TextStyle(
-                                          color: Colors.grey.shade700,
-                                          fontWeight: FontWeight.w500),
+                                      style: allCardMainText,
                                     ),
                                   ],
                                 ),
                                 SizedBox(
                                   height: 8,
                                 ),
-                                Text(
-                                  finalData[index]['serverUrl'].toString(),
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      finalData[index]['serverUrl'].toString(),
+                                      style: allCardMainText,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        confirmationDialogForDeleteAccount(
+                                            index);
+                                      },
+                                      child: Icon(
+                                        Icons.delete,
+                                        size: 30,
+                                        color: Colors.blue,
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      );
-                    }),
-              )
-            : Container(
-                child: Center(
-                  child: Text(
-                    "No Account added",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 21),
-                  ),
+                      ),
+                    );
+                  }),
+            )
+          : Container(
+              child: Center(
+                child: Text(
+                  "No Account added",
+                  style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 23),
                 ),
-              ));
+              ),
+            ),
+    ));
+  }
+
+  confirmationDialogForDeleteAccount(int index) {
+    print(index);
+    return showDialog(
+        context: context,
+        builder: (_) {
+          return Dialog(
+            alignment: Alignment.center,
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Sure , Are you want to Delete ?",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 19,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green.shade300),
+                          onPressed: () {
+                            deleteAccount(index);
+                            Navigator.pop(context);
+                          },
+                          child: Text("Ok")),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red.shade300),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancel")),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   getAccountData() async {
@@ -108,24 +183,22 @@ class _AddAccountState extends State<AddAccount> {
 
   Future<void> checkAccountListLoginStatus(int index) async {
     String serverUrl = finalData[index]['serverUrl'];
-    String dbName = finalData[index]['dbName'];
     String username = finalData[index]['name'];
     String password = finalData[index]['password'];
-    String branchName = finalData[index]['branchName'];
     try {
       if (serverUrl.startsWith("192")) {
         showConnectivity().then((result) async {
           if (result == ConnectivityResult.wifi) {
             checkAccountData(index, serverUrl, username, password);
           } else {
-            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+            dialog(context, "Connect to Showroom Network", Colors.red.shade300);
           }
         });
       } else {
         checkAccountData(index, serverUrl, username, password);
       }
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   }
 
@@ -179,7 +252,7 @@ class _AddAccountState extends State<AddAccount> {
       }
     } on SocketException catch (err) {
       print(err);
-      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   }
 
@@ -200,6 +273,18 @@ class _AddAccountState extends State<AddAccount> {
       }
     } else {
       return true;
+    }
+  }
+
+  Future<void> deleteAccount(int index) async {
+    setState(() {
+      finalData.removeAt(index);
+    });
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var list = jsonEncode(finalData);
+    preferences.setString('accountList', list);
+    if (finalData.isEmpty) {
+      pushRemoveUntilMethod(context, LogInPage());
     }
   }
 }

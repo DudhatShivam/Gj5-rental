@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gj5_rental/Utils/utils.dart';
+import 'package:intl/intl.dart';
 
-class ServiceDetailCard extends StatefulWidget {
-  const ServiceDetailCard({Key? key}) : super(key: key);
+import '../../Utils/utils.dart';
 
-  @override
-  State<ServiceDetailCard> createState() => _ServiceDetailCardState();
-}
+class ServiceDetailCard extends StatelessWidget {
+  final List list;
+  final int index;
 
-class _ServiceDetailCardState extends State<ServiceDetailCard> {
+  const ServiceDetailCard({Key? key, required this.list, required this.index})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,11 +37,11 @@ class _ServiceDetailCardState extends State<ServiceDetailCard> {
                   child: Row(
                     children: [
                       Text(
-                        "[ CH-67 ] ",
+                        "[${list[index]['product_id']['default_code']}] ",
                         style: allCardSubText,
                       ),
                       Text(
-                        "Zery Green Color Hathivalu Work",
+                        list[index]['product_id']['name'],
                         style: allCardSubText,
                       )
                     ],
@@ -62,7 +63,7 @@ class _ServiceDetailCardState extends State<ServiceDetailCard> {
                     style: allCardMainText,
                   ),
                   Text(
-                    "1",
+                    '${double.parse(list[index]['quantity'].toString()).toInt()}',
                     style: allCardSubText,
                   )
                 ],
@@ -74,7 +75,7 @@ class _ServiceDetailCardState extends State<ServiceDetailCard> {
                     style: allCardMainText,
                   ),
                   Text(
-                    "2",
+                    '${double.parse(list[index]['receive_qty'].toString()).toInt()}',
                     style: allCardSubText,
                   )
                 ],
@@ -94,7 +95,7 @@ class _ServiceDetailCardState extends State<ServiceDetailCard> {
                     style: allCardMainText,
                   ),
                   Text(
-                    "200",
+                    '\u{20B9}${double.parse(list[index]['charge'].toString()).toInt()}',
                     style: allCardSubText,
                   )
                 ],
@@ -106,7 +107,7 @@ class _ServiceDetailCardState extends State<ServiceDetailCard> {
                     style: allCardMainText,
                   ),
                   Text(
-                    "100",
+                    '\u{20B9}${double.parse(list[index]['amount'].toString()).toInt()}',
                     style: allCardSubText,
                   )
                 ],
@@ -122,11 +123,13 @@ class _ServiceDetailCardState extends State<ServiceDetailCard> {
               Row(
                 children: [
                   Text(
-                    "D. Date : ",
+                    "Send : ",
                     style: allCardMainText,
                   ),
                   Text(
-                    "deliveryDate",
+                    DateFormat("dd/MM/yyyy")
+                            .format(DateTime.parse(list[index]['in_date'])) ??
+                        "",
                     style: deliveryDateStyle,
                   )
                 ],
@@ -134,11 +137,13 @@ class _ServiceDetailCardState extends State<ServiceDetailCard> {
               Row(
                 children: [
                   Text(
-                    "R. Date : ",
+                    "Receive : ",
                     style: allCardMainText,
                   ),
                   Text(
-                    "returnDate",
+                    DateFormat("dd/MM/yyyy")
+                            .format(DateTime.parse(list[index]['out_date'])) ??
+                        "",
                     style: returnDateStyle,
                   )
                 ],

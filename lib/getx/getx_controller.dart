@@ -79,5 +79,9 @@ class MyGetxController extends GetxController {
   RxList<dynamic> particularServiceList=[].obs;
   RxList<dynamic> serviceLineList=[].obs;
 
+  //ServiceLineScreen
+  RxList<dynamic> serviceLineScreenList=[].obs;
+
+
 
 }
