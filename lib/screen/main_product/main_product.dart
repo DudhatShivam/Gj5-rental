@@ -12,6 +12,8 @@ import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:gj5_rental/screen/main_product/main_product_detail_screen.dart';
 import 'package:http/http.dart' as http;
 
+import '../../constant/constant.dart';
+
 class MainProductScreen extends StatefulWidget {
   const MainProductScreen({Key? key}) : super(key: key);
 
@@ -33,9 +35,7 @@ class _MainProductScreenState extends State<MainProductScreen> {
     return Scaffold(
         body: Column(
       children: [
-        SizedBox(
-          height: MediaQuery.of(context).padding.top + 10,
-        ),
+        allScreenInitialSizedBox(context),
         ScreenAppBar(
           screenName: "Product Type",
         ),
@@ -76,9 +76,7 @@ class _MainProductScreenState extends State<MainProductScreen> {
                 ),
               )
             : Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
+                child: CenterCircularProgressIndicator(),
               )),
       ],
     ));

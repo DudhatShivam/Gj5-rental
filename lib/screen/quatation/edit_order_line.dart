@@ -89,45 +89,8 @@ class _EditOrderLineState extends State<EditOrderLine> {
           behavior: HitTestBehavior.translucent,
           child: Column(
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).padding.top + 10,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        // pushRemoveUntilMethod(
-                        //     context,
-                        //     QuatationDetailScreen(
-                        //       id: widget.orderId,
-                        //       isFromAnotherScreen: false,
-                        //     ));
-                      },
-                      child: FadeInLeft(
-                        child: Icon(
-                          Icons.arrow_back,
-                          size: 30,
-                          color: Colors.teal,
-                        ),
-                      )),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  FadeInLeft(
-                    child: Text(
-                      "Edit Order Line",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 23,
-                          color: Colors.teal),
-                    ),
-                  ),
-                ],
-              ),
+              allScreenInitialSizedBox(context),
+              ScreenAppBar(screenName: "Edit Order Line"),
               SizedBox(
                 height: 15,
               ),
@@ -138,16 +101,13 @@ class _EditOrderLineState extends State<EditOrderLine> {
                     Text(
                       "Code  : ",
                       style: TextStyle(
-                          color: Colors.teal,
+                          color: primary2Color,
                           fontWeight: FontWeight.w500,
                           fontSize: 18),
                     ),
                     Text(
                       widget.productCode.toString(),
-                      style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18),
+                      style: allCardMainText,
                     ),
                   ],
                 ),
@@ -163,17 +123,14 @@ class _EditOrderLineState extends State<EditOrderLine> {
                     Text(
                       "Name : ",
                       style: TextStyle(
-                          color: Colors.teal,
+                          color: primary2Color,
                           fontWeight: FontWeight.w500,
                           fontSize: 18),
                     ),
                     Expanded(
                       child: Text(
                         widget.productName.toString(),
-                        style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18),
+                        style: allCardMainText,
                       ),
                     ),
                   ],
@@ -187,17 +144,11 @@ class _EditOrderLineState extends State<EditOrderLine> {
                 children: [
                   Text(
                     "D Date",
-                    style: TextStyle(
-                        color: primaryColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18),
+                    style: allCardSubText,
                   ),
                   Text(
                     "R Date",
-                    style: TextStyle(
-                        color: primaryColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18),
+                    style: allCardSubText,
                   ),
                 ],
               ),
@@ -335,7 +286,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                         controller: productControllers[index],
                                         suggestionsDecoration: BoxDecoration(
                                           border: Border.all(
-                                              color: Colors.teal.shade400),
+                                              color: primary2ColorShade400),
                                         ),
                                         searchStyle: primaryStyle,
                                         searchInputDecoration: InputDecoration(
@@ -378,7 +329,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                             ),
                                             focusedBorder: OutlineInputBorder(
                                               borderSide: BorderSide(
-                                                  color: Colors.teal),
+                                                  color: primary2Color),
                                             )),
                                         onSuggestionTap: (val) {
                                           FocusScope.of(context).unfocus();
@@ -436,7 +387,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                           ),
                         );
                       })
-                  : CircularProgressIndicator(),
+                  : CenterCircularProgressIndicator(),
               subProductList.length == wholeSubProductList.length
                   ? Container(
                       width: double.infinity,
@@ -444,6 +395,8 @@ class _EditOrderLineState extends State<EditOrderLine> {
                       margin: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 25),
                       child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: primary2Color),
                           onPressed: () {
                             FocusScope.of(context).unfocus();
                             updatedDictionary.clear();

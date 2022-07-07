@@ -82,7 +82,7 @@ class ServiceCard extends StatelessWidget {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Text(
-                      list[index]['service_partner_id']['name'],
+                      list[index]['service_partner_id']['name'] ?? "",
                       style: allCardSubText,
                     ),
                   ),
@@ -176,33 +176,37 @@ class ServiceCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      "Send : ",
-                      style: allCardMainText,
-                    ),
-                    Text(
-                      DateFormat("dd/MM/yyyy")
-                              .format(DateTime.parse(list[index]['in_date'])) ??
-                          "",
-                      style: deliveryDateStyle,
-                    )
-                  ],
-                ),
-                // Row(
-                //   children: [
-                //     Text(
-                //       "Receive : ",
-                //       style: allCardMainText,
-                //     ),
-                //     Text(
-                //       DateFormat("dd/MM/yyyy")
-                //           .format(DateTime.parse(list[index]['out_date'])),
-                //       style: returnDateStyle,
-                //     )
-                //   ],
-                // )
+                list[index]['in_date'] != null
+                    ? Row(
+                        children: [
+                          Text(
+                            "Send : ",
+                            style: allCardMainText,
+                          ),
+                          Text(
+                            DateFormat("dd/MM/yyyy").format(
+                                    DateTime.parse(list[index]['in_date'])) ??
+                                "",
+                            style: deliveryDateStyle,
+                          )
+                        ],
+                      )
+                    : Container(),
+                list[index]['out_date'] != null
+                    ? Row(
+                        children: [
+                          Text(
+                            "Receive : ",
+                            style: allCardMainText,
+                          ),
+                          Text(
+                            DateFormat("dd/MM/yyyy").format(
+                                DateTime.parse(list[index]['out_date'])),
+                            style: returnDateStyle,
+                          )
+                        ],
+                      )
+                    : Container()
               ],
             ),
           ],

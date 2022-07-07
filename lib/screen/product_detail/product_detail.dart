@@ -8,6 +8,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:http/http.dart' as http;
 import '../../Utils/utils.dart';
+import '../../constant/constant.dart';
 import '../Order_line/orderline_constant/order_line_card.dart';
 import '../booking status/booking_status.dart';
 
@@ -32,9 +33,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + 10,
-          ),
+          allScreenInitialSizedBox(context),
           ScreenAppBar(
             screenName: "Product Detail",
           ),

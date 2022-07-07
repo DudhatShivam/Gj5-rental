@@ -62,14 +62,14 @@ class _DialogSelectSubProductState extends State<DialogSelectSubProduct> {
                         Text(
                           "MainProduct",
                           style: TextStyle(
-                              color: Colors.teal,
+                              color: primary2Color,
                               fontWeight: FontWeight.w500,
                               fontSize: 20),
                         ),
                         Row(
                           children: [
                             Checkbox(
-                              activeColor: Colors.teal,
+                              activeColor: primary2Color,
                               value: isChecked,
                               onChanged: (value) {
                                 setState(() {
@@ -93,7 +93,7 @@ class _DialogSelectSubProductState extends State<DialogSelectSubProduct> {
                         Text(
                           "SubProduct",
                           style: TextStyle(
-                              color: Colors.teal,
+                              color: primary2Color,
                               fontWeight: FontWeight.w500,
                               fontSize: 20),
                         ),
@@ -110,7 +110,7 @@ class _DialogSelectSubProductState extends State<DialogSelectSubProduct> {
                               return Row(
                                 children: [
                                   Checkbox(
-                                    activeColor: Colors.teal,
+                                    activeColor: primary2Color,
                                     value: widget.subProductList[index]
                                         ['isChecked'],
                                     onChanged: (value) {
@@ -180,7 +180,6 @@ class _DialogSelectSubProductState extends State<DialogSelectSubProduct> {
         }
       }
     });
-
   }
 
   addMainProductInList() {

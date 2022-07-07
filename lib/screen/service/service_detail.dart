@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:animate_do/animate_do.dart';
+import 'package:gj5_rental/screen/service/service.dart';
 import 'package:gj5_rental/screen/service/service_card.dart';
 import 'package:gj5_rental/screen/service/service_detail_card.dart';
 import 'package:http/http.dart' as http;
@@ -13,11 +15,14 @@ import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 
 import '../../Utils/utils.dart';
+import '../../constant/constant.dart';
 
 class ServiceDetailScreen extends StatefulWidget {
   final int serviceLineId;
+  final bool? isFromAnotherScreen;
 
-  const ServiceDetailScreen({Key? key, required this.serviceLineId})
+  const ServiceDetailScreen(
+      {Key? key, required this.serviceLineId, this.isFromAnotherScreen})
       : super(key: key);
 
   @override
@@ -36,51 +41,73 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + 10,
-          ),
-          ScreenAppBar(screenName: "Service"),
-          Obx(() => myGetxController.particularServiceList.isNotEmpty
-              ? ServiceCard(
-                  list: myGetxController.particularServiceList,
-                  index: 0,
-                  backGroundColor: Colors.grey.withOpacity(0.1),
-                )
-              : Container()),
-          SizedBox(
-            width: 10,
-          ),
-          Padding(
-            padding: EdgeInsets.all(15),
-            child: FadeInLeft(
-              child: Text(
-                "Service Detail :",
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 23,
-                    color: Colors.teal),
+    return WillPopScope(
+      onWillPop: () => pushFunction(),
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            allScreenInitialSizedBox(context),
+            Row(
+              children: [
+                InkWell(
+                    onTap: () {
+                      pushFunction();
+                    },
+                    child: FadeInLeft(
+                      child: backArrowIcon,
+                    )),
+                SizedBox(
+                  width: 10,
+                ),
+                FadeInLeft(
+                  child: Text(
+                    "Service",
+                    style: pageTitleTextStyle,
+                  ),
+                ),
+              ],
+            ),
+            Obx(() => myGetxController.particularServiceList.isNotEmpty
+                ? ServiceCard(
+                    list: myGetxController.particularServiceList,
+                    index: 0,
+                    backGroundColor: Colors.grey.withOpacity(0.1),
+                  )
+                : Container()),
+            SizedBox(
+              width: 10,
+            ),
+            Padding(
+              padding: EdgeInsets.all(15),
+              child: FadeInLeft(
+                child: Text(
+                  "Service Detail :",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 23,
+                      color: primary2Color),
+                ),
               ),
             ),
-          ),
-          Expanded(
-              child: Obx(() => myGetxController.serviceLineList.isNotEmpty
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: myGetxController.serviceLineList.length,
-                      itemBuilder: (context, index) {
-                        return ServiceDetailCard(
-                          list: myGetxController.serviceLineList,
-                          index: index,
-                        );
-                      },
-                    )
-                  : Container()))
-        ],
+            Expanded(
+                child: Obx(() => myGetxController.serviceLineList.isNotEmpty
+                    ? ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: myGetxController.serviceLineList.length,
+                        itemBuilder: (context, index) {
+                          return ServiceDetailCard(
+                            list: myGetxController.serviceLineList,
+                            index: index,
+                            isServiceLineSceen: false,
+                          );
+                        },
+                      )
+                    : Container()))
+          ],
+        ),
       ),
     );
   }
@@ -119,5 +146,12 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     } else {
       dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
+  }
+
+  pushFunction() {
+    if (widget.isFromAnotherScreen == true) {
+      myGetxController.serviceList.clear();
+    }
+    pushMethod(context, ServiceScreen());
   }
 }

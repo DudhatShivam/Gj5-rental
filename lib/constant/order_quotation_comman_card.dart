@@ -108,10 +108,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                       ),
                       child: Text(
                         list[index]['state'],
-                        style: TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 17),
+                        style: deliveryDateStyle,
                       ),
                     )
                   ],

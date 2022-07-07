@@ -41,9 +41,8 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + 10,
-          ),
+          allScreenInitialSizedBox(context),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -56,18 +55,9 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                 },
                 child: Padding(
                     padding: EdgeInsets.only(right: 15),
-                    child: FadeInRight(
-                      child: Icon(
-                        Icons.refresh,
-                        size: 28,
-                        color: Colors.teal,
-                      ),
-                    )),
+                    child: FadeInRight(child: refreshIcon)),
               )
             ],
-          ),
-          SizedBox(
-            height: 10,
           ),
           Obx(
             () => myGetxController.receiveParticularOrderList.isNotEmpty

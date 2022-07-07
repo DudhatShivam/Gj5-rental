@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' show Platform, SocketException, exit;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'dart:math';
@@ -28,7 +29,7 @@ import '../screen/order/order_detail.dart';
 import '../screen/quatation/edit_order.dart';
 import '../screen/quatation/quotation_const/quotation_constant.dart';
 
-int editQuotationCount=0;
+int editQuotationCount = 0;
 
 ExitDialog(BuildContext context) {
   return showGeneralDialog(
@@ -226,17 +227,14 @@ textFieldWidget(
           filled: true,
           fillColor: color,
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-            borderRadius: BorderRadius.circular(10)
-          ),
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(10)),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(10)
-          ),
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.circular(10)),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: focusedBorderColor),
-              borderRadius: BorderRadius.circular(10)
-          )),
+              borderSide: BorderSide(color: focusedBorderColor),
+              borderRadius: BorderRadius.circular(10))),
     ),
   );
 }
@@ -275,7 +273,7 @@ numberValidatorTextfield(
           borderSide: BorderSide(color: Colors.white),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.teal.shade400),
+          borderSide: BorderSide(color: primary2ColorShade400),
         )),
   );
 }
@@ -535,25 +533,32 @@ Future getDraftOrderData(
     Map<String, dynamic> data = await jsonDecode(response.body);
     if (data['count'] != 0) {
       myGetxController.quotationData.addAll(data['results']);
-      print(myGetxController.quotationData.length);
     } else {
       if (quotationOffset <= 0) {
         dialog(context, "No Data Found !", Colors.red.shade300);
       }
     }
-
     if (id != 0) {
-      for (int i = 0; i < myGetxController.quotationData.length; i++) {
-        if (myGetxController.quotationData[i]['id'] == id) {
-          pushMethod(
-              context,
-              QuatationDetailScreen(
-                id: myGetxController.quotationData[i]['id'],
-                isFromAnotherScreen: true,
-                isFromEditScreen: false,
-              ));
-        }
-      }
+      pushMethod(
+          context,
+          QuatationDetailScreen(
+            id: id,
+            isFromAnotherScreen: true,
+            isFromEditScreen: false,
+          ));
+      // for (int i = 0; i < myGetxController.quotationData.length; i++) {
+      //   if (myGetxController.quotationData[i]['id'] == id) {
+      //     SchedulerBinding.instance.addPostFrameCallback((_) {
+      //       pushMethod(
+      //           context,
+      //           QuatationDetailScreen(
+      //             id: myGetxController.quotationData[i]['id'],
+      //             isFromAnotherScreen: true,
+      //             isFromEditScreen: false,
+      //           ));
+      //     });
+      //   }
+      // }
     }
   } catch (e) {
     dialog(context, "Something Went Wrong !", Colors.red.shade300);
@@ -1036,9 +1041,28 @@ orderDetailContainer() {
     child: FadeInLeft(
       child: Text(
         "Order Details : ",
-        style: TextStyle(
-            color: primaryColor, fontWeight: FontWeight.w500, fontSize: 21),
+        style: pageTitleTextStyle,
       ),
     ),
+  );
+}
+
+drawerFilterContainer(String texts, BuildContext context) {
+  return Padding(
+    padding: EdgeInsets.symmetric(
+        horizontal: 10, vertical: getHeight(0.011, context)),
+    child: Text(
+      texts,
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+  );
+}
+
+allScreenInitialSizedBox(BuildContext context) {
+  return SizedBox(
+    height: MediaQuery.of(context).padding.top + 10,
   );
 }

@@ -19,7 +19,7 @@ class MyGetxController extends GetxController {
 
   //orderScreen
   RxList<dynamic> orderData = [].obs;
-  RxList<dynamic> filteredOrderList=[].obs;
+  RxList<dynamic> filteredOrderList = [].obs;
   RxList<dynamic> orderLineList = [].obs;
   RxList<dynamic> particularOrderData = [].obs;
   RxList<dynamic> orderLineProductList = [].obs;
@@ -28,7 +28,7 @@ class MyGetxController extends GetxController {
   //QuotationScreen
 
   RxList<dynamic> quotationData = [].obs;
-  RxList<dynamic> filteredQuotationData=[].obs;
+  RxList<dynamic> filteredQuotationData = [].obs;
   RxInt badgeText = 0.obs;
   RxList<dynamic> quotationCartList = [].obs;
   RxList<dynamic> quotationOrder = [].obs;
@@ -43,45 +43,49 @@ class MyGetxController extends GetxController {
 
   //delivery screen
   RxList<dynamic> deliveryScreenOrderList = [].obs;
-  RxList<dynamic> deliveryScreenFilteredOrderList=[].obs;
+  RxList<dynamic> deliveryScreenFilteredOrderList = [].obs;
   RxList<dynamic> deliveryScreenParticularOrder = [].obs;
   RxList<dynamic> deliveryScreenParticularOrderLineList = [].obs;
   RxList<dynamic> deliveryScreenParticularOrderLineProductList = [].obs;
   RxList<dynamic> deliveryScreenParticularOrderLineExtraProductList = [].obs;
   RxList<dynamic> selectedOrderLineList = [].obs;
-  RxList<dynamic> selectedOrderLineSubProductList=[].obs;
+  RxList<dynamic> selectedOrderLineSubProductList = [].obs;
 
   //OrderLine Screen
   RxList<dynamic> orderLineScreenList = [].obs;
   RxList<dynamic> orderLineScreenProductList = [].obs;
   RxBool noDataInOrderLine = false.obs;
-  RxList<dynamic> groupByList=[].obs;
-  RxList<dynamic> groupByDetailList=[].obs;
-  RxList<dynamic> filteredListOrderLine=[].obs;
-  RxBool isShowFilteredDataInOrderLine=false.obs;
+  RxList<dynamic> groupByList = [].obs;
+  RxList<dynamic> groupByDetailList = [].obs;
+  RxList<dynamic> filteredListOrderLine = [].obs;
+  RxBool isShowFilteredDataInOrderLine = false.obs;
 
   //productDetail screen
   RxList<dynamic> productDetailList = [].obs;
 
-
   //ReceiveScreen
-  RxList<dynamic> receiveOrderList=[].obs;
-  RxList<dynamic> receiveFilteredOrderList=[].obs;
-  RxList<dynamic> receiveParticularOrderList=[].obs;
-  RxList<dynamic> receiveOrderLineList=[].obs;
-  RxList<dynamic> receiveSubProductList=[].obs;
-  RxList<dynamic> receiveExtraProductList=[].obs;
-  RxList<dynamic> receiveSelectedOrderLineList=[].obs;
-  RxList<dynamic> receiveSelectedSubProductList=[].obs;
+  RxList<dynamic> receiveOrderList = [].obs;
+  RxList<dynamic> receiveFilteredOrderList = [].obs;
+  RxList<dynamic> receiveParticularOrderList = [].obs;
+  RxList<dynamic> receiveOrderLineList = [].obs;
+  RxList<dynamic> receiveSubProductList = [].obs;
+  RxList<dynamic> receiveExtraProductList = [].obs;
+  RxList<dynamic> receiveSelectedOrderLineList = [].obs;
+  RxList<dynamic> receiveSelectedSubProductList = [].obs;
 
   //ServiceScreen
-  RxList<dynamic> serviceList=[].obs;
-  RxList<dynamic> particularServiceList=[].obs;
-  RxList<dynamic> serviceLineList=[].obs;
+  RxList<dynamic> serviceList = [].obs;
+  RxList<dynamic> serviceFilteredList = [].obs;
+  RxBool isShowServiceFilteredList = false.obs;
+  RxBool noDataInServiceScreen=false.obs;
+  RxList<dynamic> particularServiceList = [].obs;
+  RxList<dynamic> serviceLineList = [].obs;
 
   //ServiceLineScreen
-  RxList<dynamic> serviceLineScreenList=[].obs;
-
-
-
+  RxList<dynamic> serviceLineScreenList = [].obs;
+  RxList<dynamic> serviceLineFilteredList = [].obs;
+  RxList<dynamic> serviceLineGroupByList = [].obs;
+  RxBool serviceLineIsShowFilteredData = false.obs;
+  RxBool serviceLineIsShowGroupByData = false.obs;
+  RxBool serviceLineIsExpand=false.obs;
 }

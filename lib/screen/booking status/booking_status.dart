@@ -61,9 +61,7 @@ class _BookingStatusState extends State<BookingStatus> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).padding.top + 10,
-            ),
+            allScreenInitialSizedBox(context),
             ScreenAppBar(screenName: "Booking Status"),
             SizedBox(
               height: 10,
@@ -77,7 +75,7 @@ class _BookingStatusState extends State<BookingStatus> {
                           controller: productSearchController,
                           maxSuggestionsInViewPort: 8,
                           suggestionsDecoration: BoxDecoration(
-                            border: Border.all(color: Colors.teal.shade400),
+                            border: Border.all(color: primary2ColorShade400),
                           ),
                           searchStyle: primaryStyle,
                           searchInputDecoration: InputDecoration(
@@ -105,7 +103,6 @@ class _BookingStatusState extends State<BookingStatus> {
                                         )
                                       : null,
                               hintText: "Search Product",
-
                               hintStyle: TextStyle(color: Colors.grey.shade400),
                               filled: true,
                               fillColor: Colors.grey.withOpacity(0.1),
@@ -116,7 +113,7 @@ class _BookingStatusState extends State<BookingStatus> {
                                 borderSide: BorderSide(color: Colors.white),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.teal),
+                                borderSide: BorderSide(color: primary2Color),
                               )),
                           onSuggestionTap: (val) {
                             getResponseProductApiList();
@@ -270,7 +267,7 @@ class _BookingStatusState extends State<BookingStatus> {
                         ))
                     : Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
-                        child: CircularProgressIndicator(),
+                        child: CenterCircularProgressIndicator(),
                       )
                 : Container()
           ],
@@ -450,11 +447,7 @@ class ScreenAppBar extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: FadeInLeft(
-                child: Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                  color: Colors.teal,
-                ),
+                child: backArrowIcon,
               )),
           SizedBox(
             width: 10,
@@ -462,10 +455,7 @@ class ScreenAppBar extends StatelessWidget {
           FadeInLeft(
             child: Text(
               screenName.toString(),
-              style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 23,
-                  color: Colors.teal),
+              style: pageTitleTextStyle,
             ),
           ),
         ],

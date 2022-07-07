@@ -1,17 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
-import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gj5_rental/screen/quatation/quatation.dart';
 import 'package:http/http.dart' as http;
-
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import 'package:intl/intl.dart';
@@ -46,6 +43,10 @@ class _CreateOrderState extends State<CreateOrder> {
   @override
   void initState() {
     super.initState();
+    nameController.text = "dishant";
+    numberController.text = "8511510103";
+    number2Controller.text = "8866382553";
+    addressController.text = "varachha";
   }
 
   @override
@@ -56,9 +57,7 @@ class _CreateOrderState extends State<CreateOrder> {
         reverse: true,
         child: Column(
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).padding.top + 10,
-            ),
+            allScreenInitialSizedBox(context),
             ScreenAppBar(screenName: "Create Order"),
             SizedBox(
               height: 25,
@@ -216,11 +215,7 @@ class _CreateOrderState extends State<CreateOrder> {
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.calendar_today,
-                            color: Colors.grey.shade400,
-                            size: 22,
-                          ),
+                          calenderIcon,
                           SizedBox(
                             width: 10,
                           ),
@@ -277,11 +272,7 @@ class _CreateOrderState extends State<CreateOrder> {
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.calendar_today,
-                            color: Colors.grey.shade400,
-                            size: 22,
-                          ),
+                          calenderIcon,
                           SizedBox(
                             width: 10,
                           ),
@@ -303,6 +294,8 @@ class _CreateOrderState extends State<CreateOrder> {
                     margin: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 25),
                     child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: primary2Color),
                         onPressed: () {
                           if (_formKey.currentState?.validate() == true &&
                               nameController.text.isNotEmpty &&
@@ -315,7 +308,7 @@ class _CreateOrderState extends State<CreateOrder> {
                   )
                 : Padding(
                     padding: EdgeInsets.all(25),
-                    child: CircularProgressIndicator(),
+                    child: CenterCircularProgressIndicator(),
                   ),
             Padding(
                 padding: EdgeInsets.only(
@@ -339,8 +332,6 @@ class _CreateOrderState extends State<CreateOrder> {
               .isBefore(returnNotFormatedDate ?? DateTime.now()) ==
           true) {
         checkWifiForCreateOrder();
-        // saveInCart();
-        // myGetxController.badgeText.value++;
       } else {
         setState(() {
           isValidRDate = false;
@@ -352,22 +343,6 @@ class _CreateOrderState extends State<CreateOrder> {
     }
   }
 
-  // Future<void> saveInCart() async {
-  //   Map data = {
-  //     'name': nameController.text,
-  //     'number': numberController.text,
-  //     'address': addressController.text,
-  //     'remark': remarkController.text,
-  //     'ddate': deliveryDate,
-  //     'rdate': returnDate
-  //   };
-  //   myGetxController.quotationCartList.add(data);
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   preferences
-  //       .setString("cartList", jsonEncode(myGetxController.quotationCartList))
-  //       .whenComplete(() => Navigator.pop(context));
-  // }
-
   checkWifiForCreateOrder() {
     getStringPreference('apiUrl').then((value) async {
       try {
@@ -377,7 +352,8 @@ class _CreateOrderState extends State<CreateOrder> {
               if (result == ConnectivityResult.wifi) {
                 createOrder(value, token.toString());
               } else {
-                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -385,7 +361,7 @@ class _CreateOrderState extends State<CreateOrder> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -420,9 +396,16 @@ class _CreateOrderState extends State<CreateOrder> {
             body: jsonEncode(body));
 
     Map datas = jsonDecode(response.body);
-    getDraftOrderData(context, apiUrl, token, datas['id']);
     setState(() {
       isBtnLoading = false;
     });
+    if (response.statusCode == 200) {
+      myGetxController.quotationData.clear();
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        pushMethod(context, QuatationScreen());
+      });
+    } else {
+      dialog(context, "Something Went Wrong !", Colors.red.shade300);
+    }
   }
 }

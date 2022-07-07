@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -27,8 +26,8 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
   MyGetxController myGetxController = Get.find();
   TextEditingController codeController = TextEditingController();
   TextEditingController productNameController = TextEditingController();
-  final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
   bool noData = false;
+  bool isExpandSearch = false;
 
   @override
   void initState() {
@@ -41,67 +40,58 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + 10,
-          ),
-          ExpansionTileCard(
-            trailing: FadeInRight(
-              child: Icon(
-                Icons.search,
-                size: 30,
-                color: Colors.teal,
-              ),
-            ),
-            key: findCard,
-            title: Row(
+          allScreenInitialSizedBox(context),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: FadeInLeft(
-                            child: Icon(
-                              Icons.arrow_back,
-                              size: 30,
-                              color: Colors.teal,
-                            ),
-                          )),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      FadeInLeft(
-                        child: Text(
-                          "Product",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 23,
-                              color: Colors.teal),
-                        ),
-                      ),
-                    ],
-                  ),
+                Row(
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: FadeInLeft(child: backArrowIcon)),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    FadeInLeft(
+                      child: Text("Product", style: pageTitleTextStyle),
+                    ),
+                  ],
                 ),
-                InkWell(
-                    onTap: () {
-                      checkWifiForgetData(false);
-                    },
-                    child: FadeInRight(
-                        child:
-                            Icon(Icons.refresh, size: 30, color: Colors.teal))),
+                Row(
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          checkWifiForgetData(false);
+                        },
+                        child: FadeInRight(
+                            child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: refreshIcon,
+                        ))),
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            isExpandSearch = !isExpandSearch;
+                          });
+                        },
+                        child: isExpandSearch == false
+                            ? FadeInRight(child: searchIcon)
+                            : cancelIcon)
+                  ],
+                )
               ],
             ),
-            elevation: 0,
-            shadowColor: Colors.white,
-            initialElevation: 0,
-            borderRadius: BorderRadius.circular(0),
-            baseColor: Colors.transparent,
-            expandedColor: Colors.transparent,
-            children: [
-              Column(
+          ),
+          AnimatedSize(
+            duration: Duration(milliseconds: 500),
+            child: Container(
+              height: isExpandSearch ? null : 0,
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
@@ -109,10 +99,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     child: Text(
                       "Find Product :",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20,
-                          color: Colors.blueGrey),
+                      style: drawerTextStyle,
                     ),
                   ),
                   Container(
@@ -168,27 +155,33 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 8,
-                  ),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          findCard.currentState?.toggleExpansion();
-                          checkWifiForgetData(true);
-                        },
-                        child: Text("Search")),
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: primary2Color),
+                          onPressed: () {
+                            setState(() {
+                              isExpandSearch=false;
+                            });
+                            checkWifiForgetData(true);
+                          },
+                          child: Text("Search")),
+                    ),
                   ),
                 ],
-              )
-            ],
+              ),
+            ),
           ),
           Obx(() => myGetxController.mainProductDetailList.isNotEmpty
               ? Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: isExpandSearch == false
+                        ? EdgeInsets.symmetric(vertical: 15)
+                        : EdgeInsets.zero,
                     itemCount: myGetxController.mainProductDetailList.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
@@ -220,11 +213,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                                         myGetxController
                                                 .mainProductDetailList[index]
                                             ['default_code'],
-                                        style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w700,
-                                            color:
-                                                primaryColor.withOpacity(0.9)),
+                                        style: allCardSubText,
                                       ),
                                     )
                                   ],
@@ -243,10 +232,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                                             .mainProductDetailList[index]
                                                 ['rent']
                                             .toString(),
-                                        style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.green),
+                                        style: deliveryDateStyle,
                                       ),
                                     )
                                   ],
@@ -267,7 +253,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                                     child: Text(
                                       myGetxController
                                           .mainProductDetailList[index]['name'],
-                                      style: primaryStyle,
+                                      style: allCardSubText,
                                     ),
                                   ),
                                 )
@@ -291,7 +277,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                       ),
                     ))
                   : Expanded(
-                      child: Center(child: CircularProgressIndicator()),
+                      child: CenterCircularProgressIndicator(),
                     )),
         ],
       ),
@@ -309,7 +295,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                 ? getMainProductList(apiUrl, accessToken)
                 : searchProduct(apiUrl, accessToken);
           } else {
-            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+            dialog(context, "Connect to Showroom Network", Colors.red.shade300);
           }
         });
       } else {
@@ -318,7 +304,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
             : searchProduct(apiUrl, accessToken);
       }
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   }
 
@@ -379,7 +365,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
       myGetxController.mainProductDetailList.clear();
       myGetxController.mainProductDetailList.value = data['results'];
     } else {
-      dialog(context, "Product Not Found",Colors.red.shade300);
+      dialog(context, "Product Not Found", Colors.red.shade300);
     }
   }
 }

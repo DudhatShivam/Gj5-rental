@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,12 +27,12 @@ class DeliveryScreen extends StatefulWidget {
 
 class _DeliveryScreebState extends State<DeliveryScreen> {
   MyGetxController myGetxController = Get.find();
-  final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
   TextEditingController nameController = TextEditingController();
   TextEditingController orderNumberController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   bool isSearchLoadData = false;
   ScrollController scrollController = ScrollController();
+  bool isExpandSearch = false;
 
   @override
   void initState() {
@@ -56,69 +55,66 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
     return Scaffold(
         body: Column(
       children: [
-        SizedBox(
-          height: MediaQuery.of(context).padding.top + 10,
-        ),
-        ExpansionTileCard(
-          trailing: FadeInRight(
-            child: Icon(
-              Icons.search,
-              size: 30,
-              color: Colors.teal,
-            ),
-          ),
-          key: findCard,
-          title: Row(
+        allScreenInitialSizedBox(context),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          pushRemoveUntilMethod(context, HomeScreen());
-                        },
-                        child: FadeInLeft(
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: 30,
-                            color: Colors.teal,
-                          ),
-                        )),
-                    SizedBox(
-                      width: 10,
+              Row(
+                children: [
+                  InkWell(
+                      onTap: () {
+                        pushRemoveUntilMethod(context, HomeScreen());
+                      },
+                      child: FadeInLeft(
+                        child: backArrowIcon,
+                      )),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  FadeInLeft(
+                    child: Text(
+                      "Deliver Order Status",
+                      style: pageTitleTextStyle,
                     ),
-                    FadeInLeft(
-                      child: Text(
-                        "Deliver Order Status",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 23,
-                            color: Colors.teal),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              InkWell(
-                  onTap: () {
-                    deliverScreenOffset = 0;
-                    myGetxController.deliveryScreenFilteredOrderList.clear();
-                    myGetxController.deliveryScreenOrderList.clear();
-                    checkWlanForgetDeliveryData(false);
-                  },
-                  child: FadeInRight(
-                      child: Icon(Icons.refresh, size: 30, color: Colors.teal)))
+              Row(
+                children: [
+                  InkWell(
+                      onTap: () {
+                        deliverScreenOffset = 0;
+                        myGetxController.deliveryScreenFilteredOrderList
+                            .clear();
+                        myGetxController.deliveryScreenOrderList.clear();
+                        checkWlanForgetDeliveryData(false);
+                      },
+                      child: FadeInRight(
+                          child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: refreshIcon,
+                      ))),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          isExpandSearch = !isExpandSearch;
+                        });
+                      },
+                      child: isExpandSearch == false
+                          ? FadeInRight(child: searchIcon)
+                          : cancelIcon)
+                ],
+              )
             ],
           ),
-          elevation: 0,
-          shadowColor: Colors.white,
-          initialElevation: 0,
-          borderRadius: BorderRadius.circular(0),
-          baseColor: Colors.transparent,
-          expandedColor: Colors.transparent,
-          children: [
-            Column(
+        ),
+        AnimatedSize(
+          duration: Duration(milliseconds: 500),
+          child: Container(
+            height: isExpandSearch ? null : 0,
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
@@ -126,10 +122,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Text(
                     "Find Order :",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        color: Colors.blueGrey),
+                    style: drawerTextStyle,
                   ),
                 ),
                 Container(
@@ -213,30 +206,29 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        myGetxController.deliveryScreenFilteredOrderList
-                            .clear();
-                        setState(() {
-                          isSearchLoadData = true;
-                        });
-                        findCard.currentState?.toggleExpansion();
-                        checkWlanForgetDeliveryData(true);
-                      },
-                      child: Text("Search")),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: primary2Color),
+                        onPressed: () {
+                          myGetxController.deliveryScreenFilteredOrderList
+                              .clear();
+                          setState(() {
+                            isSearchLoadData = true;
+                            isExpandSearch = false;
+                          });
+                          checkWlanForgetDeliveryData(true);
+                        },
+                        child: Text("Search")),
+                  ),
                 ),
               ],
-            )
-          ],
-        ),
-        SizedBox(
-          height: 10,
+            ),
+          ),
         ),
         Expanded(
           child: Obx(() => myGetxController
@@ -248,7 +240,9 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                       shrinkWrap: true,
                       itemCount:
                           myGetxController.deliveryScreenOrderList.length,
-                      padding: EdgeInsets.zero,
+                      padding: isExpandSearch == false
+                          ? EdgeInsets.symmetric(vertical: 15)
+                          : EdgeInsets.zero,
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list: myGetxController.deliveryScreenOrderList,
@@ -269,7 +263,9 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                       shrinkWrap: true,
                       itemCount: myGetxController
                           .deliveryScreenFilteredOrderList.length,
-                      padding: EdgeInsets.zero,
+                      padding: isExpandSearch == false
+                          ? EdgeInsets.symmetric(vertical: 15)
+                          : EdgeInsets.zero,
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list:
@@ -288,12 +284,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                         );
                       },
                     )
-              : Container(
-                  child: Center(
-                      child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.teal))),
-                )),
+              : CenterCircularProgressIndicator()),
         )
       ],
     ));
@@ -310,7 +301,8 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                     ? searchProduct(apiUrl, token)
                     : getDataForDelivery(apiUrl, token);
               } else {
-                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -320,7 +312,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -347,15 +339,14 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
       if (data['results'] != []) {
         myGetxController.deliveryScreenOrderList.addAll(data['results']);
       } else {
-        dialog(context, "No Data Found !",Colors.red.shade300);
+        dialog(context, "No Data Found !", Colors.red.shade300);
       }
     } else {
-      dialog(context, "Something Went Wrong !",Colors.red.shade300);
+      dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
   }
 
   Future<void> searchProduct(String apiUrl, String token) async {
-
     String? domain;
     List domainData = [];
 
@@ -364,10 +355,12 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
           "('customer_name', 'ilike', '${nameController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (numberController.text != "") {
-      domainData.add("('mobile1', 'ilike', '${numberController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
+      domainData.add(
+          "('mobile1', 'ilike', '${numberController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (orderNumberController.text != "") {
-      domainData.add("('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
+      domainData.add(
+          "('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (domainData.length == 1) {
       domain = "[${domainData[0]}]";
@@ -397,13 +390,13 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
         setState(() {
           isSearchLoadData = false;
         });
-        dialog(context, "No Order Found",Colors.red.shade300);
+        dialog(context, "No Order Found", Colors.red.shade300);
       }
     } else {
       setState(() {
         isSearchLoadData = false;
       });
-      dialog(context, "Something Went Wrong !",Colors.red.shade300);
+      dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
   }
 }

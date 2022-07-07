@@ -46,7 +46,7 @@ class _QuotationCartState extends State<QuotationCart> {
                   child: FadeInLeft(
                     child: Icon(
                       Icons.arrow_back,
-                      color: Colors.teal,
+                      color: primary2Color,
                       size: 30,
                     ),
                   ),
@@ -60,7 +60,7 @@ class _QuotationCartState extends State<QuotationCart> {
                     style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 23,
-                        color: Colors.teal),
+                        color: primary2Color),
                   ),
                 ),
               ],

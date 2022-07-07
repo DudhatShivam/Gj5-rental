@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,11 +25,11 @@ class ReceiveScreen extends StatefulWidget {
 
 class _RceiveScreenState extends State<ReceiveScreen> {
   MyGetxController myGetxController = Get.find();
-  final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
   TextEditingController nameController = TextEditingController();
   TextEditingController orderNumberController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   bool isSearchLoadData = false;
+  bool isExpandSearch = false;
   ScrollController scrollController = ScrollController();
 
   @override
@@ -54,80 +53,71 @@ class _RceiveScreenState extends State<ReceiveScreen> {
     return Scaffold(
         body: Column(
       children: [
-        SizedBox(
-          height: MediaQuery.of(context).padding.top + 10,
-        ),
-        ExpansionTileCard(
-          trailing: FadeInRight(
-            child: Icon(
-              Icons.search,
-              size: 30,
-              color: Colors.teal,
-            ),
-          ),
-          key: findCard,
-          title: Row(
+        allScreenInitialSizedBox(context),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: FadeInLeft(
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: 30,
-                            color: Colors.teal,
-                          ),
-                        )),
-                    SizedBox(
-                      width: 10,
+              Row(
+                children: [
+                  InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: FadeInLeft(
+                        child: backArrowIcon,
+                      )),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  FadeInLeft(
+                    child: Text(
+                      "Receive Order Status",
+                      style: pageTitleTextStyle,
                     ),
-                    FadeInLeft(
-                      child: Text(
-                        "Receive Order Status",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 23,
-                            color: Colors.teal),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              InkWell(
-                  onTap: () {
-                    myGetxController.receiveFilteredOrderList.clear();
-                    myGetxController.receiveOrderList.clear();
-                    checkWlanForReceiveScreenData(false);
-                  },
-                  child: FadeInRight(
-                      child: Icon(Icons.refresh, size: 30, color: Colors.teal)))
+              Row(
+                children: [
+                  InkWell(
+                      onTap: () {
+                        myGetxController.receiveFilteredOrderList.clear();
+                        myGetxController.receiveOrderList.clear();
+                        checkWlanForReceiveScreenData(false);
+                      },
+                      child: FadeInRight(
+                          child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: refreshIcon,
+                      ))),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          isExpandSearch = !isExpandSearch;
+                        });
+                      },
+                      child: isExpandSearch == false
+                          ? FadeInRight(child: searchIcon)
+                          : cancelIcon)
+                ],
+              )
             ],
           ),
-          elevation: 0,
-          shadowColor: Colors.white,
-          initialElevation: 0,
-          borderRadius: BorderRadius.circular(0),
-          baseColor: Colors.transparent,
-          expandedColor: Colors.transparent,
-          children: [
-            Column(
+        ),
+        AnimatedSize(
+          duration: Duration(milliseconds: 500),
+          child: Container(
+            height: isExpandSearch ? null : 0,
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Text(
-                    "Find Order :",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        color: Colors.blueGrey),
-                  ),
+                  child: Text("Find Order :", style: drawerTextStyle),
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
@@ -210,26 +200,28 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 8,
-                ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        myGetxController.receiveFilteredOrderList.clear();
-                        setState(() {
-                          isSearchLoadData = true;
-                        });
-                        findCard.currentState?.toggleExpansion();
-                        checkWlanForReceiveScreenData(true);
-                      },
-                      child: Text("Search")),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: primary2Color),
+                        onPressed: () {
+                          myGetxController.receiveFilteredOrderList.clear();
+                          setState(() {
+                            isSearchLoadData = true;
+                            isExpandSearch = false;
+                          });
+                          checkWlanForReceiveScreenData(true);
+                        },
+                        child: Text("Search")),
+                  ),
                 ),
               ],
-            )
-          ],
+            ),
+          ),
         ),
         Expanded(
           child: Obx(() => myGetxController.receiveOrderList.isNotEmpty &&
@@ -239,7 +231,9 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                       controller: scrollController,
                       shrinkWrap: true,
                       itemCount: myGetxController.receiveOrderList.length,
-                      padding: EdgeInsets.zero,
+                      padding: isExpandSearch == false
+                          ? EdgeInsets.symmetric(vertical: 15)
+                          : EdgeInsets.zero,
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list: myGetxController.receiveOrderList,
@@ -260,7 +254,9 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                       shrinkWrap: true,
                       itemCount:
                           myGetxController.receiveFilteredOrderList.length,
-                      padding: EdgeInsets.zero,
+                      padding: isExpandSearch == false
+                          ? EdgeInsets.symmetric(vertical: 15)
+                          : EdgeInsets.zero,
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list: myGetxController.receiveFilteredOrderList,
@@ -277,12 +273,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                         );
                       },
                     )
-              : Container(
-                  child: Center(
-                      child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.teal))),
-                )),
+              : CenterCircularProgressIndicator()),
         )
       ],
     ));

@@ -3,11 +3,15 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
+import '../quatation/quotation_detail.dart';
 import 'booking_status.dart';
 
 class BookOrder extends StatefulWidget {
@@ -42,6 +46,7 @@ class _BookOrderState extends State<BookOrder> {
   DateTime deliveryNotFormatedDate = DateTime.now();
   bool isValidRDate = true;
   bool isBtnLoading = false;
+  MyGetxController myGetxController = Get.find();
 
   @override
   void initState() {
@@ -342,7 +347,7 @@ class _BookOrderState extends State<BookOrder> {
                           )
                         : Padding(
                             padding: EdgeInsets.symmetric(vertical: 10),
-                            child: CircularProgressIndicator(),
+                            child: CenterCircularProgressIndicator(),
                           ),
                     Padding(
                         padding: EdgeInsets.only(
@@ -422,7 +427,14 @@ class _BookOrderState extends State<BookOrder> {
         setState(() {
           isBtnLoading = false;
         });
-        getDraftOrderData(context, apiUrl, token, data['rental_id']);
+        myGetxController.quotationData.clear();
+        pushMethod(
+            context,
+            QuatationDetailScreen(
+              id: data['rental_id'],
+              isFromAnotherScreen: true,
+              isFromEditScreen: false,
+            ));
       } else {
         setState(() {
           isBtnLoading = false;

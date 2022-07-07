@@ -23,18 +23,21 @@ import '../../constant/constant.dart';
 import '../../constant/order_quotation_amount_card.dart';
 import '../../constant/order_quotation_comman_card.dart';
 import '../../constant/order_quotation_detail_card.dart';
+import '../service/add_service/add_service.dart';
 import 'create_order.dart';
 
 class QuatationDetailScreen extends StatefulWidget {
   final int? id;
   final bool isFromAnotherScreen;
   final bool? isFromEditScreen;
+  final bool? isFromCreateOrderScreen;
 
   const QuatationDetailScreen(
       {Key? key,
       this.id,
       required this.isFromAnotherScreen,
-      this.isFromEditScreen})
+      this.isFromEditScreen,
+      this.isFromCreateOrderScreen})
       : super(key: key);
 
   @override
@@ -42,12 +45,13 @@ class QuatationDetailScreen extends StatefulWidget {
 }
 
 class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
+  MyGetxController myGetxController = Get.find();
+
   @override
   void initState() {
     super.initState();
     checkQuotationAndOrderDetailData(context, widget.id ?? 0, false);
   }
-  MyGetxController myGetxController = Get.put(MyGetxController());
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +59,12 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
       onWillPop: () => onWillPopNavigateFunction(),
       child: Scaffold(
         floatingActionButton: CustomFABWidget(
-            transitionType: ContainerTransitionType.fade, isCreateOrder: false),
+            transitionType: ContainerTransitionType.fade,
+            isQuotationDetailAddProduct: true),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: MediaQuery.of(context).padding.top + 10,
-            ),
+            allScreenInitialSizedBox(context),
             Row(
               children: [
                 SizedBox(
@@ -71,23 +74,14 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
                     onTap: () {
                       onWillPopNavigateFunction();
                     },
-                    child: FadeInLeft(
-                      child: Icon(
-                        Icons.arrow_back,
-                        size: 30,
-                        color: Colors.teal,
-                      ),
-                    )),
+                    child: FadeInLeft(child: backArrowIcon)),
                 SizedBox(
                   width: 10,
                 ),
                 FadeInLeft(
                   child: Text(
                     "Order Detail",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 23,
-                        color: Colors.teal),
+                    style: pageTitleTextStyle,
                   ),
                 ),
               ],
@@ -109,10 +103,7 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
               padding: EdgeInsets.all(10),
               child: Text(
                 "Order Details : ",
-                style: TextStyle(
-                    color: primaryColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 21),
+                style: pageTitleTextStyle,
               ),
             ),
             Expanded(
@@ -182,12 +173,18 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
 
 class CustomFABWidget extends StatelessWidget {
   final ContainerTransitionType? transitionType;
-  final bool isCreateOrder;
+  final bool? isCreateOrder;
+  final bool? isQuotationDetailAddProduct;
+  final bool? isAddService;
+  final bool? isAddProductInService;
 
   CustomFABWidget({
     Key? key,
     @required this.transitionType,
-    required this.isCreateOrder,
+    this.isCreateOrder,
+    this.isQuotationDetailAddProduct,
+    this.isAddService,
+    this.isAddProductInService,
   }) : super(key: key);
   MyGetxController myGetxController = Get.find();
   double fabSize = 56;
@@ -197,19 +194,24 @@ class CustomFABWidget extends StatelessWidget {
         transitionDuration: Duration(milliseconds: 800),
         openBuilder: (context, _) => isCreateOrder == true
             ? CreateOrder()
-            : QuotationDetailAddProduct(
-                deliveryDate: DateFormat("dd/MM/yyyy").format(DateTime.parse(
-                    myGetxController.quotationOrder[0]['delivery_date'])),
-                returnDate: DateFormat("dd/MM/yyyy").format(DateTime.parse(
-                    myGetxController.quotationOrder[0]['return_date'])),
-                orderId: myGetxController.quotationOrder[0]['id'],
-              ),
+            : isQuotationDetailAddProduct == true
+                ? QuotationDetailAddProduct(
+                    deliveryDate: DateFormat("dd/MM/yyyy").format(
+                        DateTime.parse(myGetxController.quotationOrder[0]
+                            ['delivery_date'])),
+                    returnDate: DateFormat("dd/MM/yyyy").format(DateTime.parse(
+                        myGetxController.quotationOrder[0]['return_date'])),
+                    orderId: myGetxController.quotationOrder[0]['id'],
+                  )
+                : isAddService == true
+                    ? AddServiceScreen()
+                    : Container(),
         closedShape: CircleBorder(),
-        closedColor: Colors.teal,
+        closedColor: primary2Color,
         closedBuilder: (context, openContainer) => Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.teal,
+            color: primary2Color,
           ),
           height: fabSize,
           width: fabSize,

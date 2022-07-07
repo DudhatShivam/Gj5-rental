@@ -62,7 +62,7 @@ class _QuotatiopnCartAddProductState extends State<QuotatiopnCartAddProduct> {
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Icon(
                       Icons.arrow_back,
-                      color: Colors.teal,
+                      color: primary2Color,
                       size: 30,
                     ),
                   ),
@@ -74,7 +74,7 @@ class _QuotatiopnCartAddProductState extends State<QuotatiopnCartAddProduct> {
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 23,
-                      color: Colors.teal),
+                      color: primary2Color),
                 ),
               ),
             ],
@@ -170,7 +170,7 @@ class _QuotatiopnCartAddProductState extends State<QuotatiopnCartAddProduct> {
             child: SearchField(
               controller: productSearchController,
               suggestionsDecoration: BoxDecoration(
-                  border: Border.all(color: Colors.teal.shade400),
+                  border: Border.all(color: primary2ColorShade400),
                   color: Colors.transparent),
               suggestionItemDecoration: BoxDecoration(),
               searchStyle: primaryStyle,
@@ -202,7 +202,7 @@ class _QuotatiopnCartAddProductState extends State<QuotatiopnCartAddProduct> {
                     borderSide: BorderSide(color: Colors.white),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.teal),
+                    borderSide: BorderSide(color: primary2Color),
                   )),
               onSuggestionTap: (val) {
                 getIdFromTextFieldData();

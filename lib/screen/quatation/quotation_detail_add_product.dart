@@ -59,9 +59,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + 10,
-          ),
+          allScreenInitialSizedBox(context),
           ScreenAppBar(
             screenName: "Add Product in Order",
           ),
@@ -73,17 +71,11 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
             children: [
               Text(
                 "D Date",
-                style: TextStyle(
-                    color: primaryColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18),
+                style: allCardSubText,
               ),
               Text(
                 "R Date",
-                style: TextStyle(
-                    color: primaryColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18),
+                style: allCardSubText,
               ),
             ],
           ),
@@ -125,7 +117,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                       if (value != null) {
                         returnNotFormatedDate = value;
                         setState(() {
-                          returnDate = DateFormat('dd-MM-yyyy').format(value!);
+                          returnDate = DateFormat('dd-MM-yyyy').format(value);
                         });
                       }
                     });
@@ -231,7 +223,10 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                           padding: const EdgeInsets.all(15),
                           child: SizedBox(
                               width: double.infinity,
+                              height: 43,
                               child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: primary2Color),
                                 onPressed: () {
                                   FocusScope.of(context).unfocus();
                                   checkWifiForAddProduct();
@@ -255,7 +250,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
       child: Obx(() => SearchField(
             controller: productSearchController,
             suggestionsDecoration: BoxDecoration(
-              border: Border.all(color: Colors.teal.shade400),
+              border: Border.all(color: primary2ColorShade400),
             ),
             searchStyle: primaryStyle,
             searchInputDecoration: InputDecoration(
@@ -289,7 +284,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                   borderSide: BorderSide(color: Colors.white),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.teal),
+                  borderSide: BorderSide(color: primary2Color),
                 )),
             onSuggestionTap: (val) {
               getResponseProductApiList();
@@ -322,7 +317,8 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                 getData(value, productId ?? 0, token);
               } else {
                 responseOfApi.clear();
-                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -330,7 +326,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -362,7 +358,8 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                 addProduct(value, token);
               } else {
                 responseOfApi.clear();
-                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -370,7 +367,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -395,7 +392,8 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
       checkQuotationAndOrderDetailData(context, orderId ?? 0, false);
       Navigator.pop(context);
     } else {
-      dialog(context, data['msg'] ?? "Some thing went wrong",Colors.red.shade300);
+      dialog(
+          context, data['msg'] ?? "Some thing went wrong", Colors.red.shade300);
     }
   }
 

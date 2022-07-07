@@ -65,9 +65,8 @@ class _EditOrderState extends State<EditOrder> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + 10,
-          ),
+          allScreenInitialSizedBox(context),
+
           ScreenAppBar(
             screenName: "Edit Order",
           ),
@@ -189,11 +188,7 @@ class _EditOrderState extends State<EditOrder> {
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.calendar_today,
-                          color: Colors.grey.shade400,
-                          size: 22,
-                        ),
+                        calenderIcon,
                         SizedBox(
                           width: 10,
                         ),
@@ -241,11 +236,7 @@ class _EditOrderState extends State<EditOrder> {
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.calendar_today,
-                          color: Colors.grey.shade400,
-                          size: 22,
-                        ),
+                        calenderIcon,
                         SizedBox(
                           width: 10,
                         ),
@@ -264,8 +255,11 @@ class _EditOrderState extends State<EditOrder> {
               ? Padding(
                   padding: const EdgeInsets.all(15),
                   child: SizedBox(
+                      height: 45,
                       width: double.infinity,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: primary2Color),
                         onPressed: () {
                           myGetxController.isUpdateData.value = true;
                           FocusScope.of(context).unfocus();
@@ -276,7 +270,7 @@ class _EditOrderState extends State<EditOrder> {
                 )
               : Padding(
                   padding: const EdgeInsets.all(15),
-                  child: CircularProgressIndicator(),
+                  child: CenterCircularProgressIndicator(),
                 ))
         ],
       ),
@@ -293,7 +287,8 @@ class _EditOrderState extends State<EditOrder> {
                 updateData(value, token, widget.id ?? "");
                 // updateDetail(value, token, widget.lineId);
               } else {
-                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -301,7 +296,7 @@ class _EditOrderState extends State<EditOrder> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -328,11 +323,16 @@ class _EditOrderState extends State<EditOrder> {
         headers: {'Access-Token': token, 'Content-Type': 'text/plain'});
     var data = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      getDraftOrderData(context, apiUrl, token, 0,);
+      getDraftOrderData(
+        context,
+        apiUrl,
+        token,
+        0,
+      );
       Navigator.pop(context);
       myGetxController.isUpdateData.value = false;
     } else {
-      dialog(context, data['error_descrip'],Colors.red.shade300);
+      dialog(context, data['error_descrip'], Colors.red.shade300);
       myGetxController.isUpdateData.value = false;
     }
   }

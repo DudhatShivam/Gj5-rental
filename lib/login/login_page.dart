@@ -233,21 +233,7 @@ class _LogInPageState extends State<LogInPage> {
                           FocusScope.of(context).unfocus();
                           finalData.isNotEmpty
                               ? pushMethod(context, AddAccount())
-                              : ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                      backgroundColor: Color(0xffFB578E),
-                                      duration: Duration(seconds: 2),
-                                      content: Padding(
-                                        padding: EdgeInsets.only(left: 20),
-                                        child: Text(
-                                          "Login First",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500,
-                                              letterSpacing: 1,
-                                              fontSize: 20),
-                                        ),
-                                      )));
+                              : showToast("Login first");
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 25),

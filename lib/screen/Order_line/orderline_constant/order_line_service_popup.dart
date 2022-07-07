@@ -18,7 +18,11 @@ class OrderLineServicePopUp extends StatefulWidget {
   final int? groupByMainListIndex;
 
   const OrderLineServicePopUp(
-      {Key? key, required this.orderId, required this.index, required this.isShowFromGroupBy, this.groupByMainListIndex})
+      {Key? key,
+      required this.orderId,
+      required this.index,
+      required this.isShowFromGroupBy,
+      this.groupByMainListIndex})
       : super(key: key);
 
   @override
@@ -26,12 +30,10 @@ class OrderLineServicePopUp extends StatefulWidget {
 }
 
 class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
-  MyGetxController myGetxController = Get.find();
-  String? gender;
+  String? serviceSelection;
   String? selectedValue;
-  List lst = [];
+  List partnerList = [];
   List<String> serviceOrderLineDropDownList = [];
-
 
   @override
   void initState() {
@@ -61,12 +63,12 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                   children: [
                     Radio(
                         value: "washing",
-                        groupValue: gender,
+                        groupValue: serviceSelection,
                         onChanged: (value) {
                           setState(() {
                             selectedValue = null;
                             serviceOrderLineDropDownList.clear();
-                            gender = value.toString();
+                            serviceSelection = value.toString();
                             getResPartnerData(value.toString());
                           });
                         }),
@@ -80,12 +82,12 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                   children: [
                     Radio(
                         value: "stitching",
-                        groupValue: gender,
+                        groupValue: serviceSelection,
                         onChanged: (value) {
                           setState(() {
                             selectedValue = null;
                             serviceOrderLineDropDownList.clear();
-                            gender = value.toString();
+                            serviceSelection = value.toString();
                             getResPartnerData(value.toString());
                           });
                         }),
@@ -104,7 +106,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                   hint: Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(
-                      'Select Item',
+                      'Select Partner',
                       style: TextStyle(
                         fontSize: 14,
                         color: Theme.of(context).hintColor,
@@ -145,7 +147,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                     ? Container()
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: Colors.green.shade300),
+                            backgroundColor: Colors.green.shade300),
                         onPressed: () {
                           setService();
                         },
@@ -154,8 +156,8 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                   width: 10,
                 ),
                 ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(primary: Colors.red.shade300),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade300),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -184,14 +186,14 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
         if (response.statusCode == 200) {
           var data = jsonDecode(response.body);
           if (data['count'] != 0) {
-            lst = data['results'];
-            lst.forEach((element) {
+            partnerList = data['results'];
+            partnerList.forEach((element) {
               serviceOrderLineDropDownList.add(element['name']);
             });
             setState(() {});
           }
         } else {
-          dialog(context, "Something Went Wrong !",Colors.red.shade300);
+          dialog(context, "Something Went Wrong !", Colors.red.shade300);
         }
       });
     });
@@ -200,7 +202,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
   void setService() {
     int? partnerId;
     int orderLineId = widget.orderId;
-    lst.forEach((element) {
+    partnerList.forEach((element) {
       if (element['name'] == selectedValue) {
         partnerId = element['id'];
       }
@@ -210,7 +212,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
       getStringPreference('apiUrl').then((apiUrl) {
         getStringPreference('accessToken').then((token) async {
           final finalUri = Uri.parse(
-              "http://$apiUrl/api/rental.line/$orderLineId/btn_service_api?service_type=$gender&service_partner_id=$partnerId");
+              "http://$apiUrl/api/rental.line/$orderLineId/btn_service_api?service_type=$serviceSelection&service_partner_id=$partnerId");
           final response = await http.put(finalUri, headers: {
             'Access-Token': token,
           });
@@ -218,17 +220,22 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
             var data = jsonDecode(response.body);
             if (data['status'] == 0) {
               Navigator.pop(context);
-              dialog(context, data['msg'],Colors.red.shade300);
+              dialog(context, data['msg'], Colors.red.shade300);
             } else {
-              widget.isShowFromGroupBy == true ?  setDataOfUpdatedIdInGroupByListOrderLineScreen(widget.orderId, widget.index,widget.groupByMainListIndex ?? 0) : setDataOfUpdatedIdInOrderLineScreen(widget.orderId, widget.index);
+              widget.isShowFromGroupBy == true
+                  ? setDataOfUpdatedIdInGroupByListOrderLineScreen(
+                      widget.orderId,
+                      widget.index,
+                      widget.groupByMainListIndex ?? 0)
+                  : setDataOfUpdatedIdInOrderLineScreen(
+                      widget.orderId, widget.index);
               Navigator.pop(context);
             }
           } else {
-            dialog(context, "Something Went Wrong !",Colors.red.shade300);
+            dialog(context, "Something Went Wrong !", Colors.red.shade300);
           }
         });
       });
     }
   }
-
 }

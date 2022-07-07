@@ -47,9 +47,7 @@ class _OrderDetailState extends State<OrderDetail> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          height: MediaQuery.of(context).padding.top + 10,
-        ),
+        allScreenInitialSizedBox(context),
         ScreenAppBar(screenName: "Order Detail"),
         SizedBox(
           height: 10,
@@ -68,8 +66,7 @@ class _OrderDetailState extends State<OrderDetail> {
           padding: EdgeInsets.all(10),
           child: Text(
             "Order Details : ",
-            style: TextStyle(
-                color: primaryColor, fontWeight: FontWeight.w500, fontSize: 21),
+            style: pageTitleTextStyle,
           ),
         ),
         Expanded(
@@ -95,7 +92,6 @@ class _OrderDetailState extends State<OrderDetail> {
                                 orderId: widget.id ?? 0,
                                 isDeliveryScreen: false,
                                 isReceiveScreen: false,
-
                               );
                             })
                         : Container(),

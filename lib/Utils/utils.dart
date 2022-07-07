@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'dart:math' as math;
@@ -17,6 +18,8 @@ getWidth(double width, BuildContext context) {
 }
 
 Color primaryColor = Color(0xff0F052D);
+Color primary2Color = Colors.teal;
+Color primary2ColorShade400 = Colors.teal.shade400;
 
 Color newStatusColor = Color(0xff2F8DFA);
 Color confirmStatusColor = Color(0xff8B572A);
@@ -39,6 +42,7 @@ pushMethod(BuildContext context, Widget name) {
   //   canOnlySwipeFromEdge: true,
   //   builder: (BuildContext context) => name,
   // ));
+  print("push");
   Navigator.of(context).push(MaterialPageRoute(builder: (context) => name));
 }
 
@@ -49,7 +53,7 @@ pushRemoveUntilMethod(BuildContext context, Widget name) {
 }
 
 TextStyle dialogTitleStyle =
-    TextStyle(color: Colors.teal, fontWeight: FontWeight.w500, fontSize: 24);
+    TextStyle(color: primary2Color, fontWeight: FontWeight.w500, fontSize: 24);
 
 TextStyle primaryStyle = TextStyle(
     fontSize: 17,
@@ -78,9 +82,59 @@ TextStyle deliveryDateStyle =
 TextStyle returnDateStyle =
     TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.red);
 
+TextStyle pageTitleTextStyle =
+    TextStyle(fontWeight: FontWeight.w500, fontSize: 23, color: primary2Color);
+
+Icon searchIcon = Icon(
+  Icons.search,
+  size: 30,
+  color: primary2Color,
+);
+Icon cancelIcon = Icon(
+  Icons.cancel_outlined,
+  size: 30,
+  color: primary2Color,
+);
+Icon refreshIcon = Icon(Icons.refresh, size: 30, color: primary2Color);
+Icon backArrowIcon = Icon(
+  Icons.arrow_back,
+  size: 30,
+  color: primary2Color,
+);
+Icon calenderIcon = Icon(
+  Icons.calendar_today,
+  color: Colors.grey.shade400,
+  size: 22,
+);
+Icon drawerMenuIcon = Icon(
+  Icons.menu,
+  size: 30,
+  color: primary2Color,
+);
+Icon textFieldCancelIcon = Icon(
+  Icons.cancel,
+  size: 25,
+  color: Colors.grey.shade400,
+);
+
 Future showConnectivity() async {
   final results = await Connectivity().checkConnectivity();
   return results;
+}
+
+Widget CenterCircularProgressIndicator() {
+  return Center(
+      child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(primary2Color)));
+}
+
+showToast(String text) {
+  return Fluttertoast.showToast(
+    msg: text,
+    backgroundColor: Colors.teal,
+    timeInSecForIosWeb: 2,
+    fontSize: 17,
+  );
 }
 
 Future dialog(BuildContext context, String text, Color color) {

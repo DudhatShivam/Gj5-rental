@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +26,7 @@ class OrderScreen extends StatefulWidget {
   State<OrderScreen> createState() => _OrderState();
 }
 
-class _OrderState extends State<OrderScreen> {
+class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
   List status = [
     'New',
     'Confirmed',
@@ -45,9 +44,9 @@ class _OrderState extends State<OrderScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController orderNumberController = TextEditingController();
   TextEditingController numberController = TextEditingController();
-  final GlobalKey<ExpansionTileCardState> findCard = new GlobalKey();
   bool isSearchLoadData = false;
   ScrollController scrollController = ScrollController();
+  bool isExpandSearch = false;
 
   @override
   void initState() {
@@ -71,69 +70,64 @@ class _OrderState extends State<OrderScreen> {
         body: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: MediaQuery.of(context).padding.top + 10,
-        ),
-        ExpansionTileCard(
-          trailing: FadeInRight(
-            child: Icon(
-              Icons.search,
-              size: 30,
-              color: Colors.teal,
-            ),
-          ),
-          key: findCard,
-          title: Row(
+        allScreenInitialSizedBox(context),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    InkWell(
-                        onTap: () {
-                          pushRemoveUntilMethod(context, HomeScreen());
-                        },
-                        child: FadeInLeft(
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: 30,
-                            color: Colors.teal,
-                          ),
-                        )),
-                    SizedBox(
-                      width: 10,
+              Row(
+                children: [
+                  InkWell(
+                      onTap: () {
+                        pushRemoveUntilMethod(context, HomeScreen());
+                      },
+                      child: FadeInLeft(child: backArrowIcon)),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  FadeInLeft(
+                    child: Text(
+                      "Confirm Order",
+                      style: pageTitleTextStyle,
                     ),
-                    FadeInLeft(
-                      child: Text(
-                        "Confirm Order",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 23,
-                            color: Colors.teal),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              InkWell(
-                  onTap: () {
-                    orderScreenOffset = 0;
-                    myGetxController.orderData.clear();
-                    myGetxController.filteredOrderList.clear();
-                    getData();
-                  },
-                  child: FadeInRight(
-                      child: Icon(Icons.refresh, size: 30, color: Colors.teal)))
+              Row(
+                children: [
+                  InkWell(
+                      onTap: () {
+                        orderScreenOffset = 0;
+                        myGetxController.orderData.clear();
+                        myGetxController.filteredOrderList.clear();
+                        getData();
+                      },
+                      child: FadeInRight(
+                          child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: refreshIcon,
+                      ))),
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          isExpandSearch = !isExpandSearch;
+                        });
+                      },
+                      child: isExpandSearch == false
+                          ? FadeInRight(child: searchIcon)
+                          : cancelIcon)
+                ],
+              ),
             ],
           ),
-          elevation: 0,
-          shadowColor: Colors.white,
-          initialElevation: 0,
-          borderRadius: BorderRadius.circular(0),
-          baseColor: Colors.transparent,
-          expandedColor: Colors.transparent,
-          children: [
-            Column(
+        ),
+        AnimatedSize(
+          duration: Duration(milliseconds: 500),
+          child: Container(
+            height: isExpandSearch ? null : 0,
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
@@ -141,10 +135,7 @@ class _OrderState extends State<OrderScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Text(
                     "Find Order :",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        color: Colors.blueGrey),
+                    style: drawerTextStyle,
                   ),
                 ),
                 Container(
@@ -230,20 +221,25 @@ class _OrderState extends State<OrderScreen> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          isSearchLoadData = true;
-                        });
-                        findCard.currentState?.toggleExpansion();
-                        searchProduct();
-                      },
-                      child: Text("Search")),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: primary2Color),
+                        onPressed: () {
+                          setState(() {
+                            isSearchLoadData = true;
+                            isExpandSearch = false;
+                          });
+                          searchProduct();
+                        },
+                        child: Text("Search")),
+                  ),
                 ),
               ],
-            )
-          ],
+            ),
+          ),
         ),
         Expanded(
           child: Obx(() => myGetxController.orderData.isNotEmpty &&
@@ -251,7 +247,9 @@ class _OrderState extends State<OrderScreen> {
               ? myGetxController.filteredOrderList.isEmpty
                   ? ListView.builder(
                       controller: scrollController,
-                      padding: EdgeInsets.zero,
+                      padding: isExpandSearch == false
+                          ? EdgeInsets.symmetric(vertical: 15)
+                          : EdgeInsets.zero,
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemCount: myGetxController.orderData.length,
@@ -269,7 +267,9 @@ class _OrderState extends State<OrderScreen> {
                         );
                       })
                   : ListView.builder(
-                      padding: EdgeInsets.zero,
+                      padding: isExpandSearch == false
+                          ? EdgeInsets.symmetric(vertical: 15)
+                          : EdgeInsets.zero,
                       physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
@@ -284,16 +284,11 @@ class _OrderState extends State<OrderScreen> {
                           onTap: () => pushMethod(
                               context,
                               OrderDetail(
-                                  id: myGetxController
-                                      .filteredOrderList[index]['id'])),
+                                  id: myGetxController.filteredOrderList[index]
+                                      ['id'])),
                         );
                       })
-              : Container(
-                  child: Center(
-                      child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.teal))),
-                )),
+              : CenterCircularProgressIndicator()),
         )
       ],
     ));
@@ -308,7 +303,8 @@ class _OrderState extends State<OrderScreen> {
               if (result == ConnectivityResult.wifi) {
                 getOrderData(apiUrl, token);
               } else {
-                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -316,7 +312,7 @@ class _OrderState extends State<OrderScreen> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
@@ -346,9 +342,9 @@ class _OrderState extends State<OrderScreen> {
           'Connection': 'keep-alive'
         });
         Map<String, dynamic> data = await jsonDecode(response.body);
-        if(data['count'] != 0){
+        if (data['count'] != 0) {
           myGetxController.orderData.addAll(data['results']);
-        }else{
+        } else {
           if (orderScreenOffset <= 0) {
             dialog(context, "No Data Found !", Colors.red.shade300);
           }
@@ -367,7 +363,8 @@ class _OrderState extends State<OrderScreen> {
               if (result == ConnectivityResult.wifi) {
                 getSearchData(apiUrl, token);
               } else {
-                dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
               }
             });
           } else {
@@ -375,13 +372,12 @@ class _OrderState extends State<OrderScreen> {
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
   }
 
   getSearchData(String apiUrl, String token) async {
-
     String? domain;
     List datas = [];
 
@@ -390,10 +386,12 @@ class _OrderState extends State<OrderScreen> {
           "('customer_name', 'ilike', '${nameController.text}'),('state' , 'not in' , ('cancel','done'))");
     }
     if (numberController.text != "") {
-      datas.add("('mobile1', 'ilike', '${numberController.text}'),('state' , 'not in' , ('cancel','done'))");
+      datas.add(
+          "('mobile1', 'ilike', '${numberController.text}'),('state' , 'not in' , ('cancel','done'))");
     }
     if (orderNumberController.text != "") {
-      datas.add("('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done'))");
+      datas.add(
+          "('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done'))");
     }
     if (datas.length == 1) {
       domain = "[${datas[0]}]";
@@ -421,13 +419,13 @@ class _OrderState extends State<OrderScreen> {
         setState(() {
           isSearchLoadData = false;
         });
-        dialog(context, "No Order Found",Colors.red.shade300);
+        dialog(context, "No Order Found", Colors.red.shade300);
       }
     } else {
       setState(() {
         isSearchLoadData = false;
       });
-      dialog(context, "Something Went Wrong !",Colors.red.shade300);
+      dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
   }
 }
