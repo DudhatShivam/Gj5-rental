@@ -99,41 +99,48 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                 ),
               ],
             ),
-            Container(
-              color: Colors.grey.shade100,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton2(
-                  hint: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      'Select Partner',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).hintColor,
+            InkWell(
+              onTap: (){
+                if(serviceOrderLineDropDownList.isEmpty){
+                  showToast("Select Service");
+                }
+              },
+              child: Container(
+                color: Colors.grey.shade100,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton2(
+                    hint: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        'Select Partner',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).hintColor,
+                        ),
                       ),
                     ),
-                  ),
-                  items: serviceOrderLineDropDownList
-                      .map((item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 15),
-                              child: Text(
-                                item,
-                                style: primaryStyle,
+                    items: serviceOrderLineDropDownList
+                        .map((item) => DropdownMenuItem<String>(
+                              value: item,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Text(
+                                  item,
+                                  style: primaryStyle,
+                                ),
                               ),
-                            ),
-                          ))
-                      .toList(),
-                  value: selectedValue,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedValue = value as String;
-                    });
-                  },
-                  buttonHeight: 40,
-                  buttonWidth: getWidth(0.25, context),
-                  itemHeight: 40,
+                            ))
+                        .toList(),
+                    value: selectedValue,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedValue = value as String;
+                      });
+                    },
+                    buttonHeight: 40,
+                    buttonWidth: getWidth(0.25, context),
+                    itemHeight: 40,
+                  ),
                 ),
               ),
             ),

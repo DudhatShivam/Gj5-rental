@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:animations/animations.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/service/service_detail.dart';
+import 'package:gj5_rental/screen/service/servicecontroller.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:animate_do/animate_do.dart';
@@ -26,23 +26,19 @@ class ServiceScreen extends StatefulWidget {
   State<ServiceScreen> createState() => _ServiceScreenState();
 }
 
-class _ServiceScreenState extends State<ServiceScreen>
-    with TickerProviderStateMixin {
-  MyGetxController myGetxController = Get.find();
+class _ServiceScreenState extends State<ServiceScreen> {
+  ServiceController serviceController = Get.put(ServiceController());
   ScrollController scrollController = ScrollController();
   TextEditingController serviceNumberController = TextEditingController();
+  TextEditingController partnerController = TextEditingController();
   String? serviceType;
-  String deliveryDate = "";
-  DateTime notFormatedDDate = DateTime.now();
   bool isExpandSearch = false;
 
   @override
   void initState() {
     super.initState();
     clearFilteredList();
-    if (myGetxController.serviceList.isEmpty) {
-      checkWlanForServiceScreenData(false);
-    }
+    checkWlanForServiceScreenData(false);
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -93,7 +89,6 @@ class _ServiceScreenState extends State<ServiceScreen>
                     children: [
                       InkWell(
                           onTap: () {
-                            myGetxController.serviceList.clear();
                             clearFilteredList();
                             resetFilter();
                             checkWlanForServiceScreenData(false);
@@ -241,53 +236,21 @@ class _ServiceScreenState extends State<ServiceScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "D Date",
+                            "Partner : ",
                             style: primaryStyle,
                           ),
-                          InkWell(
-                            onTap: () async {
-                              FocusScope.of(context).unfocus();
-                              pickedDate(context).then((value) {
-                                if (value != null) {
-                                  notFormatedDDate = value;
-                                  setState(() {
-                                    deliveryDate =
-                                        DateFormat('dd/MM/yyyy').format(value);
-                                  });
-                                }
-                              });
-                            },
-                            child: Container(
-                              width: getWidth(0.30, context),
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: Colors.greenAccent.withOpacity(0.3),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                      child: Row(
-                                    children: [
-                                      calenderIcon,
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        deliveryDate,
-                                        style: primaryStyle,
-                                      ),
-                                    ],
-                                  )),
-                                  InkWell(
-                                    onTap: () {
-                                      deliveryDate = "";
-                                    },
-                                    child: textFieldCancelIcon,
-                                  )
-                                ],
-                              ),
-                            ),
+                          Container(
+                            width: getWidth(0.30, context),
+                            child: textFieldWidget(
+                                "Partner Name",
+                                partnerController,
+                                false,
+                                false,
+                                Colors.greenAccent.withOpacity(0.3),
+                                TextInputType.text,
+                                0,
+                                Colors.greenAccent,
+                                1),
                           )
                         ],
                       ),
@@ -304,10 +267,10 @@ class _ServiceScreenState extends State<ServiceScreen>
                               setState(() {
                                 isExpandSearch = false;
                               });
-                              myGetxController.serviceFilteredList.clear();
-                              myGetxController.isShowServiceFilteredList.value =
-                                  true;
-                              myGetxController.noDataInServiceScreen.value =
+                              serviceController.serviceFilteredList.clear();
+                              serviceController
+                                  .isShowServiceFilteredList.value = true;
+                              serviceController.noDataInServiceScreen.value =
                                   false;
                               checkWlanForServiceScreenData(true);
                             },
@@ -319,55 +282,57 @@ class _ServiceScreenState extends State<ServiceScreen>
               ),
             ),
             Expanded(
-                child: Obx(() => myGetxController
+                child: Obx(() => serviceController
                             .isShowServiceFilteredList.value ==
                         false
-                    ? myGetxController.serviceList.isNotEmpty
+                    ? serviceController.serviceList.isNotEmpty
                         ? ListView.builder(
                             padding: isExpandSearch == false
                                 ? EdgeInsets.symmetric(vertical: 15)
                                 : EdgeInsets.zero,
-                            itemCount: myGetxController.serviceList.length,
+                            itemCount: serviceController.serviceList.length,
                             shrinkWrap: true,
                             controller: scrollController,
                             scrollDirection: Axis.vertical,
                             itemBuilder: (context, index) {
                               return ServiceCard(
-                                list: myGetxController.serviceList,
+                                list: serviceController.serviceList,
                                 index: index,
                                 backGroundColor: Colors.white,
                                 onTap: () => pushMethod(
                                     context,
                                     ServiceDetailScreen(
-                                      serviceLineId: myGetxController
+                                      serviceLineId: serviceController
                                           .serviceList[index]['id'],
+                                      isFromAnotherScreen: false,
                                     )),
                               );
                             },
                           )
                         : CenterCircularProgressIndicator()
-                    : myGetxController.serviceFilteredList.isNotEmpty
+                    : serviceController.serviceFilteredList.isNotEmpty
                         ? ListView.builder(
                             padding: EdgeInsets.symmetric(vertical: 15),
                             itemCount:
-                                myGetxController.serviceFilteredList.length,
+                                serviceController.serviceFilteredList.length,
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
                             itemBuilder: (context, index) {
                               return ServiceCard(
-                                list: myGetxController.serviceFilteredList,
+                                list: serviceController.serviceFilteredList,
                                 index: index,
                                 backGroundColor: Colors.white,
                                 onTap: () => pushMethod(
                                     context,
                                     ServiceDetailScreen(
-                                      serviceLineId: myGetxController
+                                      serviceLineId: serviceController
                                           .serviceFilteredList[index]['id'],
+                                      isFromAnotherScreen: false,
                                     )),
                               );
                             },
                           )
-                        : myGetxController.noDataInServiceScreen.value == true
+                        : serviceController.noDataInServiceScreen.value == true
                             ? Center(
                                 child: Text(
                                 "No Order !",
@@ -392,7 +357,7 @@ class _ServiceScreenState extends State<ServiceScreen>
               if (result == ConnectivityResult.wifi) {
                 isSearchData == true
                     ? getSearchDataOfServiceScreen(apiUrl, token)
-                    : getDataOfServiceScreen(apiUrl, token);
+                    : getDataOfServiceScreen(context, apiUrl, token);
               } else {
                 dialog(context, "Connect to Showroom Network",
                     Colors.red.shade300);
@@ -401,7 +366,7 @@ class _ServiceScreenState extends State<ServiceScreen>
           } else {
             isSearchData == true
                 ? getSearchDataOfServiceScreen(apiUrl, token)
-                : getDataOfServiceScreen(apiUrl, token);
+                : getDataOfServiceScreen(context, apiUrl, token);
           }
         });
       } on SocketException catch (err) {
@@ -410,44 +375,17 @@ class _ServiceScreenState extends State<ServiceScreen>
     });
   }
 
-  getDataOfServiceScreen(apiUrl, token) async {
-    String domain = "[('out_date','=',False)]";
-    var params = {
-      'filters': domain.toString(),
-      'limit': '10',
-      'offset': '$serviceScreenOffset',
-      'order': 'id desc'
-    };
-    Uri uri = Uri.parse("http://$apiUrl/api/service.service");
-    final finalUri = uri.replace(queryParameters: params);
-    final response = await http.get(finalUri,
-        headers: {'Access-Token': token, 'Connection': 'keep-alive'});
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      if (data['count'] != 0) {
-        myGetxController.serviceList.addAll(data['results']);
-      } else {
-        if (serviceScreenOffset <= 0) {
-          dialog(context, "No Data Found !", Colors.red.shade300);
-        }
-      }
-    } else {
-      dialog(context, "Something Went Wrong !", Colors.red.shade300);
-    }
-  }
-
   getSearchDataOfServiceScreen(apiUrl, token) async {
     String? domain;
     List datas = [];
-    String dDate = DateFormat('yyyy/MM/dd').format(notFormatedDDate);
     if (serviceNumberController.text != "") {
       datas.add("('name', 'ilike', '${serviceNumberController.text}')");
     }
     if (serviceType != null) {
       datas.add("('service_type', '=', '$serviceType')");
     }
-    if (deliveryDate != "") {
-      datas.add("('delivery_date', '=', '${dDate}')");
+    if (partnerController.text != "") {
+      datas.add("('service_partner_name', 'ilike', '${partnerController.text}')");
     }
     if (datas.length == 1) {
       domain = "[${datas[0]}]";
@@ -456,7 +394,7 @@ class _ServiceScreenState extends State<ServiceScreen>
     } else if (datas.length == 3) {
       domain = "[${datas[0]},${datas[1]},${datas[2]}]";
     } else {
-      myGetxController.serviceFilteredList.value = [];
+      serviceController.serviceFilteredList.value = [];
     }
     var params = {
       'filters': domain.toString(),
@@ -469,9 +407,9 @@ class _ServiceScreenState extends State<ServiceScreen>
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
-        myGetxController.serviceFilteredList.addAll(data['results']);
+        serviceController.serviceFilteredList.addAll(data['results']);
       } else {
-        myGetxController.noDataInServiceScreen.value = true;
+        serviceController.noDataInServiceScreen.value = true;
         dialog(context, "No Order Found", Colors.red.shade300);
       }
     } else {
@@ -480,15 +418,44 @@ class _ServiceScreenState extends State<ServiceScreen>
   }
 
   void clearFilteredList() {
-    myGetxController.noDataInServiceScreen.value == false;
-    myGetxController.isShowServiceFilteredList.value = false;
-    myGetxController.serviceFilteredList.clear();
+    serviceScreenOffset = 0;
+    serviceController.serviceList.clear();
+    serviceController.noDataInServiceScreen.value == false;
+    serviceController.isShowServiceFilteredList.value = false;
+    serviceController.serviceFilteredList.clear();
   }
 
   resetFilter() {
     serviceType = null;
     serviceNumberController.clear();
-    deliveryDate = "";
+    partnerController.clear();
     setState(() {});
+  }
+}
+
+Future<void> getDataOfServiceScreen(BuildContext context, apiUrl, token) async {
+  ServiceController serviceController = Get.find();
+  String domain = "[('out_date','=',False)]";
+  var params = {
+    'filters': domain.toString(),
+    'limit': '10',
+    'offset': '$serviceScreenOffset',
+    'order': 'id desc'
+  };
+  Uri uri = Uri.parse("http://$apiUrl/api/service.service");
+  final finalUri = uri.replace(queryParameters: params);
+  final response = await http.get(finalUri,
+      headers: {'Access-Token': token, 'Connection': 'keep-alive'});
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+    if (data['count'] != 0) {
+      serviceController.serviceList.addAll(data['results']);
+    } else {
+      if (serviceScreenOffset <= 0) {
+        dialog(context, "No Data Found !", Colors.red.shade300);
+      }
+    }
+  } else {
+    dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }
 }

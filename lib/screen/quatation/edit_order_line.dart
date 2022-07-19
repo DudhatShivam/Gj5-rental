@@ -29,7 +29,8 @@ class EditOrderLine extends StatefulWidget {
       required this.productCode,
       required this.productName,
       this.orderId,
-      this.rent})
+      this.rent,
+      required this.isFromBookingOrderScreen})
       : super(key: key);
   final int? orderId;
   final int? lineId;
@@ -40,6 +41,7 @@ class EditOrderLine extends StatefulWidget {
   final List<dynamic>? wholeSubProductList;
   final String productCode;
   final String productName;
+  final bool isFromBookingOrderScreen;
 
   @override
   State<EditOrderLine> createState() => _EditOrderLineState();
@@ -63,6 +65,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
   @override
   void initState() {
     super.initState();
+    print("fromBookOrder ${widget.isFromBookingOrderScreen}");
     deliveryDate = DateFormat('dd/MM/yyyy')
         .format(DateTime.parse(widget.deliveryDate ?? ""));
     returnDate = DateFormat('dd/MM/yyyy')
@@ -285,8 +288,8 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                       child: SearchField(
                                         controller: productControllers[index],
                                         suggestionsDecoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: primary2ColorShade400),
+                                          border:
+                                              Border.all(color: primary2Color),
                                         ),
                                         searchStyle: primaryStyle,
                                         searchInputDecoration: InputDecoration(
@@ -443,15 +446,12 @@ class _EditOrderLineState extends State<EditOrderLine> {
     print(response.statusCode);
     if (response.statusCode == 200) {
       editQuotationCount = editQuotationCount + 1;
-      Future.delayed(Duration.zero, () async {
-        pushMethod(
-            context,
-            QuatationDetailScreen(
-              id: widget.orderId,
-              isFromAnotherScreen: true,
-              isFromEditScreen: true,
-            ));
-      });
+      pushMethod(
+          context,
+          QuatationDetailScreen(
+            id: widget.orderId,
+            isFromAnotherScreen: widget.isFromBookingOrderScreen ?? false,
+          ));
     } else if (response.statusCode == 409) {
       final data = jsonDecode(response.body);
       dialog(context, data['error_descrip'], Colors.red.shade300);

@@ -54,7 +54,6 @@ class _RceiveScreenState extends State<ReceiveScreen> {
         body: Column(
       children: [
         allScreenInitialSizedBox(context),
-
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(
@@ -245,6 +244,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                               ReceiveDetail(
                                 orderId: myGetxController
                                     .receiveOrderList[index]['id'],
+                                isFromAnotherScreen: false,
                               )),
                           isOrderScreen: false,
                         );
@@ -268,6 +268,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                               ReceiveDetail(
                                 orderId: myGetxController
                                     .receiveFilteredOrderList[index]['id'],
+                                isFromAnotherScreen: false,
                               )),
                           isOrderScreen: false,
                         );

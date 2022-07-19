@@ -23,6 +23,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
   final int orderId;
   final bool isDeliveryScreen;
   final bool isReceiveScreen;
+  final bool? isFromBookingOrderScreen;
 
   OrderQuotationDetailCard({
     Key? key,
@@ -33,6 +34,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
     required this.orderId,
     required this.isDeliveryScreen,
     required this.isReceiveScreen,
+    this.isFromBookingOrderScreen,
   }) : super(key: key);
 
   MyGetxController myGetxController = Get.find();
@@ -81,6 +83,8 @@ class OrderQuotationDetailCard extends StatelessWidget {
                                 ['name'],
                             productCode: orderDetailsList[index]['product_id']
                                 ['default_code'],
+                            isFromBookingOrderScreen:
+                                isFromBookingOrderScreen ?? false,
                           ));
                     });
                   },
@@ -194,11 +198,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
         padding: EdgeInsets.all(15),
         width: double.infinity,
         decoration: BoxDecoration(
-            color: orderDetailsList[index]['state'] == "ready"
-                ? Colors.green.shade100.withOpacity(0.5)
-                : orderDetailsList[index]['state'] == "waiting"
-                    ? Colors.deepOrange.shade100.withOpacity(0.5)
-                    : Colors.white,
+            color: statusBackGroundColor(orderDetailsList, index),
             border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
             borderRadius: BorderRadius.all(Radius.circular(5))),
         child: Column(
@@ -260,13 +260,13 @@ class OrderQuotationDetailCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.green.shade100,
+                    color: statusBackGroundColor(orderDetailsList, index),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Text(
                     orderDetailsList[index]['state'],
                     style: TextStyle(
-                        color: Colors.green.shade700,
+                        color: statusColor(orderDetailsList, index),
                         fontWeight: FontWeight.w500,
                         fontSize: 17),
                   ),
@@ -274,7 +274,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: 10,
+              height: 5,
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -299,7 +299,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                 : Column(
                     children: [
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,7 +315,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                                 children: [
                                   Text(
                                     orderDetailsList[index]['remarks'],
-                                    style: allCardSubText,
+                                    style: remarkTextStyle,
                                   ),
                                 ],
                               ),
@@ -326,7 +326,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                     ],
                   ),
             SizedBox(
-              height: 10,
+              height: 5,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -339,7 +339,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                     ),
                     Text(
                       deliveryDate,
-                      style:deliveryDateStyle,
+                      style: deliveryDateStyle,
                     )
                   ],
                 ),
@@ -358,7 +358,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: 10,
+              height: 5,
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -486,5 +486,3 @@ class OrderQuotationDetailCard extends StatelessWidget {
     }
   }
 }
-
-List selectedOrderLineReceiveList = [];

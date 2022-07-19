@@ -22,7 +22,8 @@ class EditOrder extends StatefulWidget {
       this.deliveryDate,
       this.returnDate,
       this.id,
-      this.remarks})
+      this.remarks,
+      this.index})
       : super(key: key);
   final String? name;
   final String? number;
@@ -30,6 +31,7 @@ class EditOrder extends StatefulWidget {
   final String? returnDate;
   final String? remarks;
   final String? id;
+  final int? index;
 
   @override
   State<EditOrder> createState() => _EditOrderState();
@@ -48,13 +50,11 @@ class _EditOrderState extends State<EditOrder> {
   @override
   void initState() {
     super.initState();
-    print(widget.id);
     nameController.text = widget.name ?? "";
     numberController.text = widget.number ?? "";
     remarkController.text = widget.remarks ?? "";
     deliveryDate = widget.deliveryDate ?? "";
     returnDate = widget.returnDate ?? "";
-    print(deliveryDate);
     notFormatedDDate = new DateFormat("dd/MM/yyy").parse(deliveryDate);
     notFormatedRDate = DateFormat("dd/MM/yyy").parse(returnDate);
   }
@@ -66,7 +66,6 @@ class _EditOrderState extends State<EditOrder> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           allScreenInitialSizedBox(context),
-
           ScreenAppBar(
             screenName: "Edit Order",
           ),
@@ -323,17 +322,26 @@ class _EditOrderState extends State<EditOrder> {
         headers: {'Access-Token': token, 'Content-Type': 'text/plain'});
     var data = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      getDraftOrderData(
-        context,
-        apiUrl,
-        token,
-        0,
-      );
-      Navigator.pop(context);
+      updateQuotationData(apiUrl, token, orderId);
       myGetxController.isUpdateData.value = false;
     } else {
       dialog(context, data['error_descrip'], Colors.red.shade300);
       myGetxController.isUpdateData.value = false;
+    }
+  }
+
+  Future<void> updateQuotationData(
+      String apiUrl, String token, String orderId) async {
+    final response = await http.get(
+        Uri.parse("http://$apiUrl/api/rental.rental/$orderId"),
+        headers: {'Access-Token': token, 'Content-Type': 'application/http'});
+    var data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      myGetxController.quotationData.removeAt(widget.index ?? 0);
+      myGetxController.quotationData.insert(widget.index ?? 0, data);
+      Navigator.pop(context);
+    } else {
+      dialog(context, "Error In Getting Data", Colors.red.shade300);
     }
   }
 }

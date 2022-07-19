@@ -254,6 +254,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                               DeliveryDetailScreen(
                                 id: myGetxController
                                     .deliveryScreenOrderList[index]['id'],
+                                isFromAnotherScreen: false,
                               )),
                           isOrderScreen: false,
                         );
@@ -279,6 +280,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                                 id: myGetxController
                                         .deliveryScreenFilteredOrderList[index]
                                     ['id'],
+                                isFromAnotherScreen: false,
                               )),
                           isOrderScreen: false,
                         );

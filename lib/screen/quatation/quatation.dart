@@ -16,32 +16,31 @@ import '../../constant/constant.dart';
 import '../../home/home.dart';
 
 class QuatationScreen extends StatefulWidget {
-  const QuatationScreen({Key? key}) : super(key: key);
+  const QuatationScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<QuatationScreen> createState() => _QuatationScreenState();
 }
 
 class _QuatationScreenState extends State<QuatationScreen> {
-  MyGetxController myGetxController = Get.find();
+  MyGetxController myGetxController = Get.put(MyGetxController());
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   ScrollController scrollController = ScrollController();
-  bool isSearchLoadData = false;
   bool isExpandSearch = false;
 
   @override
   void initState() {
     super.initState();
-    myGetxController.filteredQuotationData.clear();
-    if (myGetxController.quotationData.isEmpty) {
-      getData();
-    }
+    clearList();
+    getData(false);
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
         quotationOffset = quotationOffset + 5;
-        getData();
+        getData(false);
       }
     });
   }
@@ -86,10 +85,8 @@ class _QuatationScreenState extends State<QuatationScreen> {
                       children: [
                         InkWell(
                             onTap: () {
-                              quotationOffset = 0;
-                              myGetxController.quotationData.clear();
-                              myGetxController.filteredQuotationData.clear();
-                              getData();
+                              clearList();
+                              getData(false);
                             },
                             child: FadeInRight(
                                 child: Padding(
@@ -99,9 +96,9 @@ class _QuatationScreenState extends State<QuatationScreen> {
                             ))),
                         InkWell(
                             onTap: () {
-                              // setState(() {
-                              //   isExpandSearch = !isExpandSearch;
-                              // });
+                              setState(() {
+                                isExpandSearch = !isExpandSearch;
+                              });
                             },
                             child: isExpandSearch == false
                                 ? FadeInRight(child: searchIcon)
@@ -188,11 +185,12 @@ class _QuatationScreenState extends State<QuatationScreen> {
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: primary2Color),
                               onPressed: () {
-                                // setState(() {
-                                //   isSearchLoadData = true;
-                                //   isExpandSearch = false;
-                                // });
-                                searchProduct();
+                                myGetxController
+                                    .isShowQuotationFilteredList.value = true;
+                                setState(() {
+                                  isExpandSearch = false;
+                                });
+                                getData(true);
                               },
                               child: Text("Search")),
                         ),
@@ -201,118 +199,109 @@ class _QuatationScreenState extends State<QuatationScreen> {
                   ),
                 ),
               ),
-              Expanded(
-                child: Obx(() => myGetxController.quotationData.isNotEmpty &&
-                        isSearchLoadData == false
-                    ? myGetxController.filteredQuotationData.isEmpty
-                        ? ListView.builder(
-                            controller: scrollController,
-                            shrinkWrap: true,
-                            itemCount: myGetxController.quotationData.length,
-                            padding: isExpandSearch == false
-                                ? EdgeInsets.symmetric(vertical: 15)
-                                : EdgeInsets.zero,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  editQuotationCount = 0;
-                                  pushMethod(
-                                      context,
-                                      QuatationDetailScreen(
-                                        id: myGetxController
-                                            .quotationData[index]['id'],
-                                        isFromAnotherScreen: false,
-                                      ));
-                                },
-                                child: OrderQuatationCommanCard(
-                                  index: index,
-                                  backGroundColor: Colors.white,
-                                  isOrderScreen: false,
-                                  isDeliveryScreen: false,
-                                  list: myGetxController.quotationData,
-                                ),
-                              );
-                            },
-                          )
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            itemCount:
-                                myGetxController.filteredQuotationData.length,
-                            padding: isExpandSearch == false
-                                ? EdgeInsets.symmetric(vertical: 15)
-                                : EdgeInsets.zero,
-                            itemBuilder: (context, index) {
-                              return OrderQuatationCommanCard(
-                                index: index,
-                                backGroundColor: Colors.white,
-                                isOrderScreen: false,
-                                isDeliveryScreen: false,
-                                list: myGetxController.filteredQuotationData,
-                                onTap: () => pushMethod(
-                                    context,
-                                    QuatationDetailScreen(
-                                      id: myGetxController
-                                          .filteredQuotationData[index]['id'],
-                                      isFromAnotherScreen: false,
-                                    )),
-                              );
-                            },
-                          )
-                    : CenterCircularProgressIndicator()),
-              )
+              Obx(() => Expanded(
+                  child: myGetxController.isShowQuotationFilteredList.value ==
+                          false
+                      ? myGetxController.quotationData.isNotEmpty
+                          ? ListView.builder(
+                              controller: scrollController,
+                              shrinkWrap: true,
+                              itemCount: myGetxController.quotationData.length,
+                              padding: isExpandSearch == false
+                                  ? EdgeInsets.symmetric(vertical: 15)
+                                  : EdgeInsets.zero,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () async {
+                                    editQuotationCount = 0;
+                                    pushMethod(
+                                        context,
+                                        QuatationDetailScreen(
+                                          id: myGetxController
+                                              .quotationData[index]['id'],
+                                          isFromAnotherScreen: false,
+                                        ));
+                                  },
+                                  child: OrderQuatationCommanCard(
+                                    index: index,
+                                    backGroundColor: Colors.white,
+                                    isOrderScreen: false,
+                                    isDeliveryScreen: false,
+                                    list: myGetxController.quotationData,
+                                  ),
+                                );
+                              },
+                            )
+                          : CenterCircularProgressIndicator()
+                      : myGetxController.filteredQuotationData.isNotEmpty
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              itemCount:
+                                  myGetxController.filteredQuotationData.length,
+                              padding: isExpandSearch == false
+                                  ? EdgeInsets.symmetric(vertical: 15)
+                                  : EdgeInsets.zero,
+                              itemBuilder: (context, indexs) {
+                                return InkWell(
+                                  onTap: () {
+                                    editQuotationCount = 0;
+                                    pushMethod(
+                                        context,
+                                        QuatationDetailScreen(
+                                          id: myGetxController
+                                              .quotationData[indexs]['id'],
+                                          isFromAnotherScreen: false,
+                                        ));
+                                  },
+                                  child: OrderQuatationCommanCard(
+                                    index: indexs,
+                                    backGroundColor: Colors.white,
+                                    isOrderScreen: false,
+                                    isDeliveryScreen: false,
+                                    list:
+                                        myGetxController.filteredQuotationData,
+                                  ),
+                                );
+                              },
+                            )
+                          : myGetxController.noDataInQuotationScreen.value ==
+                                  false
+                              ? CenterCircularProgressIndicator()
+                              : Center(
+                                  child: Text(
+                                  "No Order !",
+                                  style: TextStyle(
+                                      color: Colors.grey.shade300,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w500),
+                                ))))
             ],
           )),
     );
   }
 
-  getData() async {
+  getData(bool isSearchData) async {
     getStringPreference('apiUrl').then((apiUrl) async {
       try {
         getStringPreference('accessToken').then((token) async {
           if (apiUrl.toString().startsWith("192")) {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
-                getDraftOrderData(context, apiUrl, token, 0);
+                isSearchData == false
+                    ? getDraftOrderData(context, apiUrl, token, 0)
+                    : getSearchData(apiUrl, token);
               } else {
                 dialog(context, "Connect to Showroom Network",
                     Colors.red.shade300);
               }
             });
           } else {
-            getDraftOrderData(context, apiUrl, token, 0);
+            isSearchData == false
+                ? getDraftOrderData(context, apiUrl, token, 0)
+                : getSearchData(apiUrl, token);
           }
         });
       } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
-      }
-    });
-  }
-
-  searchProduct() {
-    print(MediaQuery.of(context).viewInsets.bottom);
-    getStringPreference('apiUrl').then((apiUrl) async {
-      try {
-        getStringPreference('accessToken').then((token) async {
-          if (apiUrl.toString().startsWith("192")) {
-            showConnectivity().then((result) async {
-              if (result == ConnectivityResult.wifi) {
-                getSearchData(apiUrl, token);
-              } else {
-                // setState(() {
-                //   isSearchLoadData = false;
-                // });
-                dialog(context, "Connect to Showroom Network",
-                    Colors.red.shade300);
-              }
-            });
-          } else {
-            getSearchData(apiUrl, token);
-          }
-        });
-      } on SocketException catch (err) {
-        // setState(() {
-        //   isSearchLoadData = false;
-        // });
         dialog(context, "Connect to Showroom Network", Colors.red.shade300);
       }
     });
@@ -331,7 +320,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
           "('mobile1', 'ilike', '${numberController.text}'),('state','=','draft')");
     }
     if (datas.length == 1) {
-      domain = "[${datas[0]},('state','=','draft')]";
+      domain = "[${datas[0]}]";
     } else if (datas.length == 2) {
       domain = "['|' , ${datas[0]} , ${datas[1]}]";
     } else {
@@ -346,21 +335,50 @@ class _QuatationScreenState extends State<QuatationScreen> {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
-        // setState(() {
-        //   isSearchLoadData = false;
-        // });
         myGetxController.filteredQuotationData.addAll(data['results']);
       } else {
-        // setState(() {
-        //   isSearchLoadData = false;
-        // });
+        myGetxController.noDataInQuotationScreen.value = true;
         dialog(context, "No Order Found", Colors.red.shade300);
       }
     } else {
-      // setState(() {
-      //   isSearchLoadData = false;
-      // });
       dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
+  }
+
+  void clearList() {
+    quotationOffset = 0;
+    myGetxController.quotationData.clear();
+    myGetxController.isShowQuotationFilteredList.value = false;
+    myGetxController.noDataInQuotationScreen.value = false;
+    myGetxController.filteredQuotationData.clear();
+  }
+}
+
+Future<void> getDraftOrderData(
+    BuildContext context, String apiUrl, String accessToken, int id) async {
+  MyGetxController myGetxController = Get.find();
+  String domain = "[('state','=','draft')]";
+  var params = {
+    'filters': domain.toString(),
+    'limit': '5',
+    'offset': '$quotationOffset',
+    'order': 'id desc'
+  };
+  Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
+  final finalUri = uri.replace(queryParameters: params);
+  final response = await http.get(finalUri, headers: {
+    'Access-Token': accessToken,
+  });
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+    if (data['count'] != 0) {
+      myGetxController.quotationData.addAll(data['results']);
+    } else {
+      if (quotationOffset <= 0) {
+        dialog(context, "No Data Found !", Colors.red.shade300);
+      }
+    }
+  } else {
+    dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }
 }

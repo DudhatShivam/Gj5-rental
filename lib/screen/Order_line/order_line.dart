@@ -36,7 +36,12 @@ class _OrderLineScreenState extends State<OrderLineScreen>
   TextEditingController orderCodeController = TextEditingController();
   String deliveryDate = "";
   DateTime notFormatedDDate = DateTime.now();
+  String toDeliveryDate = "";
+  DateTime notFormatedToDDate = DateTime.now();
   bool isExpandSearch = false;
+  bool isShowToDate = false;
+  bool ARService = false;
+  bool ARManager = false;
 
   List<String> filterList = [
     'Today deliver',
@@ -58,10 +63,9 @@ class _OrderLineScreenState extends State<OrderLineScreen>
   @override
   void initState() {
     super.initState();
-    if (myGetxController.orderLineScreenList.isEmpty) {
-      cheCkWlanForOrderLineData(context, false);
-    }
+    getAccessRight();
     clearList();
+    cheCkWlanForOrderLineData(context, false);
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -79,8 +83,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
           child: Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
-              Colors.teal.shade100.withOpacity(0.1),
-              Colors.tealAccent.shade100.withOpacity(0.1)
+              mainColor1.withOpacity(0.20),
+              mainColor2.withOpacity(0.05)
             ])),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,8 +92,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                 Container(
                   decoration: BoxDecoration(
                       gradient: LinearGradient(colors: [
-                    Colors.teal.shade400,
-                    Colors.tealAccent.shade100
+                    mainColor1.withOpacity(0.35),
+                    mainColor2.withOpacity(0.15)
                   ])),
                   height: MediaQuery.of(context).padding.top +
                       getHeight(0.13, context),
@@ -318,7 +322,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             style: primaryStyle,
                           ),
                           Container(
-                            width: getWidth(0.30, context),
+                            width: getWidth(0.315, context),
                             child: textFieldWidget(
                                 "Order Number",
                                 orderNumberController,
@@ -334,7 +338,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                       ),
                     ),
                     SizedBox(
-                      height: 8,
+                      height: 5,
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -346,7 +350,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             style: primaryStyle,
                           ),
                           Container(
-                            width: getWidth(0.30, context),
+                            width: getWidth(0.315, context),
                             child: textFieldWidget(
                                 "Product Code",
                                 orderCodeController,
@@ -362,7 +366,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                       ),
                     ),
                     SizedBox(
-                      height: 8,
+                      height: 5,
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -373,56 +377,150 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             "D Date",
                             style: primaryStyle,
                           ),
-                          InkWell(
-                            onTap: () async {
-                              FocusScope.of(context).unfocus();
-                              pickedDate(context).then((value) {
-                                if (value != null) {
-                                  notFormatedDDate = value;
-                                  setState(() {
-                                    deliveryDate =
-                                        DateFormat('dd/MM/yyyy').format(value);
-                                  });
-                                }
-                              });
-                            },
-                            child: Container(
-                              width: getWidth(0.30, context),
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: Colors.greenAccent.withOpacity(0.3),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                      child: Row(
-                                    children: [
-                                      calenderIcon,
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        deliveryDate,
-                                        style: primaryStyle,
-                                      ),
-                                    ],
-                                  )),
-                                  InkWell(
-                                    onTap: () {
+                          Row(
+                            children: [
+                              InkWell(
+                                onTap: () async {
+                                  FocusScope.of(context).unfocus();
+                                  picked7DateAbove(context).then((value) {
+                                    if (value != null) {
+                                      notFormatedDDate = value;
                                       setState(() {
-                                        deliveryDate = "";
+                                        deliveryDate = DateFormat('dd/MM/yyyy')
+                                            .format(value);
                                       });
-                                    },
-                                    child: textFieldCancelIcon,
-                                  )
-                                ],
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  width: getWidth(0.275, context),
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                      color:
+                                          Colors.greenAccent.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          child: Row(
+                                        children: [
+                                          calenderIcon,
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            deliveryDate,
+                                            style: primaryStyle,
+                                          ),
+                                        ],
+                                      )),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            deliveryDate = "";
+                                          });
+                                        },
+                                        child: textFieldCancelIcon,
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    isShowToDate = !isShowToDate;
+                                    toDeliveryDate = "";
+                                  });
+                                },
+                                child: Icon(
+                                  isShowToDate == false
+                                      ? Icons.add
+                                      : Icons.remove,
+                                  color: primary2Color,
+                                  size: 28,
+                                ),
+                              ),
+                            ],
                           )
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    isShowToDate == true
+                        ? Container(
+                            margin: EdgeInsets.symmetric(horizontal: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "To Date",
+                                  style: primaryStyle,
+                                ),
+                                SizedBox(
+                                  width: getWidth(0.031, context),
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    FocusScope.of(context).unfocus();
+                                    picked7DateAbove(context).then((value) {
+                                      if (value != null) {
+                                        notFormatedToDDate = value;
+                                        setState(() {
+                                          toDeliveryDate =
+                                              DateFormat('dd/MM/yyyy')
+                                                  .format(value);
+                                        });
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    width: getWidth(0.275, context),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                        color:
+                                            Colors.greenAccent.withOpacity(0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            child: Row(
+                                          children: [
+                                            calenderIcon,
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              toDeliveryDate,
+                                              style: primaryStyle,
+                                            ),
+                                          ],
+                                        )),
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              toDeliveryDate = "";
+                                            });
+                                          },
+                                          child: textFieldCancelIcon,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 5),
@@ -432,11 +530,20 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: primary2Color),
                             onPressed: () {
-                              myGetxController.filteredListOrderLine.clear();
-                              checkWlanForFilteredData();
-                              setState(() {
-                                isExpandSearch = false;
-                              });
+                              if (toDeliveryDate != "") {
+                                if (notFormatedToDDate
+                                        .isAfter(notFormatedDDate) ==
+                                    true) {
+                                  searchTimeCall();
+                                } else {
+                                  dialog(
+                                      context,
+                                      "You can not select fromDate greater than toDate",
+                                      Colors.red.shade300);
+                                }
+                              } else {
+                                searchTimeCall();
+                              }
                             },
                             child: Text("Search")),
                       ),
@@ -528,6 +635,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                                   isProductDetailScreen: false,
                                                   isShowFromGroupBy: true,
                                                   groupByMainListIndex: index,
+                                                  ARManager: ARManager,
+                                                  ARService: ARService,
                                                 );
                                               })
                                           : Container()
@@ -542,9 +651,10 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                     () => myGetxController
                                 .isShowFilteredDataInOrderLine.value ==
                             true
-                        ? myGetxController.filteredListOrderLine.isNotEmpty
-                            ? Expanded(
-                                child: ListView.builder(
+                        ? Expanded(
+                            child: myGetxController
+                                    .filteredListOrderLine.isNotEmpty
+                                ? ListView.builder(
                                     controller: scrollController,
                                     padding: isExpandSearch == true
                                         ? EdgeInsets.zero
@@ -562,20 +672,23 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                         index: index,
                                         isProductDetailScreen: false,
                                         isShowFromGroupBy: false,
+                                        ARManager: ARManager,
+                                        ARService: ARService,
                                       );
-                                    }))
-                            : Expanded(
-                                child: Container(
-                                  child: Center(
-                                      child: Text(
-                                    "No Order !",
-                                    style: TextStyle(
-                                        color: Colors.grey.shade300,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w500),
-                                  )),
-                                ),
-                              )
+                                    })
+                                : myGetxController.noDataInOrderLine.value ==
+                                        true
+                                    ? Container(
+                                        child: Center(
+                                            child: Text(
+                                          "No Order !",
+                                          style: TextStyle(
+                                              color: Colors.grey.shade300,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.w500),
+                                        )),
+                                      )
+                                    : CenterCircularProgressIndicator())
                         : Expanded(
                             child: myGetxController
                                     .orderLineScreenList.isNotEmpty
@@ -597,25 +710,24 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                         index: index,
                                         isProductDetailScreen: false,
                                         isShowFromGroupBy: false,
+                                        ARManager: ARManager,
+                                        ARService: ARService,
                                       );
                                     })
-                                : myGetxController.noDataInOrderLine.value ==
-                                        true
-                                    ? Container(
-                                        child: Center(
-                                            child: Text(
-                                          "No Order !",
-                                          style: TextStyle(
-                                              color: Colors.grey.shade300,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.w500),
-                                        )),
-                                      )
-                                    : CenterCircularProgressIndicator(),
+                                : CenterCircularProgressIndicator(),
                           ),
                   )
           ],
         ));
+  }
+
+  searchTimeCall() {
+    myGetxController.orderLineScreenList.clear();
+    myGetxController.noDataInOrderLine.value = false;
+    checkWlanForFilteredData();
+    setState(() {
+      isExpandSearch = false;
+    });
   }
 
   checkWlanForFilteredData() {
@@ -642,9 +754,11 @@ class _OrderLineScreenState extends State<OrderLineScreen>
   }
 
   searchOrderLineOrder(String apiUrl, String token) async {
+    myGetxController.filteredListOrderLine.clear();
     String? domain;
     List datas = [];
     String dDate = DateFormat('yyyy/MM/dd').format(notFormatedDDate);
+    String toDDate = DateFormat('yyyy/MM/dd').format(notFormatedToDDate);
     if (orderNumberController.text != "") {
       datas.add(
           "('order_no', 'ilike', '${orderNumberController.text}'),('order_status' , 'not in' , ('cancel','done'))");
@@ -654,8 +768,13 @@ class _OrderLineScreenState extends State<OrderLineScreen>
           "('p_default_code', 'ilike', '${orderCodeController.text}'),('order_status' , 'not in' , ('draft','cancel','done')), ('state' , 'not in' , ('cancel','receive','deliver'))");
     }
     if (deliveryDate != "") {
-      datas.add(
-          "('delivery_date', '=', '${dDate}'),('order_status' , 'not in' , ('cancel','done')), ('state' , 'not in' , ('cancel','receive'))");
+      if (toDeliveryDate != "") {
+        datas.add(
+            "('delivery_date', '>=', '${dDate}'),('delivery_date', '<=', '${toDDate}'),('order_status' , 'not in' , ('cancel','done')), ('state' , 'not in' , ('cancel','receive'))");
+      } else {
+        datas.add(
+            "('delivery_date', '=', '${dDate}'),('order_status' , 'not in' , ('cancel','done')), ('state' , 'not in' , ('cancel','receive'))");
+      }
     }
 
     if (datas.length == 1) {
@@ -687,6 +806,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
           isShowGroupByData = false;
         });
       } else {
+        myGetxController.noDataInOrderLine.value = true;
         dialog(context, "No Order Found", Colors.red.shade300);
       }
     } else {
@@ -737,6 +857,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
   }
 
   clearList() async {
+    orderLineOffset = 0;
+    myGetxController.orderLineScreenList.clear();
     myGetxController.noDataInOrderLine.value == false;
     myGetxController.isShowFilteredDataInOrderLine.value = false;
     myGetxController.filteredListOrderLine.clear();
@@ -783,5 +905,10 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     }
     myGetxController.isShowFilteredDataInOrderLine.value = true;
     _key.currentState?.closeDrawer();
+  }
+
+  Future<void> getAccessRight() async {
+    ARManager = await getBoolPreference('ARManager');
+    ARService = await getBoolPreference('ARService');
   }
 }

@@ -29,7 +29,6 @@ import '../screen/order/order_detail.dart';
 import '../screen/quatation/edit_order.dart';
 import '../screen/quatation/quotation_const/quotation_constant.dart';
 
-int editQuotationCount = 0;
 
 ExitDialog(BuildContext context) {
   return showGeneralDialog(
@@ -177,6 +176,15 @@ Future<DateTime?> pickedDate(BuildContext context) async {
   return picked;
 }
 
+Future<DateTime?> picked7DateAbove(BuildContext context) async {
+  final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(Duration(days: 7)),
+      lastDate: DateTime(2030));
+  return picked;
+}
+
 void showInSnackBar(String value, BuildContext context) {
   Get.snackbar(
     'Error',
@@ -188,6 +196,7 @@ void showInSnackBar(String value, BuildContext context) {
     snackPosition: SnackPosition.TOP,
   );
 }
+
 
 textFieldWidget(
     String hint,
@@ -273,7 +282,7 @@ numberValidatorTextfield(
           borderSide: BorderSide(color: Colors.white),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: primary2ColorShade400),
+          borderSide: BorderSide(color: primary2Color),
         )),
   );
 }
@@ -512,59 +521,6 @@ Widget cartCard(List<dynamic> list, int index, String cartOwnerName,
   );
 }
 
-Future getDraftOrderData(
-    BuildContext context, String apiUrl, String accessToken, int id) async {
-  try {
-    MyGetxController myGetxController = Get.find();
-    String domain = "[('state','=','draft')]";
-    var params = {
-      'filters': domain.toString(),
-      'limit': '5',
-      'offset': '$quotationOffset',
-      'order': 'id desc'
-    };
-    Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
-    final finalUri = uri.replace(queryParameters: params);
-    final response = await http.get(finalUri, headers: {
-      'Access-Token': accessToken,
-      'Content-Type': 'application/http',
-      'Connection': 'keep-alive'
-    });
-    Map<String, dynamic> data = await jsonDecode(response.body);
-    if (data['count'] != 0) {
-      myGetxController.quotationData.addAll(data['results']);
-    } else {
-      if (quotationOffset <= 0) {
-        dialog(context, "No Data Found !", Colors.red.shade300);
-      }
-    }
-    if (id != 0) {
-      pushMethod(
-          context,
-          QuatationDetailScreen(
-            id: id,
-            isFromAnotherScreen: true,
-            isFromEditScreen: false,
-          ));
-      // for (int i = 0; i < myGetxController.quotationData.length; i++) {
-      //   if (myGetxController.quotationData[i]['id'] == id) {
-      //     SchedulerBinding.instance.addPostFrameCallback((_) {
-      //       pushMethod(
-      //           context,
-      //           QuatationDetailScreen(
-      //             id: myGetxController.quotationData[i]['id'],
-      //             isFromAnotherScreen: true,
-      //             isFromEditScreen: false,
-      //           ));
-      //     });
-      //   }
-      // }
-    }
-  } catch (e) {
-    dialog(context, "Something Went Wrong !", Colors.red.shade300);
-  }
-}
-
 bookingStatusResponseCard(List<dynamic> responseOfApi, int index) {
   return Container(
     margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -715,7 +671,6 @@ void checkForOrderScreenProductDetail() {
 
   myGetxController.orderLineProductList.clear();
   myGetxController.orderLineList.forEach((element) {
-    print("inseide call");
     if (element['product_details_ids'] != []) {
       List<dynamic> data = element['product_details_ids'];
       data.forEach((value) {
@@ -1065,4 +1020,30 @@ allScreenInitialSizedBox(BuildContext context) {
   return SizedBox(
     height: MediaQuery.of(context).padding.top + 10,
   );
+}
+
+Color statusBackGroundColor(List list, int index) {
+  Color color;
+  list[index]['state'] == 'done' || list[index]['state'] == 'cancel'
+      ? color = mutedColor.withOpacity(0.08)
+      : list[index]['state'] == 'confirm'
+          ? color = infoColor.withOpacity(0.08)
+          : list[index]['state'] == 'return' ||
+                  list[index]['state'] == 'pending'
+              ? color = dangerColor.withOpacity(0.08)
+              : color = defaultColor.withOpacity(0.08);
+  return color;
+}
+
+Color statusColor(List list, int index) {
+  Color color;
+  list[index]['state'] == 'done' || list[index]['state'] == 'cancel'
+      ? color = mutedColor
+      : list[index]['state'] == 'confirm'
+          ? color = infoColor
+          : list[index]['state'] == 'return' ||
+                  list[index]['state'] == 'pending'
+              ? color = dangerColor
+              : color = defaultColor;
+  return color;
 }

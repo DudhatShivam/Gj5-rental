@@ -49,7 +49,7 @@ class ExtraProductCard extends StatelessWidget {
                       children: [
                         Text(
                           "Remark : ",
-                          style: allCardMainText,
+                          style: remarkTextStyle,
                         ),
                         Expanded(
                           child: Text(

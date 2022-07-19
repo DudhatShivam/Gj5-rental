@@ -46,12 +46,10 @@ class _BookOrderState extends State<BookOrder> {
   DateTime deliveryNotFormatedDate = DateTime.now();
   bool isValidRDate = true;
   bool isBtnLoading = false;
-  MyGetxController myGetxController = Get.find();
 
   @override
   void initState() {
     super.initState();
-    print(widget.productName);
     deliveryDate = widget.deliveryDate ?? "";
     returnDate = widget.returnDate ?? "";
     deliveryNotFormatedDate = new DateFormat("dd/MM/yyyy").parse(deliveryDate);
@@ -334,6 +332,8 @@ class _BookOrderState extends State<BookOrder> {
                             width: double.infinity,
                             height: 45,
                             child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: primary2Color),
                                 onPressed: () {
                                   if (_formKey.currentState?.validate() ==
                                           true &&
@@ -427,14 +427,18 @@ class _BookOrderState extends State<BookOrder> {
         setState(() {
           isBtnLoading = false;
         });
-        myGetxController.quotationData.clear();
-        pushMethod(
+        pushRemoveUntilMethod(
             context,
             QuatationDetailScreen(
               id: data['rental_id'],
               isFromAnotherScreen: true,
-              isFromEditScreen: false,
             ));
+        // pushMethod(
+        //     context,
+        //     QuatationDetailScreen(
+        //       id: data['rental_id'],
+        //       isFromAnotherScreen: true,
+        //     ));
       } else {
         setState(() {
           isBtnLoading = false;

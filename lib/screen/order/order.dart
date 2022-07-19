@@ -71,7 +71,6 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         allScreenInitialSizedBox(context),
-
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(
@@ -263,6 +262,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                           onTap: () => pushMethod(
                               context,
                               OrderDetail(
+                                  idFromAnotherScreen: false,
                                   id: myGetxController.orderData[index]['id'])),
                         );
                       })
@@ -284,6 +284,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                           onTap: () => pushMethod(
                               context,
                               OrderDetail(
+                                  idFromAnotherScreen: false,
                                   id: myGetxController.filteredOrderList[index]
                                       ['id'])),
                         );

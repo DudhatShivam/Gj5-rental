@@ -20,10 +20,21 @@ class ProductDetail extends StatefulWidget {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    productDetailOffset = 0;
+    myGetxController.productDetailList.clear();
     checkWifiForProductDetailData();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        productDetailOffset = productDetailOffset + 10;
+        checkWifiForProductDetailData();
+      }
+    });
   }
 
   MyGetxController myGetxController = Get.find();
@@ -40,7 +51,7 @@ class _ProductDetailState extends State<ProductDetail> {
           Expanded(
             child: Obx(() => myGetxController.productDetailList.isNotEmpty
                 ? ListView.builder(
-                    physics: BouncingScrollPhysics(),
+                    controller: scrollController,
                     padding: EdgeInsets.zero,
                     scrollDirection: Axis.vertical,
                     itemCount: myGetxController.productDetailList.length,
@@ -51,11 +62,11 @@ class _ProductDetailState extends State<ProductDetail> {
                         productList: myGetxController.productDetailList,
                         index: index,
                         isProductDetailScreen: true,
+                        ARManager: false,
+                        ARService: false,
                       );
                     })
-                : Container(
-                    child: Center(child: CircularProgressIndicator()),
-                  )),
+                : CenterCircularProgressIndicator()),
           ),
         ],
       ),
@@ -71,32 +82,43 @@ class _ProductDetailState extends State<ProductDetail> {
           if (result == ConnectivityResult.wifi) {
             getProductDetail(apiUrl, accessToken);
           } else {
-            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+            dialog(context, "Connect to Showroom Network", Colors.red.shade300);
           }
         });
       } else {
         getProductDetail(apiUrl, accessToken);
       }
     } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   }
 
   Future<void> getProductDetail(String apiUrl, String accessToken) async {
-    String domain = "[('order_status' , 'not in' , ('draft','cancel','done'))]";
-    var params = {'filters': domain.toString()};
+    String dayBefore = get5daysBeforeDate();
+    String dayAfter = get7DaysAfterDate();
+    String domain =
+        "[('state' , 'not in' , ('draft','cancel','done')),('delivery_date' , '>=' , '$dayBefore') , ('delivery_date' , '<=' , '$dayAfter')]";
+    var params = {
+      'filters': domain.toString(),
+      'limit': '10',
+      'offset': '$productDetailOffset',
+      'order': 'id desc'
+    };
     Uri uri = Uri.parse("http://$apiUrl/api/product.details");
     final finalUri = uri.replace(queryParameters: params);
     final response =
         await http.get(finalUri, headers: {'Access-Token': accessToken});
-    print(response.statusCode);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       if (data['count'] > 0) {
         myGetxController.productDetailList.addAll(data['results']);
+      } else {
+        if (myGetxController.productDetailList.isEmpty) {
+          dialog(context, "No Data Found !", Colors.red.shade300);
+        }
       }
     } else {
-      dialog(context, "Something Went Wrong !",Colors.red.shade300);
+      dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
   }
 }

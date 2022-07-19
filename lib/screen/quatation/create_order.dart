@@ -8,6 +8,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:gj5_rental/screen/quatation/quatation.dart';
+import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
 import 'package:http/http.dart' as http;
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -26,7 +27,6 @@ class _CreateOrderState extends State<CreateOrder> {
   TextEditingController number2Controller = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
-  MyGetxController myGetxController = Get.find();
   final _formKey = GlobalKey<FormState>();
   String returnDate = "";
   String deliveryDate = "";
@@ -43,10 +43,6 @@ class _CreateOrderState extends State<CreateOrder> {
   @override
   void initState() {
     super.initState();
-    nameController.text = "dishant";
-    numberController.text = "8511510103";
-    number2Controller.text = "8866382553";
-    addressController.text = "varachha";
   }
 
   @override
@@ -367,6 +363,7 @@ class _CreateOrderState extends State<CreateOrder> {
   }
 
   Future<void> createOrder(String apiUrl, String token) async {
+    MyGetxController myGetxController = Get.find();
     setState(() {
       isBtnLoading = true;
     });
@@ -401,8 +398,14 @@ class _CreateOrderState extends State<CreateOrder> {
     });
     if (response.statusCode == 200) {
       myGetxController.quotationData.clear();
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        pushMethod(context, QuatationScreen());
+      quotationOffset = 0;
+      getDraftOrderData(context, apiUrl, token, 0).whenComplete(() {
+        pushMethod(
+            context,
+            QuatationDetailScreen(
+              id: datas['id'],
+              isFromAnotherScreen: false,
+            ));
       });
     } else {
       dialog(context, "Something Went Wrong !", Colors.red.shade300);

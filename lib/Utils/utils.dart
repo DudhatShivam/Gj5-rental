@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import '../constant/constant.dart';
+import '../home/home.dart';
+import '../main.dart';
 
 getHeight(double height, BuildContext context) {
   return MediaQuery.of(context).size.height * height;
@@ -17,33 +19,48 @@ getWidth(double width, BuildContext context) {
   return MediaQuery.of(context).size.height * width;
 }
 
-Color primaryColor = Color(0xff0F052D);
-Color primary2Color = Colors.teal;
-Color primary2ColorShade400 = Colors.teal.shade400;
+bool isFromAnotherScreen = false;
+int editQuotationCount = 0;
 
-Color newStatusColor = Color(0xff2F8DFA);
-Color confirmStatusColor = Color(0xff8B572A);
-Color waitingStatusColor = Color(0xffA9DACC);
-Color readyToDeliveryStatusColor = Color(0xffEB648B);
-Color partiallyDeliverStatusColor = Color(0xffF8C753);
-Color DeliverStatusColor = Color(0xffFEB7E30);
-Color partiallyReceivedStatusColor = Color(0xffFEB7E30);
-Color doneStatusColor = Colors.green;
-Color cancelledStatusColor = Color(0xffD5001A);
+Color primaryColor = Color(0xff0F052D);
+Color primary2Color = Color(0xffAd2A30);
+
+Color mainColor1 = Color(0xffFB578E);
+Color mainColor2 = Color(0xffFEA78D);
+
+Color infoColor = Color(0xff33b5e5);
+Color successColor = Color(0xff00C851);
+Color dangerColor = Color(0xffff4444);
+Color mutedColor = Color(0xff6c757d);
+Color defaultColor = Colors.black;
+Color stitchingColor = Color(0xffDEA551);
 
 int orderScreenOffset = 0;
 int deliverScreenOffset = 0;
 int quotationOffset = 0;
 int receiveScreenOffset = 0;
 int serviceScreenOffset = 0;
+int cancelOrderOffset = 0;
+int productDetailOffset = 0;
+
+popFunction(BuildContext context, bool isFromAnotherScreen) async {
+  if (isFromAnotherScreen == true) {
+    pushRemoveUntilMethod(context, HomeScreen());
+  } else {
+    Navigator.of(context).pop();
+  }
+}
 
 pushMethod(BuildContext context, Widget name) {
   // Navigator.of(context).push(SwipeablePageRoute(
   //   canOnlySwipeFromEdge: true,
   //   builder: (BuildContext context) => name,
   // ));
-  print("push");
   Navigator.of(context).push(MaterialPageRoute(builder: (context) => name));
+}
+
+navigatorKeyPushMethod(BuildContext context, Widget name) {
+  navigatorKey.currentState?.push(MaterialPageRoute(builder: (_) => name));
 }
 
 pushRemoveUntilMethod(BuildContext context, Widget name) {
@@ -76,6 +93,9 @@ TextStyle allCardMainText = TextStyle(
     fontSize: 17, fontWeight: FontWeight.w500, color: Colors.grey.shade600);
 TextStyle allCardSubText =
     TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black);
+
+TextStyle remarkTextStyle =
+    TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: infoColor);
 
 TextStyle deliveryDateStyle =
     TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.green);
@@ -124,14 +144,21 @@ Future showConnectivity() async {
 
 Widget CenterCircularProgressIndicator() {
   return Center(
-      child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(primary2Color)));
+    child: Container(
+      height: 100,
+      width: 100,
+      child: LoadingIndicator(
+        indicatorType: Indicator.pacman,
+        colors: [primary2Color, mainColor1, mainColor2],
+      ),
+    ),
+  );
 }
 
 showToast(String text) {
   return Fluttertoast.showToast(
     msg: text,
-    backgroundColor: Colors.teal,
+    backgroundColor: primary2Color,
     timeInSecForIosWeb: 2,
     fontSize: 17,
   );
@@ -424,7 +451,13 @@ Future<void> setLogInData(
     String image,
     String branchName,
     String pastDayOrder,
-    String nextDayOder) async {
+    String nextDayOder,
+    bool ARUser,
+    bool ARService,
+    bool ARReceive,
+    bool ARDeliver,
+    bool ARChangeProduct,
+    bool ARManager) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.setString('apiUrl', apiUrl);
   preferences.setString('branchName', branchName);
@@ -435,6 +468,12 @@ Future<void> setLogInData(
   preferences.setString('image', image).whenComplete(() => print("image set"));
   preferences.setString('pastDayOrder', pastDayOrder);
   preferences.setString('nextDayOder', nextDayOder);
+  preferences.setBool('ARUser', ARUser);
+  preferences.setBool('ARService', ARService);
+  preferences.setBool('ARReceive', ARReceive);
+  preferences.setBool('ARDeliver', ARDeliver);
+  preferences.setBool('ARChangeProduct', ARChangeProduct);
+  preferences.setBool('ARManager', ARManager);
 }
 
 Future<void> removePreference() async {
@@ -451,11 +490,22 @@ Future<void> removePreference() async {
   preferences.remove('nextDayOder');
   preferences.remove('LogIN');
   preferences.remove('cartList');
+  preferences.remove('ARUser');
+  preferences.remove('ARService');
+  preferences.remove('ARReceive');
+  preferences.remove('ARDeliver');
+  preferences.remove('ARChangeProduct');
+  preferences.remove('ARManager');
 }
 
 Future getStringPreference(String pref) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   return preferences.getString(pref);
+}
+
+Future getBoolPreference(String pref) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  return preferences.getBool(pref);
 }
 
 Future setLogIn(bool isLogIN) async {

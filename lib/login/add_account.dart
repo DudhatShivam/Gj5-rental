@@ -234,7 +234,13 @@ class _AddAccountState extends State<AddAccount> {
                         data['image'].toString(),
                         data['branch_name'],
                         data['past_day_order'].toString(),
-                        data['next_day_order'].toString())
+                        data['next_day_order'].toString(),
+                        data['is_user'],
+                        data['is_servicer'],
+                        data['is_receiver'],
+                        data['is_deliver'],
+                        data['change_product'],
+                        data['is_manager'])
                     .whenComplete(() {
                   pushRemoveUntilMethod(context, HomeScreen());
                 });

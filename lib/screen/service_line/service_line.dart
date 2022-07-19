@@ -32,6 +32,8 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
   int? selectedGroupByIndex;
   int? groupByListIndex;
   bool isExpandSearch = false;
+  DateTime? notFormatedDDate;
+  String? deliveryDate;
 
   List filterList = [
     'washing',
@@ -68,8 +70,8 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
           child: Container(
               decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
-                Colors.teal.shade100.withOpacity(0.1),
-                Colors.tealAccent.shade100.withOpacity(0.1)
+                mainColor1.withOpacity(0.20),
+                mainColor2.withOpacity(0.05)
               ])),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,8 +79,8 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                   Container(
                     decoration: BoxDecoration(
                         gradient: LinearGradient(colors: [
-                      Colors.teal.shade400,
-                      Colors.tealAccent.shade100
+                      mainColor1.withOpacity(0.35),
+                      mainColor2.withOpacity(0.15)
                     ])),
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     height: MediaQuery.of(context).padding.top +
@@ -188,7 +190,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                               groupByField("product_id", "name");
                             } else if (index == 2) {
                               groupByField("service_partner_id", "name");
-                            } else if (index == 1) {
+                            } else if (index == 3) {
                               groupByField("service_type", "");
                             }
                           },
@@ -295,6 +297,68 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                 0,
                                 Colors.greenAccent,
                                 1),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "D Date",
+                            style: primaryStyle,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              FocusScope.of(context).unfocus();
+                              picked7DateAbove(context).then((value) {
+                                if (value != null) {
+                                  notFormatedDDate = value;
+                                  setState(() {
+                                    deliveryDate =
+                                        DateFormat('dd/MM/yyyy').format(value);
+                                  });
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: getWidth(0.30, context),
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: Colors.greenAccent.withOpacity(0.3),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: Row(
+                                    children: [
+                                      calenderIcon,
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        deliveryDate ?? "",
+                                        style: primaryStyle,
+                                      ),
+                                    ],
+                                  )),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        deliveryDate = "";
+                                      });
+                                    },
+                                    child: textFieldCancelIcon,
+                                  )
+                                ],
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -610,6 +674,10 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
   showDefaultData() {
     myGetxController.serviceLineFilteredList.clear();
     myGetxController.serviceLineIsShowFilteredData.value = false;
+    myGetxController.serviceLineIsShowGroupByData.value = false;
+    selectedGroupByIndex = null;
+    selectedFilterIndex = null;
+    setState(() {});
   }
 
   void showGroupBy() {
@@ -627,29 +695,44 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
 
   getSearchData(apiUrl, token) async {
     try {
+      String dDate =
+          DateFormat('yyyy/MM/dd').format(notFormatedDDate ?? DateTime.now());
+      List datas = [];
+      String? domain;
       if (productCodeSearchController.text.isNotEmpty) {
-        String domain =
-            "[('default_code', 'ilike', '${productCodeSearchController.text}') , ('out_date','=',False)]";
-        var params = {
-          'filters': domain.toString(),
-        };
-        Uri uri = Uri.parse("http://$apiUrl/api/product.service.line");
-        final finalUri = uri.replace(queryParameters: params);
-        final response =
-            await http.get(finalUri, headers: {'Access-Token': token});
-        print(response.statusCode);
-        if (response.statusCode == 200) {
-          var data = jsonDecode(response.body);
-          if (data['count'] > 0) {
-            discardGroupBy();
-            showFilterData();
-            myGetxController.serviceLineFilteredList.addAll(data['results']);
-          } else {
-            dialog(context, "No Data Found !", Colors.red.shade300);
-          }
+        datas.add(
+            "('default_code', 'ilike', '${productCodeSearchController.text}')");
+      }
+      if (deliveryDate != "") {
+        datas.add("('delivery_date', '=', '${dDate}')");
+      }
+
+      if (datas.length == 1) {
+        domain = "[${datas[0]}]";
+      } else if (datas.length == 2) {
+        domain = "[${datas[0]},${datas[1]}]";
+      } else {
+        myGetxController.serviceLineFilteredList.value = [];
+      }
+      var params = {
+        'filters': domain.toString(),
+      };
+      Uri uri = Uri.parse("http://$apiUrl/api/product.service.line");
+      final finalUri = uri.replace(queryParameters: params);
+      final response =
+          await http.get(finalUri, headers: {'Access-Token': token});
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data['count'] > 0) {
+          discardGroupBy();
+          showFilterData();
+          myGetxController.serviceLineFilteredList.addAll(data['results']);
         } else {
-          dialog(context, "Something Went Wrong !", Colors.red.shade300);
+          dialog(context, "No Data Found !", Colors.red.shade300);
         }
+      } else {
+        dialog(context, "Something Went Wrong !", Colors.red.shade300);
       }
     } catch (e) {
       print(e);

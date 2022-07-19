@@ -250,7 +250,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
       child: Obx(() => SearchField(
             controller: productSearchController,
             suggestionsDecoration: BoxDecoration(
-              border: Border.all(color: primary2ColorShade400),
+              border: Border.all(color: primary2Color),
             ),
             searchStyle: primaryStyle,
             searchInputDecoration: InputDecoration(
@@ -411,11 +411,4 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
       });
     }
   }
-
-//     .replace(queryParameters: {
-// 'product_id': productId,
-// 'delivery_date': deliveryDate,
-// 'return_date': returnDate,
-// 'rent': rentController.text
-// })
 }

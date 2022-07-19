@@ -75,7 +75,7 @@ class _BookingStatusState extends State<BookingStatus> {
                           controller: productSearchController,
                           maxSuggestionsInViewPort: 8,
                           suggestionsDecoration: BoxDecoration(
-                            border: Border.all(color: primary2ColorShade400),
+                            border: Border.all(color: primary2Color),
                           ),
                           searchStyle: primaryStyle,
                           searchInputDecoration: InputDecoration(
@@ -257,6 +257,8 @@ class _BookingStatusState extends State<BookingStatus> {
                         width: double.infinity,
                         height: 45,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: primary2Color),
                           onPressed: () {
                             setState(() {
                               isBtnLoading = true;
@@ -318,7 +320,6 @@ class _BookingStatusState extends State<BookingStatus> {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
                 checkingStatus(value, token);
-                // updateDetail(value, token, widget.lineId);
               } else {
                 dialog(context, "Connect to Showroom Network",
                     Colors.red.shade300);
@@ -416,7 +417,6 @@ class _BookingStatusState extends State<BookingStatus> {
     if (myGetxController.isMainProductTrueProductList.isEmpty == true) {
       getStringPreference('ProductList').then((value) async {
         Map<String, dynamic> data = await jsonDecode(value);
-        print(data['count']);
         List<dynamic> lst = await data['results'];
         lst.forEach((element) {
           if (element['is_main_product'] == true) {

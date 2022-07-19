@@ -1,21 +1,22 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:animate_do/animate_do.dart';
+import 'package:animations/animations.dart';
+import 'package:gj5_rental/screen/service/add_service/add_service.dart';
 import 'package:gj5_rental/screen/service/service.dart';
 import 'package:gj5_rental/screen/service/service_card.dart';
 import 'package:gj5_rental/screen/service/service_detail_card.dart';
+import 'package:gj5_rental/screen/service/servicecontroller.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:gj5_rental/getx/getx_controller.dart';
-import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
+import '../quatation/quotation_detail.dart';
 
 class ServiceDetailScreen extends StatefulWidget {
   final int serviceLineId;
@@ -30,12 +31,10 @@ class ServiceDetailScreen extends StatefulWidget {
 }
 
 class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
-  MyGetxController myGetxController = Get.find();
+  ServiceController serviceController = Get.put(ServiceController());
 
   @override
   void initState() {
-    myGetxController.particularServiceList.clear();
-    myGetxController.serviceLineList.clear();
     checkWlanForGetData();
   }
 
@@ -44,33 +43,40 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     return WillPopScope(
       onWillPop: () => pushFunction(),
       child: Scaffold(
+        floatingActionButton: CustomFABWidget(
+          transitionType: ContainerTransitionType.fade,
+          isAddProductInService: true,
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             allScreenInitialSizedBox(context),
-            Row(
-              children: [
-                InkWell(
-                    onTap: () {
-                      pushFunction();
-                    },
-                    child: FadeInLeft(
-                      child: backArrowIcon,
-                    )),
-                SizedBox(
-                  width: 10,
-                ),
-                FadeInLeft(
-                  child: Text(
-                    "Service",
-                    style: pageTitleTextStyle,
+            Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Row(
+                children: [
+                  InkWell(
+                      onTap: () {
+                        pushFunction();
+                      },
+                      child: FadeInLeft(
+                        child: backArrowIcon,
+                      )),
+                  SizedBox(
+                    width: 10,
                   ),
-                ),
-              ],
+                  FadeInLeft(
+                    child: Text(
+                      "Service",
+                      style: pageTitleTextStyle,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Obx(() => myGetxController.particularServiceList.isNotEmpty
+            Obx(() => serviceController.particularServiceList.isNotEmpty
                 ? ServiceCard(
-                    list: myGetxController.particularServiceList,
+                    list: serviceController.particularServiceList,
                     index: 0,
                     backGroundColor: Colors.grey.withOpacity(0.1),
                   )
@@ -91,15 +97,15 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               ),
             ),
             Expanded(
-                child: Obx(() => myGetxController.serviceLineList.isNotEmpty
+                child: Obx(() => serviceController.serviceLineList.isNotEmpty
                     ? ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
-                        itemCount: myGetxController.serviceLineList.length,
+                        itemCount: serviceController.serviceLineList.length,
                         itemBuilder: (context, index) {
                           return ServiceDetailCard(
-                            list: myGetxController.serviceLineList,
+                            list: serviceController.serviceLineList,
                             index: index,
                             isServiceLineSceen: false,
                           );
@@ -119,14 +125,16 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
           if (apiUrl.toString().startsWith("192")) {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
-                getDataOfServiceDetail(apiUrl, token);
+                getDataOfServiceDetail(
+                    context, apiUrl, token, widget.serviceLineId);
               } else {
                 dialog(context, "Connect to Showroom Network",
                     Colors.red.shade300);
               }
             });
           } else {
-            getDataOfServiceDetail(apiUrl, token);
+            getDataOfServiceDetail(
+                context, apiUrl, token, widget.serviceLineId);
           }
         });
       } on SocketException catch (err) {
@@ -135,23 +143,24 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     });
   }
 
-  getDataOfServiceDetail(String apiUrl, String token) async {
-    final response = await http.get(
-        Uri.parse("http://$apiUrl/api/service.service/${widget.serviceLineId}"),
-        headers: {'Access-Token': token, 'Connection': 'keep-alive'});
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      myGetxController.particularServiceList.add(data);
-      myGetxController.serviceLineList.addAll(data['service_line_ids']);
-    } else {
-      dialog(context, "Something Went Wrong !", Colors.red.shade300);
-    }
-  }
-
   pushFunction() {
-    if (widget.isFromAnotherScreen == true) {
-      myGetxController.serviceList.clear();
-    }
-    pushMethod(context, ServiceScreen());
+    Navigator.of(context).popUntil(ModalRoute.withName("/ServiceHome"));
+  }
+}
+
+Future<void> getDataOfServiceDetail(BuildContext context, String apiUrl,
+    String token, int serviceLineId) async {
+  ServiceController serviceController = Get.find();
+  serviceController.particularServiceList.clear();
+  serviceController.serviceLineList.clear();
+  final response = await http.get(
+      Uri.parse("http://$apiUrl/api/service.service/$serviceLineId"),
+      headers: {'Access-Token': token, 'Connection': 'keep-alive'});
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+    serviceController.particularServiceList.add(data);
+    serviceController.serviceLineList.addAll(data['service_line_ids']);
+  } else {
+    dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }
 }

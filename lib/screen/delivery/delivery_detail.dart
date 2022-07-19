@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
+import 'package:gj5_rental/screen/order/order_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -20,8 +21,11 @@ import '../../constant/order_quotation_detail_card.dart';
 
 class DeliveryDetailScreen extends StatefulWidget {
   final int id;
+  final bool isFromAnotherScreen;
 
-  const DeliveryDetailScreen({Key? key, required this.id}) : super(key: key);
+  const DeliveryDetailScreen(
+      {Key? key, required this.id, required this.isFromAnotherScreen})
+      : super(key: key);
 
   @override
   State<DeliveryDetailScreen> createState() => _DeliveryDetailScreenState();
@@ -39,153 +43,157 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          allScreenInitialSizedBox(context),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ScreenAppBar(
-                screenName: "Deliver Order",
-              ),
-              InkWell(
-                onTap: () {
-                  isSelectAll = false;
-                  checkWlanForData(true);
-                },
-                child: Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: FadeInRight(
-                      child: refreshIcon,
-                    )),
-              )
-            ],
-          ),
-          Obx(
-            () => myGetxController.deliveryScreenParticularOrder.isNotEmpty
-                ? OrderQuatationCommanCard(
-                    list: myGetxController.deliveryScreenParticularOrder,
-                    backGroundColor: Colors.grey.withOpacity(0.1),
-                    index: 0,
-                    isDeliveryScreen: true,
-                    isOrderScreen: false,
-                  )
-                : Container(),
-          ),
-          orderDetailContainer(),
-          Obx(
-            () => myGetxController
-                    .deliveryScreenParticularOrderLineList.isNotEmpty
-                ? Row(
-                    children: [
-                      Checkbox(
-                        activeColor: primary2Color,
-                        value: isSelectAll,
-                        onChanged: (value) {
-                          setState(() {
-                            isSelectAll = value ?? true;
-                          });
-                          selectWholeItem();
-                        },
-                      ),
-                      Text(
-                        "Select all",
-                        style: primaryStyle,
-                      )
-                    ],
-                  )
-                : Container(),
-          ),
-          Expanded(
-              child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return WillPopScope(
+      onWillPop: () => popFunction(context, widget.isFromAnotherScreen),
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            allScreenInitialSizedBox(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Obx(() => myGetxController
-                        .deliveryScreenParticularOrderLineList.isNotEmpty
-                    ? ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        itemCount: myGetxController
-                            .deliveryScreenParticularOrderLineList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return OrderQuotationDetailCard(
-                            orderDetailsList: myGetxController
-                                .deliveryScreenParticularOrderLineList,
-                            index: index,
-                            productDetail: myGetxController
-                                .deliveryScreenParticularOrderLineProductList,
-                            isOrderScreen: false,
-                            orderId: widget.id ?? 0,
-                            isDeliveryScreen: true,
-                            isReceiveScreen: false,
-                          );
-                        })
-                    : Container()),
-                Obx(() => myGetxController
-                        .deliveryScreenParticularOrderLineExtraProductList
-                        .isNotEmpty
-                    ? Container(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(15),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Extra Product : ",
-                                  style: TextStyle(
-                                      color: primaryColor,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 21),
-                                ),
-                              ),
-                            ),
-                            ListView.builder(
-                                padding: EdgeInsets.only(bottom: 15),
-                                itemCount: myGetxController
-                                    .deliveryScreenParticularOrderLineExtraProductList
-                                    .length,
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return ExtraProductCard(
-                                    extraProductList: myGetxController
-                                        .deliveryScreenParticularOrderLineExtraProductList,
-                                    index: index,
-                                  );
-                                }),
-                          ],
-                        ),
-                      )
-                    : Container()),
-                Obx(
-                  () => myGetxController
-                          .deliveryScreenParticularOrder.isNotEmpty
-                      ? OrderQuotationAmountCard(
-                          list: myGetxController.deliveryScreenParticularOrder)
-                      : Container(),
-                ),
-                Obx(() => myGetxController.selectedOrderLineList.isNotEmpty
-                    ? Container(
-                        margin:
-                            EdgeInsets.only(left: 15, bottom: 20, right: 15),
-                        height: 45,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              confirmationDialogForIsDeliverTrue();
-                            },
-                            child: Text("DELIVER")))
-                    : Container())
+                CommonPushMethodAppBar(
+                    title: "Deliver Order",
+                    isFormAnotherScreen: widget.isFromAnotherScreen),
+                InkWell(
+                  onTap: () {
+                    isSelectAll = false;
+                    checkWlanForData(true);
+                  },
+                  child: Padding(
+                      padding: EdgeInsets.only(right: 15),
+                      child: FadeInRight(
+                        child: refreshIcon,
+                      )),
+                )
               ],
             ),
-          )),
-        ],
+            Obx(
+              () => myGetxController.deliveryScreenParticularOrder.isNotEmpty
+                  ? OrderQuatationCommanCard(
+                      list: myGetxController.deliveryScreenParticularOrder,
+                      backGroundColor: Colors.grey.withOpacity(0.1),
+                      index: 0,
+                      isDeliveryScreen: true,
+                      isOrderScreen: false,
+                    )
+                  : Container(),
+            ),
+            orderDetailContainer(),
+            Obx(
+              () => myGetxController
+                      .deliveryScreenParticularOrderLineList.isNotEmpty
+                  ? Row(
+                      children: [
+                        Checkbox(
+                          activeColor: primary2Color,
+                          value: isSelectAll,
+                          onChanged: (value) {
+                            setState(() {
+                              isSelectAll = value ?? true;
+                            });
+                            selectWholeItem();
+                          },
+                        ),
+                        Text(
+                          "Select all",
+                          style: primaryStyle,
+                        )
+                      ],
+                    )
+                  : Container(),
+            ),
+            Expanded(
+                child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(() => myGetxController
+                          .deliveryScreenParticularOrderLineList.isNotEmpty
+                      ? ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.zero,
+                          itemCount: myGetxController
+                              .deliveryScreenParticularOrderLineList.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return OrderQuotationDetailCard(
+                              orderDetailsList: myGetxController
+                                  .deliveryScreenParticularOrderLineList,
+                              index: index,
+                              productDetail: myGetxController
+                                  .deliveryScreenParticularOrderLineProductList,
+                              isOrderScreen: false,
+                              orderId: widget.id ?? 0,
+                              isDeliveryScreen: true,
+                              isReceiveScreen: false,
+                            );
+                          })
+                      : Container()),
+                  Obx(() => myGetxController
+                          .deliveryScreenParticularOrderLineExtraProductList
+                          .isNotEmpty
+                      ? Container(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(15),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "Extra Product : ",
+                                    style: TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 21),
+                                  ),
+                                ),
+                              ),
+                              ListView.builder(
+                                  padding: EdgeInsets.only(bottom: 15),
+                                  itemCount: myGetxController
+                                      .deliveryScreenParticularOrderLineExtraProductList
+                                      .length,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return ExtraProductCard(
+                                      extraProductList: myGetxController
+                                          .deliveryScreenParticularOrderLineExtraProductList,
+                                      index: index,
+                                    );
+                                  }),
+                            ],
+                          ),
+                        )
+                      : Container()),
+                  Obx(
+                    () => myGetxController
+                            .deliveryScreenParticularOrder.isNotEmpty
+                        ? OrderQuotationAmountCard(
+                            list:
+                                myGetxController.deliveryScreenParticularOrder)
+                        : Container(),
+                  ),
+                  Obx(() => myGetxController.selectedOrderLineList.isNotEmpty
+                      ? Container(
+                          margin:
+                              EdgeInsets.only(left: 15, bottom: 20, right: 15),
+                          height: 45,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                confirmationDialogForIsDeliverTrue();
+                              },
+                              child: Text("DELIVER")))
+                      : Container())
+                ],
+              ),
+            )),
+          ],
+        ),
       ),
     );
   }

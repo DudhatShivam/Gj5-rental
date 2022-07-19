@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:gj5_rental/screen/order/order_detail.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Utils/utils.dart';
@@ -19,8 +20,11 @@ import '../booking status/booking_status.dart';
 
 class ReceiveDetail extends StatefulWidget {
   final int orderId;
+  final bool isFromAnotherScreen;
 
-  const ReceiveDetail({Key? key, required this.orderId}) : super(key: key);
+  const ReceiveDetail(
+      {Key? key, required this.orderId, required this.isFromAnotherScreen})
+      : super(key: key);
 
   @override
   State<ReceiveDetail> createState() => _ReceiveDetailState();
@@ -37,123 +41,126 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          allScreenInitialSizedBox(context),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ScreenAppBar(
-                screenName: "Receive Detail",
-              ),
-              InkWell(
-                onTap: () {
-                  checkWlanForData(false);
-                },
-                child: Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: FadeInRight(child: refreshIcon)),
-              )
-            ],
-          ),
-          Obx(
-            () => myGetxController.receiveParticularOrderList.isNotEmpty
-                ? OrderQuatationCommanCard(
-                    list: myGetxController.receiveParticularOrderList,
-                    backGroundColor: Colors.grey.withOpacity(0.1),
-                    index: 0,
-                    isDeliveryScreen: true,
-                    isOrderScreen: false,
-                  )
-                : Container(),
-          ),
-          orderDetailContainer(),
-          Expanded(
-              child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Obx(() => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    myGetxController.receiveOrderLineList.isNotEmpty
-                        ? ListView.builder(
-                            physics: BouncingScrollPhysics(),
-                            padding: EdgeInsets.zero,
-                            itemCount:
-                                myGetxController.receiveOrderLineList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return OrderQuotationDetailCard(
-                                orderDetailsList:
-                                    myGetxController.receiveOrderLineList,
-                                index: index,
-                                productDetail:
-                                    myGetxController.receiveSubProductList,
-                                isOrderScreen: false,
-                                orderId: widget.orderId ?? 0,
-                                isDeliveryScreen: false,
-                                isReceiveScreen: true,
-                              );
-                            })
-                        : Container(),
-                    myGetxController.receiveExtraProductList.isNotEmpty
-                        ? Container(
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Extra Product : ",
-                                      style: TextStyle(
-                                          color: primaryColor,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 21),
+    return WillPopScope(
+      onWillPop: () => popFunction(context, widget.isFromAnotherScreen),
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            allScreenInitialSizedBox(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CommonPushMethodAppBar(
+                    title: "Receive Detail",
+                    isFormAnotherScreen: widget.isFromAnotherScreen),
+                InkWell(
+                  onTap: () {
+                    checkWlanForData(false);
+                  },
+                  child: Padding(
+                      padding: EdgeInsets.only(right: 15),
+                      child: FadeInRight(child: refreshIcon)),
+                )
+              ],
+            ),
+            Obx(
+              () => myGetxController.receiveParticularOrderList.isNotEmpty
+                  ? OrderQuatationCommanCard(
+                      list: myGetxController.receiveParticularOrderList,
+                      backGroundColor: Colors.grey.withOpacity(0.1),
+                      index: 0,
+                      isDeliveryScreen: true,
+                      isOrderScreen: false,
+                    )
+                  : Container(),
+            ),
+            orderDetailContainer(),
+            Expanded(
+                child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Obx(() => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      myGetxController.receiveOrderLineList.isNotEmpty
+                          ? ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              itemCount:
+                                  myGetxController.receiveOrderLineList.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return OrderQuotationDetailCard(
+                                  orderDetailsList:
+                                      myGetxController.receiveOrderLineList,
+                                  index: index,
+                                  productDetail:
+                                      myGetxController.receiveSubProductList,
+                                  isOrderScreen: false,
+                                  orderId: widget.orderId ?? 0,
+                                  isDeliveryScreen: false,
+                                  isReceiveScreen: true,
+                                );
+                              })
+                          : Container(),
+                      myGetxController.receiveExtraProductList.isNotEmpty
+                          ? Container(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Extra Product : ",
+                                        style: TextStyle(
+                                            color: primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 21),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                ListView.builder(
-                                    padding: EdgeInsets.only(bottom: 15),
-                                    itemCount: myGetxController
-                                        .receiveExtraProductList.length,
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return ExtraProductCard(
-                                        extraProductList: myGetxController
-                                            .receiveExtraProductList,
-                                        index: index,
-                                      );
-                                    }),
-                              ],
-                            ),
-                          )
-                        : Container(),
-                    myGetxController.receiveParticularOrderList.isNotEmpty
-                        ? OrderQuotationAmountCard(
-                            list: myGetxController.receiveParticularOrderList)
-                        : Container(),
-                    myGetxController.receiveSelectedOrderLineList.isNotEmpty ||
-                            myGetxController
-                                .receiveSelectedSubProductList.isNotEmpty
-                        ? Container(
-                            margin: EdgeInsets.only(
-                                left: 15, bottom: 20, right: 15),
-                            height: 45,
-                            width: double.infinity,
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  confirmationDialogForIsReceive();
-                                },
-                                child: Text("RECEIVE")))
-                        : Container()
-                  ],
-                )),
-          ))
-        ],
+                                  ListView.builder(
+                                      padding: EdgeInsets.only(bottom: 15),
+                                      itemCount: myGetxController
+                                          .receiveExtraProductList.length,
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return ExtraProductCard(
+                                          extraProductList: myGetxController
+                                              .receiveExtraProductList,
+                                          index: index,
+                                        );
+                                      }),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      myGetxController.receiveParticularOrderList.isNotEmpty
+                          ? OrderQuotationAmountCard(
+                              list: myGetxController.receiveParticularOrderList)
+                          : Container(),
+                      myGetxController
+                                  .receiveSelectedOrderLineList.isNotEmpty ||
+                              myGetxController
+                                  .receiveSelectedSubProductList.isNotEmpty
+                          ? Container(
+                              margin: EdgeInsets.only(
+                                  left: 15, bottom: 20, right: 15),
+                              height: 45,
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    confirmationDialogForIsReceive();
+                                  },
+                                  child: Text("RECEIVE")))
+                          : Container()
+                    ],
+                  )),
+            ))
+          ],
+        ),
       ),
     );
   }

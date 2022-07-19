@@ -12,6 +12,7 @@ import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:gj5_rental/screen/quatation/quatation.dart';
 import 'package:gj5_rental/screen/quatation/quotation_const/quotation_constant.dart';
 import 'package:gj5_rental/screen/quatation/quotation_detail_add_product.dart';
+import 'package:gj5_rental/screen/service/servicecontroller.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -24,21 +25,18 @@ import '../../constant/order_quotation_amount_card.dart';
 import '../../constant/order_quotation_comman_card.dart';
 import '../../constant/order_quotation_detail_card.dart';
 import '../service/add_service/add_service.dart';
+import '../service/service_add_product/service_add_product.dart';
 import 'create_order.dart';
 
 class QuatationDetailScreen extends StatefulWidget {
   final int? id;
   final bool isFromAnotherScreen;
-  final bool? isFromEditScreen;
-  final bool? isFromCreateOrderScreen;
 
-  const QuatationDetailScreen(
-      {Key? key,
-      this.id,
-      required this.isFromAnotherScreen,
-      this.isFromEditScreen,
-      this.isFromCreateOrderScreen})
-      : super(key: key);
+  const QuatationDetailScreen({
+    Key? key,
+    this.id,
+    required this.isFromAnotherScreen,
+  }) : super(key: key);
 
   @override
   State<QuatationDetailScreen> createState() => _QuatationDetailScreenState();
@@ -50,6 +48,10 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.isFromAnotherScreen == true) {
+      isFromAnotherScreen = true;
+    }
+    print("isForm ${isFromAnotherScreen}");
     checkQuotationAndOrderDetailData(context, widget.id ?? 0, false);
   }
 
@@ -102,7 +104,7 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
             Padding(
               padding: EdgeInsets.all(10),
               child: Text(
-                "Order Details : ",
+                "Product Details : ",
                 style: pageTitleTextStyle,
               ),
             ),
@@ -129,6 +131,8 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
                                   orderId: widget.id ?? 0,
                                   isDeliveryScreen: false,
                                   isReceiveScreen: false,
+                                  isFromBookingOrderScreen:
+                                      widget.isFromAnotherScreen,
                                 );
                               })
                           : Container(),
@@ -148,11 +152,18 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
     );
   }
 
+  onWillPopNavigateFunction() {
+    widget.isFromAnotherScreen == false && isFromAnotherScreen == false
+        ? Navigator.of(context).popUntil(ModalRoute.withName("/QuotationHome"))
+        : myGetxController.quotationData.isEmpty ||
+                myGetxController.filteredQuotationData.isEmpty
+            ? pushRemoveUntilMethod(context, QuatationScreen())
+            : Navigate();
+  }
+
   Navigate() {
-    if (editQuotationCount == 1) {
-      for (int i = 1; i <= editQuotationCount * 3; i++) {
-        Navigator.pop(context);
-      }
+    if (editQuotationCount == 0) {
+      Navigator.pop(context);
     } else {
       for (int i = 1;
           i <= editQuotationCount * 3 - (editQuotationCount - 1);
@@ -160,14 +171,6 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
         Navigator.pop(context);
       }
     }
-  }
-
-  onWillPopNavigateFunction() {
-    widget.isFromAnotherScreen == false
-        ? Navigator.pop(context, true)
-        : widget.isFromEditScreen == false
-            ? pushMethod(context, QuatationScreen())
-            : Navigate();
   }
 }
 
@@ -187,6 +190,7 @@ class CustomFABWidget extends StatelessWidget {
     this.isAddProductInService,
   }) : super(key: key);
   MyGetxController myGetxController = Get.find();
+  ServiceController serviceController = Get.put(ServiceController());
   double fabSize = 56;
 
   @override
@@ -205,7 +209,11 @@ class CustomFABWidget extends StatelessWidget {
                   )
                 : isAddService == true
                     ? AddServiceScreen()
-                    : Container(),
+                    : ServiceAddProduct(
+                        serviceId: serviceController.particularServiceList[0]
+                            ['id'],
+                        serviceType: serviceController.particularServiceList[0]
+                            ['service_type']),
         closedShape: CircleBorder(),
         closedColor: primary2Color,
         closedBuilder: (context, openContainer) => Container(

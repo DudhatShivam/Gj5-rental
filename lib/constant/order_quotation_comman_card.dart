@@ -66,6 +66,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                                 deliveryDate: deliveryDate,
                                 returnDate: returnDate,
                                 remarks: list[index]['remarks'],
+                                index: index,
                                 id: list[index]['id'].toString()));
                       },
                       closeOnTap: false,
@@ -77,7 +78,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             width: double.infinity,
             decoration: BoxDecoration(
-                color: backGroundColor,
+                color:statusBackGroundColor(list, index) ,
                 border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
                 borderRadius: BorderRadius.all(Radius.circular(5))),
             child: Column(
@@ -103,18 +104,16 @@ class OrderQuatationCommanCard extends StatelessWidget {
                       alignment: Alignment.center,
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
+                        color: statusBackGroundColor(list, index),
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      child: Text(
-                        list[index]['state'],
-                        style: deliveryDateStyle,
-                      ),
+                      child: Text(list[index]['state'],
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              color: statusColor(list, index))),
                     )
                   ],
-                ),
-                SizedBox(
-                  height: 7,
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +217,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                                   scrollDirection: Axis.horizontal,
                                   child: Text(
                                     list[index]['remarks'],
-                                    style: allCardSubText,
+                                    style: remarkTextStyle,
                                   ),
                                 ),
                               )

@@ -1,10 +1,4 @@
-import 'dart:io';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../Utils/utils.dart';
 
 class MyGetxController extends GetxController {
   RxString pName = "".obs;
@@ -36,6 +30,8 @@ class MyGetxController extends GetxController {
   RxList<dynamic> quotationDetailProductDetailList = [].obs;
   RxList<dynamic> isMainProductFalseProductList = [].obs;
   RxBool isUpdateData = false.obs;
+  RxBool isShowQuotationFilteredList = false.obs;
+  RxBool noDataInQuotationScreen = false.obs;
 
   //ProductScreen
   RxList<dynamic> mainProductList = [].obs;
@@ -73,19 +69,20 @@ class MyGetxController extends GetxController {
   RxList<dynamic> receiveSelectedOrderLineList = [].obs;
   RxList<dynamic> receiveSelectedSubProductList = [].obs;
 
-  //ServiceScreen
-  RxList<dynamic> serviceList = [].obs;
-  RxList<dynamic> serviceFilteredList = [].obs;
-  RxBool isShowServiceFilteredList = false.obs;
-  RxBool noDataInServiceScreen=false.obs;
-  RxList<dynamic> particularServiceList = [].obs;
-  RxList<dynamic> serviceLineList = [].obs;
-
   //ServiceLineScreen
   RxList<dynamic> serviceLineScreenList = [].obs;
   RxList<dynamic> serviceLineFilteredList = [].obs;
   RxList<dynamic> serviceLineGroupByList = [].obs;
   RxBool serviceLineIsShowFilteredData = false.obs;
   RxBool serviceLineIsShowGroupByData = false.obs;
-  RxBool serviceLineIsExpand=false.obs;
+  RxBool serviceLineIsExpand = false.obs;
+
+  //CancelOrderScreen
+  RxList<dynamic> cancelOrderList = [].obs;
+  RxList<dynamic> filteredCancelOrderList = [].obs;
+  RxBool isShowCancelOrderScreenFilteredList = false.obs;
+  RxBool noDataInCancelOrderScreen = false.obs;
+  RxList<dynamic> cancelParticularOrderList = [].obs;
+  RxList<dynamic> cancelParticularOrderLineList = [].obs;
+  RxList<dynamic> cancelParticularOrderProductList = [].obs;
 }

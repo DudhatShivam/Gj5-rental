@@ -55,13 +55,17 @@ class ServiceCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.green.shade100,
+                    color: list[index]['service_type'] == 'washing'
+                        ? successColor.withOpacity(0.2)
+                        : stitchingColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Text(
                     list[index]['service_type'],
                     style: TextStyle(
-                        color: Colors.green.shade700,
+                        color: list[index]['service_type'] == 'washing'
+                            ? successColor
+                            : stitchingColor,
                         fontWeight: FontWeight.w500,
                         fontSize: 17),
                   ),
@@ -126,56 +130,6 @@ class ServiceCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                list[index]['delivery_date'] != null
-                    ? Row(
-                        children: [
-                          Text(
-                            "D. Date : ",
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade600),
-                          ),
-                          Text(
-                            DateFormat("dd/MM/yyyy").format(
-                                DateTime.parse(list[index]['delivery_date'])),
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.green),
-                          )
-                        ],
-                      )
-                    : Container(),
-                list[index]['return_date'] != null
-                    ? Row(
-                        children: [
-                          Text(
-                            "R. Date : ",
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey.shade600),
-                          ),
-                          Text(
-                            DateFormat("dd/MM/yyyy").format(
-                                DateTime.parse(list[index]['return_date'])),
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.red),
-                          )
-                        ],
-                      )
-                    : Container()
-              ],
-            ),
-            SizedBox(
-              height: 7,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
                 list[index]['in_date'] != null
                     ? Row(
                         children: [
@@ -202,6 +156,44 @@ class ServiceCard extends StatelessWidget {
                           Text(
                             DateFormat("dd/MM/yyyy").format(
                                 DateTime.parse(list[index]['out_date'])),
+                            style: returnDateStyle,
+                          )
+                        ],
+                      )
+                    : Container()
+              ],
+            ),
+            SizedBox(
+              height: 7,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                list[index]['delivery_date'] != null
+                    ? Row(
+                        children: [
+                          Text(
+                            "D. Date : ",
+                            style: allCardMainText,
+                          ),
+                          Text(
+                            DateFormat("dd/MM/yyyy").format(
+                                DateTime.parse(list[index]['delivery_date'])),
+                            style: deliveryDateStyle,
+                          )
+                        ],
+                      )
+                    : Container(),
+                list[index]['return_date'] != null
+                    ? Row(
+                        children: [
+                          Text(
+                            "R. Date : ",
+                            style: allCardMainText,
+                          ),
+                          Text(
+                            DateFormat("dd/MM/yyyy").format(
+                                DateTime.parse(list[index]['return_date'])),
                             style: returnDateStyle,
                           )
                         ],

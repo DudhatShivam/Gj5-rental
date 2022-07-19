@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import '../../../Utils/utils.dart';
 import '../../../constant/constant.dart';
 import '../../../getx/getx_controller.dart';
+import '../../order/order_detail.dart';
 import 'order_line_service_popup.dart';
 
 class OrderLineCard extends StatelessWidget {
@@ -22,6 +23,8 @@ class OrderLineCard extends StatelessWidget {
   final bool isProductDetailScreen;
   final bool? isShowFromGroupBy;
   final int? groupByMainListIndex;
+  final bool ARService;
+  final bool ARManager;
 
   OrderLineCard(
       {Key? key,
@@ -30,7 +33,9 @@ class OrderLineCard extends StatelessWidget {
       required this.index,
       required this.isProductDetailScreen,
       this.isShowFromGroupBy,
-      this.groupByMainListIndex})
+      this.groupByMainListIndex,
+      required this.ARService,
+      required this.ARManager})
       : super(key: key);
 
   @override
@@ -40,7 +45,7 @@ class OrderLineCard extends StatelessWidget {
       padding: EdgeInsets.all(15),
       width: double.infinity,
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: statusBackGroundColor(orderList, index),
           border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
           borderRadius: BorderRadius.all(Radius.circular(5))),
       child: Column(
@@ -52,12 +57,22 @@ class OrderLineCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Text("Order No : ", style: primaryStyle),
-                    Text(
-                      orderList[index]['rental_id']['name'] ?? "",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                          color: primaryColor.withOpacity(0.9)),
+                    InkWell(
+                      onTap: () {
+                        pushMethod(
+                            context,
+                            OrderDetail(
+                              idFromAnotherScreen: false,
+                                id: orderList[index]['rental_id']['id']));
+                      },
+                      child: Text(
+                        orderList[index]['rental_id']['name'] ?? "",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            decoration: TextDecoration.underline,
+                            color: infoColor),
+                      ),
                     )
                   ],
                 ),
@@ -66,29 +81,26 @@ class OrderLineCard extends StatelessWidget {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: statusBackGroundColor(orderList, index),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: isProductDetailScreen == false
                     ? Text(
                         orderList[index]['state'],
                         style: TextStyle(
-                            color: Colors.green,
+                            color: statusColor(orderList, index),
                             fontWeight: FontWeight.w500,
                             fontSize: 17),
                       )
                     : Text(
-                        orderList[index]['order_status'],
+                        orderList[index]['state'],
                         style: TextStyle(
-                            color: Colors.green,
+                            color: statusColor(orderList, index),
                             fontWeight: FontWeight.w500,
                             fontSize: 17),
                       ),
               )
             ],
-          ),
-          SizedBox(
-            height: 10,
           ),
           Row(
             children: [
@@ -188,7 +200,7 @@ class OrderLineCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           orderList[index]['remarks'],
-                          style: allCardSubText,
+                          style: remarkTextStyle,
                         ),
                       ),
                     ],
@@ -303,94 +315,98 @@ class OrderLineCard extends StatelessWidget {
                         }).toList(),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(
-                          Icons.notifications_active,
-                          size: 28,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        orderList[index]['state'] != "service" &&
-                                orderList[index]['state'] != "deliver" &&
-                                orderList[index]['state'] != "receive" &&
-                                orderList[index]['state'] != "cancel"
-                            ? InkWell(
-                                onTap: () {
-                                  checkWlanForServicePopUpInOrderLine(
-                                      context,
-                                      orderList[index]['id'],
-                                      index,
-                                      isShowFromGroupBy ?? false,
-                                      groupByMainListIndex ?? 0);
-                                },
-                                child: Icon(
-                                  Icons.settings,
-                                  size: 28,
-                                ),
-                              )
-                            : Container(),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        orderList[index]['state'] != "waiting" &&
-                                orderList[index]['state'] != "deliver" &&
-                                orderList[index]['state'] != "receive" &&
-                                orderList[index]['state'] != "cancel"
-                            ? InkWell(
-                                onTap: () {
-                                  popUpForWaitingThumbInOrderScreen(
-                                      context,
-                                      orderList[index]['id'],
-                                      orderList[index]['rental_id']['id'],
-                                      orderList[index]['product_id']
-                                          ['default_code'],
-                                      orderList[index]['product_id']['name'],
-                                      true,
-                                      index,
-                                      isShowFromGroupBy ?? false,
-                                      groupByMainListIndex ?? 0);
-                                },
-                                child: Icon(
-                                  Icons.lock_clock,
-                                  size: 28,
-                                ),
-                              )
-                            : Container(),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        orderList[index]['state'] != "ready" &&
-                                orderList[index]['state'] != "deliver" &&
-                                orderList[index]['state'] != "receive" &&
-                                orderList[index]['state'] != "cancel"
-                            ? InkWell(
-                                onTap: () {
-                                  checkWlanForConfirmOrderThumbAndWaiting(
-                                      orderList[index]['rental_id']['id'],
-                                      orderList[index]['id'],
-                                      context,
-                                      true,
-                                      "",
-                                      "",
-                                      orderList[index]['product_id']
-                                          ['default_code'],
-                                      orderList[index]['product_id']['name'],
-                                      true,
-                                      index,
-                                      isShowFromGroupBy ?? false,
-                                      groupByMainListIndex ?? 0);
-                                },
-                                child: Icon(
-                                  Icons.thumb_up_alt_rounded,
-                                  size: 28,
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    )
+                    ARService == true || ARManager == true
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(
+                                Icons.notifications_active,
+                                size: 28,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              orderList[index]['state'] != "service" &&
+                                      orderList[index]['state'] != "deliver" &&
+                                      orderList[index]['state'] != "receive" &&
+                                      orderList[index]['state'] != "cancel"
+                                  ? InkWell(
+                                      onTap: () {
+                                        checkWlanForServicePopUpInOrderLine(
+                                            context,
+                                            orderList[index]['id'],
+                                            index,
+                                            isShowFromGroupBy ?? false,
+                                            groupByMainListIndex ?? 0);
+                                      },
+                                      child: Icon(
+                                        Icons.settings,
+                                        size: 28,
+                                      ),
+                                    )
+                                  : Container(),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              orderList[index]['state'] != "waiting" &&
+                                      orderList[index]['state'] != "deliver" &&
+                                      orderList[index]['state'] != "receive" &&
+                                      orderList[index]['state'] != "cancel"
+                                  ? InkWell(
+                                      onTap: () {
+                                        popUpForWaitingThumbInOrderScreen(
+                                            context,
+                                            orderList[index]['id'],
+                                            orderList[index]['rental_id']['id'],
+                                            orderList[index]['product_id']
+                                                ['default_code'],
+                                            orderList[index]['product_id']
+                                                ['name'],
+                                            true,
+                                            index,
+                                            isShowFromGroupBy ?? false,
+                                            groupByMainListIndex ?? 0);
+                                      },
+                                      child: Icon(
+                                        Icons.lock_clock,
+                                        size: 28,
+                                      ),
+                                    )
+                                  : Container(),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              orderList[index]['state'] != "ready" &&
+                                      orderList[index]['state'] != "deliver" &&
+                                      orderList[index]['state'] != "receive" &&
+                                      orderList[index]['state'] != "cancel"
+                                  ? InkWell(
+                                      onTap: () {
+                                        checkWlanForConfirmOrderThumbAndWaiting(
+                                            orderList[index]['rental_id']['id'],
+                                            orderList[index]['id'],
+                                            context,
+                                            true,
+                                            "",
+                                            "",
+                                            orderList[index]['product_id']
+                                                ['default_code'],
+                                            orderList[index]['product_id']
+                                                ['name'],
+                                            true,
+                                            index,
+                                            isShowFromGroupBy ?? false,
+                                            groupByMainListIndex ?? 0);
+                                      },
+                                      child: Icon(
+                                        Icons.thumb_up_alt_rounded,
+                                        size: 28,
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
+                          )
+                        : Container()
                   ],
                 )
               : Container()
@@ -466,6 +482,7 @@ checkWlanForServicePopUpInOrderLine(BuildContext context, int orderId,
 
 int orderLineOffset = 0;
 
+
 Future<void> getDataForOrderLine(
     apiUrl, token, BuildContext context, bool isLoadAll) async {
   String dayBefore = get5daysBeforeDate();
@@ -498,7 +515,9 @@ Future<void> getDataForOrderLine(
       myGetxController.orderLineScreenList.addAll(data['results']);
       addDataInOrderLineProductList(data['results']);
     } else {
-      myGetxController.noDataInOrderLine.value = true;
+      if (myGetxController.orderLineScreenList.isEmpty) {
+        dialog(context, "No Data Found !", Colors.red.shade300);
+      }
     }
   } else {
     dialog(context, "Something Went Wrong !", Colors.red.shade300);
@@ -522,7 +541,6 @@ void addDataInOrderLineProductList(List productList) {
 
 void setDataOfUpdatedIdInOrderLineScreen(int orderId, int index) {
   MyGetxController myGetxController = Get.find();
-
   getStringPreference('apiUrl').then((apiUrl) async {
     getStringPreference('accessToken').then((token) async {
       final response = await http

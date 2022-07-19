@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gj5_rental/screen/service/service.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:gj5_rental/screen/service/servicecontroller.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +12,7 @@ import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 
 import '../../../Utils/utils.dart';
 import '../../../constant/constant.dart';
+import '../service.dart';
 import '../service_detail.dart';
 
 class AddServiceScreen extends StatefulWidget {
@@ -247,6 +249,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   }
 
   createService(apiUrl, token) async {
+    ServiceController serviceController = Get.find();
     int? partnerId;
     partnerList.forEach((element) {
       if (element['name'] == selectedValue) {
@@ -266,12 +269,16 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
             body: jsonEncode(body));
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      pushMethod(
-          context,
-          ServiceDetailScreen(
-            serviceLineId: data['id'],
-            isFromAnotherScreen: true,
-          ));
+      serviceScreenOffset = 0;
+      serviceController.serviceList.clear();
+      getDataOfServiceScreen(context, apiUrl, token).whenComplete(() {
+        pushMethod(
+            context,
+            ServiceDetailScreen(
+              serviceLineId: data['id'],
+              isFromAnotherScreen: true,
+            ));
+      });
     } else {
       dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
