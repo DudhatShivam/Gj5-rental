@@ -29,7 +29,6 @@ import '../screen/order/order_detail.dart';
 import '../screen/quatation/edit_order.dart';
 import '../screen/quatation/quotation_const/quotation_constant.dart';
 
-
 ExitDialog(BuildContext context) {
   return showGeneralDialog(
     barrierColor: Colors.black.withOpacity(0.5),
@@ -69,9 +68,7 @@ ExitDialog(BuildContext context) {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GestureDetector(
-                                  onTap: () {
-                                    print("sdsa");
-                                  },
+                                  onTap: () {},
                                   child: Text(
                                     "Sure , Are you want to exit ?",
                                     style: TextStyle(
@@ -88,7 +85,6 @@ ExitDialog(BuildContext context) {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        print("syss");
                                         Navigator.pop(context);
                                         if (Platform.isAndroid) {
                                           SystemNavigator.pop();
@@ -196,7 +192,6 @@ void showInSnackBar(String value, BuildContext context) {
     snackPosition: SnackPosition.TOP,
   );
 }
-
 
 textFieldWidget(
     String hint,
@@ -363,7 +358,6 @@ Future<void> checkWififorDeleteProduct(lineId, int index, List orderDetails,
 
 deleteProductInQuotationAndOrder(lineId, int index, List orderDetails,
     String token, String url, bool isDeleteOrder) async {
-  print(lineId);
   String uri = "";
   isDeleteOrder == true
       ? uri = "http://$url/api/rental.rental/$lineId"
@@ -627,7 +621,7 @@ remarkContainer(
       mainAxisAlignment: mainAxisAlignment,
       children: [
         Text(
-          "Remark :  ",
+          "Remark : ",
           style: primaryStyle,
         ),
         Container(
@@ -682,7 +676,9 @@ void checkForOrderScreenProductDetail() {
   });
 }
 
-void checkWlanForDataOrderDetailScreen(BuildContext context, int id) {
+
+Future<void> checkWlanForDataOrderDetailScreen(
+    BuildContext context, int id) async {
   getStringPreference('apiUrl').then((apiUrl) async {
     try {
       getStringPreference('accessToken').then((token) async {
@@ -957,15 +953,12 @@ submitReasonForWaiting(
     index,
     bool isShowFromGroupBy,
     int groupByMainListIndex) async {
-  print(dropDownValue);
-  print(reason);
   final response = await http.put(
       Uri.parse(
           "http://$apiUrl/api/rental.line/$productDetailId/btn_waiting_api?reason=$dropDownValue&waiting_reason=$reason"),
       headers: {
         'Access-Token': token,
       });
-  print(response.statusCode);
   if (response.statusCode == 200) {
     isOrderLineScreen == true
         ? isShowFromGroupBy == true

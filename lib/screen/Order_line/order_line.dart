@@ -859,6 +859,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
   clearList() async {
     orderLineOffset = 0;
     myGetxController.orderLineScreenList.clear();
+    myGetxController.orderLineScreenProductList.clear();
     myGetxController.noDataInOrderLine.value == false;
     myGetxController.isShowFilteredDataInOrderLine.value = false;
     myGetxController.filteredListOrderLine.clear();

@@ -11,12 +11,14 @@ class ServiceDetailCard extends StatelessWidget {
   final List list;
   final int index;
   final bool? isServiceLineSceen;
+  final bool isFromNotificationScreen;
 
   const ServiceDetailCard(
       {Key? key,
       required this.list,
       required this.index,
-      this.isServiceLineSceen})
+      this.isServiceLineSceen,
+      required this.isFromNotificationScreen})
       : super(key: key);
 
   @override
@@ -26,23 +28,25 @@ class ServiceDetailCard extends StatelessWidget {
     return SwipeActionCell(
       controller: controller,
       key: ObjectKey(list[index]),
-      trailingActions: [
-        SwipeAction(
-            title: "Receive",
-            onTap: (CompletionHandler handler) async {
-              controller.closeAllOpenCell();
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return ReceiveServiceLine(
-                      list: list,
-                      index: index,
-                    );
-                  });
-            },
-            closeOnTap: false,
-            color: Colors.blue),
-      ],
+      trailingActions: isFromNotificationScreen == false
+          ? [
+              SwipeAction(
+                  title: "Receive",
+                  onTap: (CompletionHandler handler) async {
+                    controller.closeAllOpenCell();
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return ReceiveServiceLine(
+                            list: list,
+                            index: index,
+                          );
+                        });
+                  },
+                  closeOnTap: false,
+                  color: Colors.blue)
+            ]
+          : [],
       child: Container(
         padding: EdgeInsets.all(15),
         margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),

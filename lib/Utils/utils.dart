@@ -43,9 +43,9 @@ int serviceScreenOffset = 0;
 int cancelOrderOffset = 0;
 int productDetailOffset = 0;
 
-popFunction(BuildContext context, bool isFromAnotherScreen) async {
-  if (isFromAnotherScreen == true) {
-    pushRemoveUntilMethod(context, HomeScreen());
+popFunction(BuildContext context, isFromAnotherScreen) async {
+  if (isFromAnotherScreen) {
+    pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
   } else {
     Navigator.of(context).pop();
   }
@@ -422,7 +422,6 @@ Future deliverScreenOrderLineSelectionDialog(
                               false) {
                             myGetxController.selectedOrderLineList.add(orderId);
                           }
-                          print(myGetxController.selectedOrderLineList);
                         },
                         child: Text("Ok")),
                     SizedBox(
@@ -465,7 +464,7 @@ Future<void> setLogInData(
   preferences.setString('uid', uid);
   preferences.setString('partnerId', partnerId);
   preferences.setString('name', name);
-  preferences.setString('image', image).whenComplete(() => print("image set"));
+  preferences.setString('image', image);
   preferences.setString('pastDayOrder', pastDayOrder);
   preferences.setString('nextDayOder', nextDayOder);
   preferences.setBool('ARUser', ARUser);
@@ -510,7 +509,7 @@ Future getBoolPreference(String pref) async {
 
 Future setLogIn(bool isLogIN) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  preferences.setBool('LogIN', isLogIN).whenComplete(() => print("LogInSet"));
+  preferences.setBool('LogIN', isLogIN);
 }
 
 Future getLogIn() async {

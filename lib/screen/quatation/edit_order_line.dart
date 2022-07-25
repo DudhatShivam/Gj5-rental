@@ -65,7 +65,6 @@ class _EditOrderLineState extends State<EditOrderLine> {
   @override
   void initState() {
     super.initState();
-    print("fromBookOrder ${widget.isFromBookingOrderScreen}");
     deliveryDate = DateFormat('dd/MM/yyyy')
         .format(DateTime.parse(widget.deliveryDate ?? ""));
     returnDate = DateFormat('dd/MM/yyyy')
@@ -442,15 +441,13 @@ class _EditOrderLineState extends State<EditOrderLine> {
         headers: {
           'Access-Token': token,
         });
-    print(response.body);
-    print(response.statusCode);
     if (response.statusCode == 200) {
       editQuotationCount = editQuotationCount + 1;
       pushMethod(
           context,
           QuatationDetailScreen(
             id: widget.orderId,
-            isFromAnotherScreen: widget.isFromBookingOrderScreen ?? false,
+            isFromAnotherScreen: widget.isFromBookingOrderScreen,
           ));
     } else if (response.statusCode == 409) {
       final data = jsonDecode(response.body);
@@ -615,7 +612,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red.shade300),
+                              backgroundColor: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },

@@ -108,6 +108,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                             list: serviceController.serviceLineList,
                             index: index,
                             isServiceLineSceen: false,
+                            isFromNotificationScreen: false,
                           );
                         },
                       )

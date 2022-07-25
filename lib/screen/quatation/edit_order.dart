@@ -55,8 +55,8 @@ class _EditOrderState extends State<EditOrder> {
     remarkController.text = widget.remarks ?? "";
     deliveryDate = widget.deliveryDate ?? "";
     returnDate = widget.returnDate ?? "";
-    notFormatedDDate = new DateFormat("dd/MM/yyy").parse(deliveryDate);
-    notFormatedRDate = DateFormat("dd/MM/yyy").parse(returnDate);
+    notFormatedDDate = DateFormat("dd/MM/yyyy").parse(deliveryDate);
+    notFormatedRDate = DateFormat("dd/MM/yyyy").parse(returnDate);
   }
 
   @override
@@ -304,8 +304,6 @@ class _EditOrderState extends State<EditOrder> {
     String name = nameController.text;
     String number = numberController.text;
     String remark = remarkController.text;
-    // DateTime tempDate = new DateFormat("MM-dd-yyyy hh:mm:ss").parse(deliveryDate);
-    // DateTime tempsDate = new DateFormat("MM-dd-yyyy hh:mm:ss").parse(returnDate);
     String dDate = DateFormat('MM/dd/yyyy').format(notFormatedDDate);
     String rDate =
         DateFormat('MM/dd/yyyy').format(notFormatedRDate ?? DateTime.now());

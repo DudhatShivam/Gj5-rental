@@ -48,8 +48,10 @@ Future<void> getQuotationAndOrderDetailOrderData(
 
   myGetxController.quotationOrder.clear();
   myGetxController.quotationDetailOrderList.clear();
+  myGetxController.quotationExtraProductList.clear();
   myGetxController.quotationOrder.add(data);
   myGetxController.quotationDetailOrderList.value = data['line_ids'];
+  myGetxController.quotationExtraProductList.addAll(data['extra_product_ids']);
   await checkForProductDetail();
 }
 

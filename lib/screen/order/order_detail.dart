@@ -35,12 +35,13 @@ class OrderDetail extends StatefulWidget {
 class _OrderDetailState extends State<OrderDetail> {
   Map<String, dynamic>? data = {};
   MyGetxController myGetxController = Get.find();
+  bool? ARChangeProduct;
 
   @override
   void initState() {
-    print(widget.id);
     super.initState();
     checkWlanForDataOrderDetailScreen(context, widget.id ?? 0);
+    getAccessRight();
   }
 
   @override
@@ -99,6 +100,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                   orderId: widget.id ?? 0,
                                   isDeliveryScreen: false,
                                   isReceiveScreen: false,
+                                  ARChangeProduct: ARChangeProduct,
                                 );
                               })
                           : Container(),
@@ -116,6 +118,10 @@ class _OrderDetailState extends State<OrderDetail> {
         ],
       )),
     );
+  }
+
+  Future<void> getAccessRight() async {
+    ARChangeProduct = await getBoolPreference('ARChangeProduct');
   }
 }
 
@@ -136,7 +142,8 @@ class CommonPushMethodAppBar extends StatelessWidget {
         ),
         InkWell(
             onTap: () {
-              popFunction(context, isFromAnotherScreen);
+              bool frm = isFormAnotherScreen;
+              popFunction(context, frm);
             },
             child: FadeInLeft(child: backArrowIcon)),
         SizedBox(

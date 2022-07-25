@@ -209,11 +209,14 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                                       ),
                                     ),
                                     FadeInLeft(
-                                      child: Text(
-                                        myGetxController
-                                                .mainProductDetailList[index]
-                                            ['default_code'],
-                                        style: allCardSubText,
+                                      child: Container(
+                                        width: getWidth(0.2, context),
+                                        child: Text(
+                                          myGetxController
+                                                  .mainProductDetailList[index]
+                                              ['default_code'] ?? "",
+                                          style: allCardSubText,
+                                        ),
                                       ),
                                     )
                                   ],
@@ -231,7 +234,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                                         myGetxController
                                             .mainProductDetailList[index]
                                                 ['rent']
-                                            .toString(),
+                                            .toString() ?? "",
                                         style: deliveryDateStyle,
                                       ),
                                     )
@@ -252,7 +255,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                                   child: FadeInRight(
                                     child: Text(
                                       myGetxController
-                                          .mainProductDetailList[index]['name'],
+                                          .mainProductDetailList[index]['name'] ?? "",
                                       style: allCardSubText,
                                     ),
                                   ),
@@ -317,7 +320,6 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
     final finalUri = uri.replace(queryParameters: params);
     final response =
         await http.get(finalUri, headers: {'Access-Token': accessToken});
-    print(response.body);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       if (data['count'] != 0) {
@@ -359,7 +361,6 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
       'Connection': 'keep-alive',
       'Content-Type': 'application/http'
     });
-    print(response.body);
     Map<String, dynamic> data = jsonDecode(response.body);
     if (data['count'] != 0) {
       myGetxController.mainProductDetailList.clear();

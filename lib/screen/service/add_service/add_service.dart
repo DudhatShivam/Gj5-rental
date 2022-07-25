@@ -114,7 +114,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         color: Colors.grey.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10)),
                     height: 48,
-                    width: getWidth(0.285, context),
+                    width: getWidth(0.31, context),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2(
                         buttonDecoration: BoxDecoration(
@@ -161,7 +161,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           SizedBox(
             height: 20,
           ),
-          remarkContainer(context, remarkController, 0.285, 0.02,
+          remarkContainer(context, remarkController, 0.31, 0.02,
               MainAxisAlignment.spaceBetween),
           SizedBox(
             height: 10,

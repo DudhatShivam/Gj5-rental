@@ -78,12 +78,12 @@ class OrderQuatationCommanCard extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             width: double.infinity,
             decoration: BoxDecoration(
-                color:statusBackGroundColor(list, index) ,
+                color: statusBackGroundColor(list, index),
                 border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
                 borderRadius: BorderRadius.all(Radius.circular(5))),
             child: Column(
               children: [
-                Row(
+                Row (
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
@@ -196,7 +196,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                   children: [
                     Text(
                       list[index]['user_id']['name'],
-                      style: allCardSubText,
+                      style: allCardMainText,
                     ),
                   ],
                 ),
@@ -274,7 +274,6 @@ class OrderQuatationCommanCard extends StatelessWidget {
 }
 
 _makingPhoneCall(String PhoneNumber, BuildContext context) async {
-  print(PhoneNumber);
   try {
     final Uri launchUri = Uri(
       scheme: 'tel',

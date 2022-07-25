@@ -21,11 +21,13 @@ import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
+import '../../constant/extraproduct_card.dart';
 import '../../constant/order_quotation_amount_card.dart';
 import '../../constant/order_quotation_comman_card.dart';
 import '../../constant/order_quotation_detail_card.dart';
 import '../service/add_service/add_service.dart';
 import '../service/service_add_product/service_add_product.dart';
+import 'add_extra_product/quotation_add_extra_product.dart';
 import 'create_order.dart';
 
 class QuatationDetailScreen extends StatefulWidget {
@@ -51,7 +53,6 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
     if (widget.isFromAnotherScreen == true) {
       isFromAnotherScreen = true;
     }
-    print("isForm ${isFromAnotherScreen}");
     checkQuotationAndOrderDetailData(context, widget.id ?? 0, false);
   }
 
@@ -60,9 +61,20 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
     return WillPopScope(
       onWillPop: () => onWillPopNavigateFunction(),
       child: Scaffold(
-        floatingActionButton: CustomFABWidget(
-            transitionType: ContainerTransitionType.fade,
-            isQuotationDetailAddProduct: true),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            CustomFABWidget(
+                transitionType: ContainerTransitionType.fade,
+                isQuotationDetailAddExtraProduct: true),
+            SizedBox(
+              height: 5,
+            ),
+            CustomFABWidget(
+                transitionType: ContainerTransitionType.fade,
+                isQuotationDetailAddProduct: true),
+          ],
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -136,6 +148,40 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
                                 );
                               })
                           : Container(),
+                      myGetxController.quotationExtraProductList.isNotEmpty
+                          ? Container(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(15),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Extra Product : ",
+                                        style: TextStyle(
+                                            color: primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 21),
+                                      ),
+                                    ),
+                                  ),
+                                  ListView.builder(
+                                      padding: EdgeInsets.only(bottom: 15),
+                                      itemCount: myGetxController
+                                          .quotationExtraProductList.length,
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return ExtraProductCard(
+                                          extraProductList: myGetxController
+                                              .quotationExtraProductList,
+                                          index: index,
+                                        );
+                                      }),
+                                ],
+                              ),
+                            )
+                          : Container(),
                       myGetxController.quotationOrder.isNotEmpty
                           ? OrderQuotationAmountCard(
                               list: myGetxController.quotationOrder)
@@ -155,16 +201,24 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
   onWillPopNavigateFunction() {
     widget.isFromAnotherScreen == false && isFromAnotherScreen == false
         ? Navigator.of(context).popUntil(ModalRoute.withName("/QuotationHome"))
-        : myGetxController.quotationData.isEmpty ||
+        : myGetxController.quotationData.isEmpty &&
                 myGetxController.filteredQuotationData.isEmpty
-            ? pushRemoveUntilMethod(context, QuatationScreen())
+            ? navvvv()
             : Navigate();
   }
 
+  navvvv() {
+    print("navvvv");
+    pushRemoveUntilMethod(context, QuatationScreen());
+  }
+
   Navigate() {
+    print("this navigate called");
     if (editQuotationCount == 0) {
+      print("this navigate called if");
       Navigator.pop(context);
     } else {
+      print("this navigate called else");
       for (int i = 1;
           i <= editQuotationCount * 3 - (editQuotationCount - 1);
           i++) {
@@ -180,6 +234,7 @@ class CustomFABWidget extends StatelessWidget {
   final bool? isQuotationDetailAddProduct;
   final bool? isAddService;
   final bool? isAddProductInService;
+  final bool? isQuotationDetailAddExtraProduct;
 
   CustomFABWidget({
     Key? key,
@@ -188,6 +243,7 @@ class CustomFABWidget extends StatelessWidget {
     this.isQuotationDetailAddProduct,
     this.isAddService,
     this.isAddProductInService,
+    this.isQuotationDetailAddExtraProduct,
   }) : super(key: key);
   MyGetxController myGetxController = Get.find();
   ServiceController serviceController = Get.put(ServiceController());
@@ -209,11 +265,13 @@ class CustomFABWidget extends StatelessWidget {
                   )
                 : isAddService == true
                     ? AddServiceScreen()
-                    : ServiceAddProduct(
-                        serviceId: serviceController.particularServiceList[0]
-                            ['id'],
-                        serviceType: serviceController.particularServiceList[0]
-                            ['service_type']),
+                    : isAddProductInService == true
+                        ? ServiceAddProduct(
+                            serviceId: serviceController
+                                .particularServiceList[0]['id'],
+                            serviceType: serviceController
+                                .particularServiceList[0]['service_type'])
+                        : QuotationAddExtraProduct(),
         closedShape: CircleBorder(),
         closedColor: primary2Color,
         closedBuilder: (context, openContainer) => Container(
@@ -223,7 +281,17 @@ class CustomFABWidget extends StatelessWidget {
           ),
           height: fabSize,
           width: fabSize,
-          child: Icon(Icons.add, color: Colors.white, size: 30),
+          alignment: Alignment.center,
+          child: isQuotationDetailAddExtraProduct == true
+              ? Text(
+                  "EX",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                      letterSpacing: 2),
+                )
+              : Icon(Icons.add, color: Colors.white, size: 30),
         ),
       );
 }

@@ -332,7 +332,6 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   }
 
   getData(String apiUrl, int id, String token) async {
-    print(id);
     final response = await http.put(
         Uri.parse("http://$apiUrl/api/product.product/$id/get_booking_status"),
         headers: {
@@ -381,13 +380,13 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
     String remark = remarkController.text;
     final response = await http.put(
         Uri.parse(
-            "http://$apiUrl/api/rental.rental/$orderId/confirm_order_from_api?product_id=$productId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark"),
+            "http://$apiUrl/api/rental.rental/$orderId/add_product_from_api?product_id=$productId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark"),
         headers: {
           'Access-Token': token,
         });
-    final data = jsonDecode(response.body);
     print(response.body);
     print(response.statusCode);
+    final data = jsonDecode(response.body);
     if (data['status'] == 1) {
       checkQuotationAndOrderDetailData(context, orderId ?? 0, false);
       Navigator.pop(context);
@@ -401,7 +400,6 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
     if (myGetxController.isMainProductFalseProductList.isEmpty == true) {
       getStringPreference('ProductList').then((value) async {
         Map<String, dynamic> data = await jsonDecode(value);
-        print(data['count']);
         List<dynamic> lst = await data['results'];
         lst.forEach((element) {
           if (element['is_main_product'] == true) {

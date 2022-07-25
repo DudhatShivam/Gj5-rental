@@ -65,7 +65,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                 children: [
                   InkWell(
                       onTap: () {
-                        pushRemoveUntilMethod(context, HomeScreen());
+                        pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
                       },
                       child: FadeInLeft(
                         child: backArrowIcon,
@@ -338,10 +338,12 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
     });
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      if (data['results'] != []) {
+      if (data['count'] != 0) {
         myGetxController.deliveryScreenOrderList.addAll(data['results']);
       } else {
-        dialog(context, "No Data Found !", Colors.red.shade300);
+        if (deliverScreenOffset <= 0) {
+          dialog(context, "No Data Found !", Colors.red.shade300);
+        }
       }
     } else {
       dialog(context, "Something Went Wrong !", Colors.red.shade300);

@@ -34,9 +34,11 @@ class DeliveryDetailScreen extends StatefulWidget {
 class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
   MyGetxController myGetxController = Get.find();
   bool isSelectAll = false;
+  late var extraProductDeliverResponse;
 
   @override
   void initState() {
+    myGetxController.deliverySelectedExtraProductList.clear();
     clearList();
     checkWlanForData(true);
   }
@@ -163,6 +165,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                                       extraProductList: myGetxController
                                           .deliveryScreenParticularOrderLineExtraProductList,
                                       index: index,
+                                      isDeliveryScreen: true,
                                     );
                                   }),
                             ],
@@ -177,7 +180,9 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                                 myGetxController.deliveryScreenParticularOrder)
                         : Container(),
                   ),
-                  Obx(() => myGetxController.selectedOrderLineList.isNotEmpty
+                  Obx(() => myGetxController.selectedOrderLineList.isNotEmpty ||
+                          myGetxController
+                              .deliverySelectedExtraProductList.isNotEmpty
                       ? Container(
                           margin:
                               EdgeInsets.only(left: 15, bottom: 20, right: 15),
@@ -187,6 +192,8 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                               onPressed: () {
                                 confirmationDialogForIsDeliverTrue();
                               },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: primary2Color),
                               child: Text("DELIVER")))
                       : Container())
                 ],
@@ -226,7 +233,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.green.shade300),
+                              backgroundColor: Colors.green.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                             checkWlanForData(false);
@@ -237,7 +244,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red.shade300),
+                              backgroundColor: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -344,38 +351,74 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
   }
 
   Future<void> changeStatusToDeliver(apiUrl, token) async {
-    String idList = myGetxController.selectedOrderLineList
+    if (myGetxController.selectedOrderLineList.isNotEmpty ||
+        myGetxController.selectedOrderLineSubProductList.isNotEmpty) {
+      String idList = myGetxController.selectedOrderLineList
+          .toString()
+          .replaceAll('[', '')
+          .replaceAll(']', '');
+      var body = {'is_deliver': 'True'};
+      final response = await http.put(
+        Uri.parse("http://$apiUrl/api/rental.line/$idList"),
+        body: jsonEncode(body),
+        headers: {
+          'Access-Token': token,
+        },
+      );
+      if (myGetxController.selectedOrderLineSubProductList.isNotEmpty) {
+        if (myGetxController.deliverySelectedExtraProductList.isNotEmpty) {
+          await deliverExtraProduct(apiUrl, token, false);
+        }
+        String productIdList = myGetxController.selectedOrderLineSubProductList
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '');
+        var body1 = {'is_deliver': 'True'};
+        final response1 = await http.put(
+          Uri.parse("http://$apiUrl/api/product.details/$productIdList"),
+          body: jsonEncode(body1),
+          headers: {
+            'Access-Token': token,
+          },
+        );
+        if (response.statusCode == 200 &&
+            response1.statusCode == 200 &&
+            extraProductDeliverResponse.statusCode == 200) {
+          apiResponseFunction();
+        } else {
+          dialog(context, "Error Occur In Order Deliver", Colors.red.shade300);
+        }
+      } else {
+        if (myGetxController.deliverySelectedExtraProductList.isNotEmpty) {
+          await deliverExtraProduct(apiUrl, token, false);
+        }
+        if (response.statusCode == 200 &&
+            extraProductDeliverResponse.statusCode == 200) {
+          apiResponseFunction();
+        } else {
+          dialog(context, "Error Occur In Order Deliver", Colors.red.shade300);
+        }
+      }
+    } else {
+      deliverExtraProduct(apiUrl, token, true);
+    }
+  }
+
+  deliverExtraProduct(apiUrl, token, bool isShowMsg) async {
+    String idList = myGetxController.deliverySelectedExtraProductList
         .toString()
         .replaceAll('[', '')
         .replaceAll(']', '');
-    var body = {'is_deliver': 'True'};
-    final response = await http.put(
-      Uri.parse("http://$apiUrl/api/rental.line/$idList"),
+    var body = {'is_deliver': 'true'};
+    extraProductDeliverResponse = await http.put(
+      Uri.parse("http://$apiUrl/api/extra.product/$idList"),
       body: jsonEncode(body),
       headers: {
         'Access-Token': token,
       },
     );
-    if (myGetxController.selectedOrderLineSubProductList.isNotEmpty) {
-      String productIdList = myGetxController.selectedOrderLineSubProductList
-          .toString()
-          .replaceAll('[', '')
-          .replaceAll(']', '');
-      var body1 = {'is_deliver': 'True'};
-      final response1 = await http.put(
-        Uri.parse("http://$apiUrl/api/product.details/$productIdList"),
-        body: jsonEncode(body1),
-        headers: {
-          'Access-Token': token,
-        },
-      );
-      if (response.statusCode == 200 && response1.statusCode == 200) {
-        apiResponseFunction();
-      } else {
-        dialog(context, "Error Occur In Order Deliver", Colors.red.shade300);
-      }
-    } else {
-      if (response.statusCode == 200) {
+    if (isShowMsg == true) {
+      if (extraProductDeliverResponse.statusCode == 200) {
         apiResponseFunction();
       } else {
         dialog(context, "Error Occur In Order Deliver", Colors.red.shade300);
@@ -384,6 +427,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
   }
 
   apiResponseFunction() {
+    myGetxController.deliverySelectedExtraProductList.clear();
     clearList();
     setState(() {
       isSelectAll = false;

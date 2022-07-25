@@ -6,15 +6,15 @@ import '../Utils/utils.dart';
 class OrderQuotationAmountCard extends StatelessWidget {
   final List list;
 
-  const OrderQuotationAmountCard(
-      {Key? key, required this.list})
+  const OrderQuotationAmountCard({Key? key, required this.list})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15),
-      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      padding: EdgeInsets.all(getWidth(0.01, context)),
+      margin: EdgeInsets.symmetric(
+          horizontal: getWidth(0.018, context), vertical: 5),
       width: double.infinity,
       decoration: BoxDecoration(
           color: Colors.cyan.shade100.withOpacity(0.5),
@@ -33,7 +33,8 @@ class OrderQuotationAmountCard extends StatelessWidget {
                       "Subtotal", list[0]['amount_total'] ?? 0, false),
                   CommanRowInAmountCard(
                       "Discount", list[0]['discount_amount'] ?? 0, false),
-                  list[0]['extra_item_amount'] > 0 && list[0]['extra_item_amount'] != null
+                  list[0]['extra_item_amount'] > 0 &&
+                          list[0]['extra_item_amount'] != null
                       ? CommanRowInAmountCard(
                           "Ex. Charge", list[0]['extra_item_amount'], false)
                       : Container(),
@@ -85,7 +86,6 @@ class OrderQuotationAmountCard extends StatelessWidget {
                     thickness: 0.5,
                     height: 5,
                   ),
-
                   Column(
                     children: [
                       CommanRowInAmountCard(
@@ -98,7 +98,7 @@ class OrderQuotationAmountCard extends StatelessWidget {
                         height: 1,
                       ),
                       CommanRowInAmountCard(
-                          "Unpay. Depo.", list[0]['unpaid_deposit'] ?? 0, true)
+                          "Unpay.Depo.", list[0]['unpaid_deposit'] ?? 0, true)
                     ],
                   )
                 ],

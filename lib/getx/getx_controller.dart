@@ -6,6 +6,7 @@ class MyGetxController extends GetxController {
   RxString logInPageError = "".obs;
   RxBool isLoggedIn = false.obs;
   RxBool isSetTextFieldData = false.obs;
+  RxBool isSyncData = false.obs;
 
   //booking status screen
 
@@ -28,10 +29,14 @@ class MyGetxController extends GetxController {
   RxList<dynamic> quotationOrder = [].obs;
   RxList<dynamic> quotationDetailOrderList = [].obs;
   RxList<dynamic> quotationDetailProductDetailList = [].obs;
+  RxList<dynamic> quotationExtraProductList = [].obs;
   RxList<dynamic> isMainProductFalseProductList = [].obs;
   RxBool isUpdateData = false.obs;
   RxBool isShowQuotationFilteredList = false.obs;
   RxBool noDataInQuotationScreen = false.obs;
+  RxList<dynamic> quotationMainProductTypeList = [].obs;
+  RxList<dynamic> quotationMainProductList = [].obs;
+  RxList<dynamic> orginalProductList = [].obs;
 
   //ProductScreen
   RxList<dynamic> mainProductList = [].obs;
@@ -46,6 +51,7 @@ class MyGetxController extends GetxController {
   RxList<dynamic> deliveryScreenParticularOrderLineExtraProductList = [].obs;
   RxList<dynamic> selectedOrderLineList = [].obs;
   RxList<dynamic> selectedOrderLineSubProductList = [].obs;
+  RxList<dynamic> deliverySelectedExtraProductList = [].obs;
 
   //OrderLine Screen
   RxList<dynamic> orderLineScreenList = [].obs;
@@ -68,6 +74,7 @@ class MyGetxController extends GetxController {
   RxList<dynamic> receiveExtraProductList = [].obs;
   RxList<dynamic> receiveSelectedOrderLineList = [].obs;
   RxList<dynamic> receiveSelectedSubProductList = [].obs;
+  RxList<dynamic> receiveSelectedExtraProductList = [].obs;
 
   //ServiceLineScreen
   RxList<dynamic> serviceLineScreenList = [].obs;
@@ -85,4 +92,8 @@ class MyGetxController extends GetxController {
   RxList<dynamic> cancelParticularOrderList = [].obs;
   RxList<dynamic> cancelParticularOrderLineList = [].obs;
   RxList<dynamic> cancelParticularOrderProductList = [].obs;
+
+  //extra Product Screen
+  RxList<dynamic> extraProductList = [].obs;
+  RxList<dynamic> extraProductFilteredList = [].obs;
 }

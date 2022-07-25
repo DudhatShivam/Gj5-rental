@@ -27,7 +27,7 @@ class _MainProductScreenState extends State<MainProductScreen> {
   @override
   void initState() {
     super.initState();
-    checkWifiForgetData();
+    checkWifiForgetMainProductData(context);
   }
 
   @override
@@ -81,39 +81,38 @@ class _MainProductScreenState extends State<MainProductScreen> {
       ],
     ));
   }
+}
 
-  Future<void> checkWifiForgetData() async {
-    String apiUrl = await getStringPreference('apiUrl');
-    String accessToken = await getStringPreference('accessToken');
-    try {
-      if (apiUrl.toString().startsWith("192")) {
-        showConnectivity().then((result) async {
-          if (result == ConnectivityResult.wifi) {
-            getMainProduct(apiUrl, accessToken);
-          } else {
-            dialog(context, "Connect to Showroom Network",Colors.red.shade300);
-          }
-        });
-      } else {
-        getMainProduct(apiUrl, accessToken);
-      }
-    } on SocketException catch (err) {
-      dialog(context, "Connect to Showroom Network",Colors.red.shade300);
+Future<void> checkWifiForgetMainProductData(BuildContext context) async {
+  String apiUrl = await getStringPreference('apiUrl');
+  String accessToken = await getStringPreference('accessToken');
+  try {
+    if (apiUrl.toString().startsWith("192")) {
+      showConnectivity().then((result) async {
+        if (result == ConnectivityResult.wifi) {
+          getMainProduct(apiUrl, accessToken);
+        } else {
+          dialog(context, "Connect to Showroom Network", Colors.red.shade300);
+        }
+      });
+    } else {
+      getMainProduct(apiUrl, accessToken);
+    }
+  } on SocketException catch (err) {
+    dialog(context, "Connect to Showroom Network", Colors.red.shade300);
+  }
+}
+
+Future<void> getMainProduct(String apiUrl, String accessToken) async {
+  MyGetxController myGetxController = Get.put(MyGetxController());
+  myGetxController.mainProductList.clear();
+  final response = await http.get(Uri.parse("http://$apiUrl/api/product.type"),
+      headers: {'Access-Token': accessToken});
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+    List<dynamic> lst = data['results'];
+    if (lst.isNotEmpty) {
+      myGetxController.mainProductList.addAll(data['results']);
     }
   }
-
-  Future<void> getMainProduct(String apiUrl, String accessToken) async {
-    myGetxController.mainProductList.clear();
-    final response = await http.get(
-        Uri.parse("http://$apiUrl/api/product.type"),
-        headers: {'Access-Token': accessToken});
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      List<dynamic> lst = data['results'];
-      if (lst.isNotEmpty) {
-        myGetxController.mainProductList.addAll(data['results']);
-      }
-    }
-  }
-
 }

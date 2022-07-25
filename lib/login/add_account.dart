@@ -44,7 +44,6 @@ class _AddAccountState extends State<AddAccount> {
                   shrinkWrap: true,
                   itemCount: finalData.length,
                   itemBuilder: (context, index) {
-                    print(finalData.length);
                     return InkWell(
                       onTap: () {
                         checkAccountListLoginStatus(index);
@@ -118,7 +117,6 @@ class _AddAccountState extends State<AddAccount> {
   }
 
   confirmationDialogForDeleteAccount(int index) {
-    print(index);
     return showDialog(
         context: context,
         builder: (_) {
@@ -177,8 +175,6 @@ class _AddAccountState extends State<AddAccount> {
     setState(() {
       finalData = jsonDecode(retreiveData ?? "");
     });
-    print("it is saved data");
-    print(finalData);
   }
 
   Future<void> checkAccountListLoginStatus(int index) async {
@@ -218,7 +214,7 @@ class _AddAccountState extends State<AddAccount> {
                   'username': username.trim(),
                   'password': password.trim()
                 }));
-        print(response.statusCode);
+
         if (response.statusCode == 200) {
           removePreference().whenComplete(() {
             final data = jsonDecode(response.body);
@@ -242,7 +238,7 @@ class _AddAccountState extends State<AddAccount> {
                         data['change_product'],
                         data['is_manager'])
                     .whenComplete(() {
-                  pushRemoveUntilMethod(context, HomeScreen());
+                  pushRemoveUntilMethod(context, HomeScreen(userId: data['uid']));
                 });
               }
             });
@@ -257,7 +253,6 @@ class _AddAccountState extends State<AddAccount> {
         }
       }
     } on SocketException catch (err) {
-      print(err);
       dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   }
@@ -267,7 +262,6 @@ class _AddAccountState extends State<AddAccount> {
     bool isDeviceSupport = await auth.canCheckBiometrics;
     bool isAvailableBioMetrics = await auth.isDeviceSupported();
     if (isAvailableBioMetrics && isDeviceSupport) {
-      print(await auth.getAvailableBiometrics());
       final bool didAuthenticate = await auth.authenticate(
         localizedReason: 'Please authenticate to Logged In',
         options: AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),

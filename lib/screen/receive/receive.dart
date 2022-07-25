@@ -325,11 +325,10 @@ class _RceiveScreenState extends State<ReceiveScreen> {
       'Connection': 'keep-alive'
     });
     if (response.statusCode == 200) {
-      print("response come");
+
       var data = jsonDecode(response.body);
       if (data['count'] != 0) {
         myGetxController.receiveOrderList.addAll(data['results']);
-        print(myGetxController.receiveOrderList.length);
       } else {
         if (receiveScreenOffset <= 0) {
           dialog(context, "No Data Found !", Colors.red.shade300);
@@ -341,7 +340,6 @@ class _RceiveScreenState extends State<ReceiveScreen> {
   }
 
   getSearchDataOfReceiveScreen(String apiUrl, String token) async {
-    print("this is");
     String? domain;
     List domainData = [];
 

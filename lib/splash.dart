@@ -9,10 +9,12 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 
 import 'package:gj5_rental/login/login_page.dart';
+import 'package:gj5_rental/screen/Order_line/notification_orderline.dart';
 import 'package:gj5_rental/screen/cancel_order/cancel_order_detail.dart';
 import 'package:gj5_rental/screen/delivery/delivery_detail.dart';
 import 'package:gj5_rental/screen/order/order_detail.dart';
 import 'package:gj5_rental/screen/receive/receive_detail.dart';
+import 'package:gj5_rental/screen/service_line/notification_show_serviceline.dart';
 
 import 'Utils/utils.dart';
 import 'manage_notification.dart';
@@ -131,8 +133,13 @@ class _SplashScreenState extends State<SplashScreen> {
               isFromAnotherScreen: true,
               orderId: int.parse(a['orderId'].toString()))));
     } else if (a['keyword'] == "service_order") {
-      // navigatorKeyPushMethod(context,
-      //     OrderDetail(idFromAnotherScreen: true, id: payload['confirmOrder']));
+      navigatorKey.currentState?.push(MaterialPageRoute(
+          builder: (_) =>
+              NotificationServiceLine(id: int.parse(a['orderId'].toString()))));
+    } else if (a['keyword'] == "order_line") {
+      navigatorKey.currentState?.push(MaterialPageRoute(
+          builder: (_) =>
+              NotificationOrderLine(id: int.parse(a['orderId'].toString()))));
     }
   }
 
@@ -143,7 +150,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (notification != null && android != null) {
         notificationClick(message?.data.toString());
       } else {
-        pushRemoveUntilMethod(context, HomeScreen());
+        pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
       }
     });
   }

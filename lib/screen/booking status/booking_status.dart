@@ -10,10 +10,7 @@ import 'package:gj5_rental/Utils/utils.dart';
 import 'package:gj5_rental/constant/constant.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/book_order.dart';
-import 'package:gj5_rental/screen/quatation/quatation.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:gj5_rental/home/home.dart';
 import 'package:intl/intl.dart';
 import 'package:searchfield/searchfield.dart';
 
@@ -281,11 +278,10 @@ class _BookingStatusState extends State<BookingStatus> {
   getResponseProductApiList() {
     int? id;
     String value = productSearchController.text.split(' ').first;
-    print(value);
     myGetxController.isMainProductTrueProductList.forEach((element) {
       if (element['default_code'] == value.trim()) {
         id = element['id'];
-        print(id);
+
         productRent = element['rent'];
       }
     });
@@ -335,17 +331,6 @@ class _BookingStatusState extends State<BookingStatus> {
     });
   }
 
-  int? getIdFromTextFieldData() {
-    int? id;
-    String value = productSearchController.text.split(' ').first;
-    myGetxController.isMainProductTrueProductList.forEach((element) {
-      if (element['default_code'] == value) {
-        id = element['id'];
-      }
-    });
-    return id;
-  }
-
   getData(String apiUrl, int id, String token) async {
     setState(() {
       loading = true;
@@ -371,7 +356,7 @@ class _BookingStatusState extends State<BookingStatus> {
   }
 
   Future<void> checkingStatus(apiUrl, token) async {
-    int? id = getIdFromTextFieldData();
+    int? id = getIdFromTextFieldData(productSearchController.text);
     if (deliveryNotFormatedDate != null && returnNotFormatedDate != null) {
       String dDate = DateFormat('MM/dd/yyyy').format(deliveryNotFormatedDate!);
       String rDate = DateFormat('MM/dd/yyyy').format(returnNotFormatedDate!);
@@ -412,20 +397,33 @@ class _BookingStatusState extends State<BookingStatus> {
           Colors.red.shade300);
     }
   }
+}
 
-  void getProductList() {
-    if (myGetxController.isMainProductTrueProductList.isEmpty == true) {
-      getStringPreference('ProductList').then((value) async {
-        Map<String, dynamic> data = await jsonDecode(value);
-        List<dynamic> lst = await data['results'];
-        lst.forEach((element) {
-          if (element['is_main_product'] == true) {
-            myGetxController.isMainProductTrueProductList.add(element);
-          }
-        });
+void getProductList() {
+  MyGetxController myGetxController = Get.find();
+  if (myGetxController.isMainProductTrueProductList.isEmpty == true) {
+    getStringPreference('ProductList').then((value) async {
+      Map<String, dynamic> data = await jsonDecode(value);
+      List<dynamic> lst = await data['results'];
+      lst.forEach((element) {
+        if (element['is_main_product'] == true) {
+          myGetxController.isMainProductTrueProductList.add(element);
+        }
       });
-    }
+    });
   }
+}
+
+int? getIdFromTextFieldData(String productSearchControllerText) {
+  MyGetxController myGetxController = Get.find();
+  int? id;
+  String value = productSearchControllerText.split(' ').first;
+  myGetxController.isMainProductTrueProductList.forEach((element) {
+    if (element['default_code'] == value) {
+      id = element['id'];
+    }
+  });
+  return id;
 }
 
 class ScreenAppBar extends StatelessWidget {

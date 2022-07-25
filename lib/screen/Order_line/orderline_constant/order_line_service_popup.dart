@@ -19,10 +19,10 @@ class OrderLineServicePopUp extends StatefulWidget {
 
   const OrderLineServicePopUp(
       {Key? key,
-      required this.orderId,
-      required this.index,
-      required this.isShowFromGroupBy,
-      this.groupByMainListIndex})
+        required this.orderId,
+        required this.index,
+        required this.isShowFromGroupBy,
+        this.groupByMainListIndex})
       : super(key: key);
 
   @override
@@ -34,13 +34,6 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
   String? selectedValue;
   List partnerList = [];
   List<String> serviceOrderLineDropDownList = [];
-
-  @override
-  void initState() {
-    print(widget.isShowFromGroupBy);
-    print(widget.index);
-    print(widget.orderId);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,15 +114,15 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                     ),
                     items: serviceOrderLineDropDownList
                         .map((item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15),
-                                child: Text(
-                                  item,
-                                  style: primaryStyle,
-                                ),
-                              ),
-                            ))
+                      value: item,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Text(
+                          item,
+                          style: primaryStyle,
+                        ),
+                      ),
+                    ))
                         .toList(),
                     value: selectedValue,
                     onChanged: (value) {
@@ -153,12 +146,12 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                 selectedValue == null
                     ? Container()
                     : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade300),
-                        onPressed: () {
-                          setService();
-                        },
-                        child: Text("Servicing")),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade300),
+                    onPressed: () {
+                      setService();
+                    },
+                    child: Text("Servicing")),
                 SizedBox(
                   width: 10,
                 ),
@@ -214,7 +207,6 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
         partnerId = element['id'];
       }
     });
-    print(partnerId);
     if (partnerId != null) {
       getStringPreference('apiUrl').then((apiUrl) {
         getStringPreference('accessToken').then((token) async {
@@ -231,11 +223,11 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
             } else {
               widget.isShowFromGroupBy == true
                   ? setDataOfUpdatedIdInGroupByListOrderLineScreen(
-                      widget.orderId,
-                      widget.index,
-                      widget.groupByMainListIndex ?? 0)
+                  widget.orderId,
+                  widget.index,
+                  widget.groupByMainListIndex ?? 0)
                   : setDataOfUpdatedIdInOrderLineScreen(
-                      widget.orderId, widget.index);
+                  widget.orderId, widget.index);
               Navigator.pop(context);
             }
           } else {

@@ -23,10 +23,11 @@ class LogInPage extends StatefulWidget {
   final String? savedUsername;
   final bool? isAccountEmptyList;
 
-  const LogInPage({Key? key,
-    this.savedServerUrl,
-    this.savedUsername,
-    this.isAccountEmptyList})
+  const LogInPage(
+      {Key? key,
+      this.savedServerUrl,
+      this.savedUsername,
+      this.isAccountEmptyList})
       : super(key: key);
 
   @override
@@ -42,7 +43,6 @@ class _LogInPageState extends State<LogInPage> {
   @override
   void initState() {
     super.initState();
-    print("SavedData");
     userNameController.text = widget.savedUsername ?? "";
     serverCode.text = widget.savedServerUrl ?? "";
     getAccountData();
@@ -65,9 +65,9 @@ class _LogInPageState extends State<LogInPage> {
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-                mainColor1.withOpacity(0.25),
-                mainColor2.withOpacity(0.25)
-              ])),
+            mainColor1.withOpacity(0.25),
+            mainColor2.withOpacity(0.25)
+          ])),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -77,10 +77,7 @@ class _LogInPageState extends State<LogInPage> {
               //   //318172
               // ),
               Container(
-                height: MediaQuery
-                    .of(context)
-                    .padding
-                    .top +
+                height: MediaQuery.of(context).padding.top +
                     getHeight(0.25, context),
                 padding: const EdgeInsets.only(left: 25),
                 child: Column(
@@ -124,22 +121,15 @@ class _LogInPageState extends State<LogInPage> {
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(30),
                         topLeft: Radius.circular(30))),
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height -
-                    (MediaQuery
-                        .of(context)
-                        .padding
-                        .top +
+                height: MediaQuery.of(context).size.height -
+                    (MediaQuery.of(context).padding.top +
                         getHeight(0.25, context)),
                 child: Column(
                   children: [
                     SizedBox(
                       height: 15,
                     ),
-                    Obx(() =>
-                        Text(
+                    Obx(() => Text(
                           myGetxController.logInPageError.value,
                           style: TextStyle(
                               fontWeight: FontWeight.w500, color: Colors.red),
@@ -192,46 +182,45 @@ class _LogInPageState extends State<LogInPage> {
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 25),
-                              child: Obx(() =>
-                              myGetxController
-                                  .isLoggedIn.value ==
-                                  false
+                              child: Obx(() => myGetxController
+                                          .isLoggedIn.value ==
+                                      false
                                   ? InkWell(
-                                onTap: () {
-                                  FocusScope.of(context).unfocus();
-                                  if (form.currentState!.validate()) {
-                                    myGetxController.isLoggedIn.value =
-                                    true;
-                                    checkLogIn(
-                                        serverCode.text,
-                                        userNameController.text,
-                                        passwordController.text);
-                                  }
-                                },
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(10),
-                                        gradient: LinearGradient(colors: [
-                                          mainColor1,
-                                          mainColor2
-                                        ])),
-                                    alignment: Alignment.center,
-                                    height: 60,
-                                    width: double.infinity,
-                                    child: Text(
-                                      "Login",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          letterSpacing: 1,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500),
-                                    )),
-                              )
+                                      onTap: () {
+                                        FocusScope.of(context).unfocus();
+                                        if (form.currentState!.validate()) {
+                                          myGetxController.isLoggedIn.value =
+                                              true;
+                                          checkLogIn(
+                                              serverCode.text,
+                                              userNameController.text,
+                                              passwordController.text);
+                                        }
+                                      },
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              gradient: LinearGradient(colors: [
+                                                mainColor1,
+                                                mainColor2
+                                              ])),
+                                          alignment: Alignment.center,
+                                          height: 60,
+                                          width: double.infinity,
+                                          child: Text(
+                                            "Login",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                letterSpacing: 1,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          )),
+                                    )
                                   : CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    Color(0xffFB578E)),
-                              )),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color(0xffFB578E)),
+                                    )),
                             )
                           ],
                         )),
@@ -269,10 +258,7 @@ class _LogInPageState extends State<LogInPage> {
                   ],
                 ),
               ),
-              MediaQuery
-                  .of(context)
-                  .viewInsets
-                  .bottom > 0
+              MediaQuery.of(context).viewInsets.bottom > 0
                   ? Padding(padding: EdgeInsets.only(bottom: 55))
                   : Container()
             ],
@@ -282,8 +268,8 @@ class _LogInPageState extends State<LogInPage> {
     );
   }
 
-  Future<void> checkLogIn(String serverUrl, String username,
-      String password) async {
+  Future<void> checkLogIn(
+      String serverUrl, String username, String password) async {
     try {
       if (serverUrl.startsWith("192")) {
         showConnectivity().then((value) async {
@@ -312,7 +298,6 @@ class _LogInPageState extends State<LogInPage> {
           if (element['serverUrl'] == serverUrl &&
               element['dbName'] == dbName &&
               element['name'] == username) {
-            print("inside called");
             toRemove.add(element);
           }
         });
@@ -331,8 +316,7 @@ class _LogInPageState extends State<LogInPage> {
         var list = jsonEncode(getdata);
         SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences
-            .setString("accountList", list)
-            .whenComplete(() => print("DataSet"));
+            .setString("accountList", list);
       } else {
         Map data = {
           'serverUrl': serverUrl,
@@ -347,8 +331,7 @@ class _LogInPageState extends State<LogInPage> {
         var list = jsonEncode(accountData);
         SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences
-            .setString("accountList", list)
-            .whenComplete(() => print("DataSet"));
+            .setString("accountList", list);
       }
     });
   }
@@ -367,73 +350,75 @@ class _LogInPageState extends State<LogInPage> {
     try {
       String dbListUrl = "http://$serverUrl/api/dblist";
       final DbListResponse = await http.get(Uri.parse(dbListUrl));
-      print(DbListResponse.body);
+
       if (DbListResponse.statusCode == 200) {
         myGetxController.logInPageError.value = "";
         final response =
-        await http.post(Uri.parse("http://$serverUrl/api/auth/get_tokens"),
-            headers: <String, String>{
-              'Content-Type': 'application/http; charset=UTF-8',
-            },
-            body: jsonEncode({
-              'db': DbListResponse.body,
-              'username': username.trim(),
-              'password': password.trim()
-            }));
+            await http.post(Uri.parse("http://$serverUrl/api/auth/get_tokens"),
+                headers: <String, String>{
+                  'Content-Type': 'application/http; charset=UTF-8',
+                },
+                body: jsonEncode({
+                  'db': DbListResponse.body,
+                  'username': username.trim(),
+                  'password': password.trim()
+                }));
         if (response.statusCode == 200) {
           myGetxController.logInPageError.value = "";
-          print(response.body);
           final data = jsonDecode(response.body);
-          setAddAccountData(
-              serverCode.text,
-              DbListResponse.body.toString(),
-              data['name'].toString(),
-              username,
-              password.trim(),
-              data['branch_name'].toString());
-          setLogInData(
-              serverUrl,
-              data['access_token'],
-              data['uid'].toString(),
-              data['partner_id'].toString(),
-              data['name'].toString(),
-              data['image'].toString(),
-              data['branch_name'],
-              data['past_day_order'].toString(),
-              data['next_day_order'].toString(),
-              data['is_user'] ?? true,
-              data['is_servicer'] ?? true,
-              data['is_receiver'] ?? true,
-              data['is_deliver'] ?? true,
-              data['change_product'] ?? true,
-              data['is_manager'] ?? true)
-                   .whenComplete(()
-          {
-            setLogIn(true);
-            myGetxController.isLoggedIn.value = false;
-            pushRemoveUntilMethod(context, HomeScreen());
-          });
-    } else if (response.statusCode == 400) {
-    myGetxController.isLoggedIn.value = false;
-    myGetxController.logInPageError.value =
-    "Enter valid server url or username or password";
-    } else if (response.statusCode == 401) {
-    myGetxController.isLoggedIn.value = false;
-    myGetxController.logInPageError.value = "user not found";
-    } else {
-    myGetxController.isLoggedIn.value = false;
-    myGetxController.logInPageError.value =
-    "logIn response statusCode different then 200,400,401";
-    }
-    } else {
-    myGetxController.isLoggedIn.value = false;
-    myGetxController.logInPageError.value =
-    "dbList response statusCode different then 200";
-    }
+          if (data['is_user'] == true) {
+            setAddAccountData(
+                serverCode.text,
+                DbListResponse.body.toString(),
+                data['name'].toString(),
+                username,
+                password.trim(),
+                data['branch_name'].toString());
+            setLogInData(
+                    serverUrl,
+                    data['access_token'],
+                    data['uid'].toString(),
+                    data['partner_id'].toString(),
+                    data['name'].toString(),
+                    data['image'].toString(),
+                    data['branch_name'],
+                    data['past_day_order'].toString(),
+                    data['next_day_order'].toString(),
+                    data['is_user'] ?? true,
+                    data['is_servicer'] ?? true,
+                    data['is_receiver'] ?? true,
+                    data['is_deliver'] ?? true,
+                    data['change_product'] ?? true,
+                    data['is_manager'] ?? true)
+                .whenComplete(() {
+              setLogIn(true);
+              myGetxController.isLoggedIn.value = false;
+              pushRemoveUntilMethod(context, HomeScreen(userId: data['uid'],));
+            });
+          } else {
+            dialog(context, "You have no Access-Rights to Login", Colors.red.shade300);
+          }
+        } else if (response.statusCode == 400) {
+          myGetxController.isLoggedIn.value = false;
+          myGetxController.logInPageError.value =
+              "Enter valid server url or username or password";
+        } else if (response.statusCode == 401) {
+          myGetxController.isLoggedIn.value = false;
+          myGetxController.logInPageError.value = "user not found";
+        } else {
+          myGetxController.isLoggedIn.value = false;
+          myGetxController.logInPageError.value =
+              "logIn response statusCode different then 200,400,401";
+        }
+      } else {
+        myGetxController.isLoggedIn.value = false;
+        myGetxController.logInPageError.value =
+            "dbList response statusCode different then 200";
+      }
     } on SocketException catch (err) {
-    myGetxController.isLoggedIn.value = false;
-    myGetxController.logInPageError.value =
-    "Something Went Wrong ! in socket exception";
+      myGetxController.isLoggedIn.value = false;
+      myGetxController.logInPageError.value =
+          "Something Went Wrong ! in socket exception";
     }
   }
 }

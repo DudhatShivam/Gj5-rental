@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
-import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -62,7 +60,7 @@ class OrderLineCard extends StatelessWidget {
                         pushMethod(
                             context,
                             OrderDetail(
-                              idFromAnotherScreen: false,
+                                idFromAnotherScreen: false,
                                 id: orderList[index]['rental_id']['id']));
                       },
                       child: Text(
@@ -319,9 +317,15 @@ class OrderLineCard extends StatelessWidget {
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Icon(
-                                Icons.notifications_active,
-                                size: 28,
+                              InkWell(
+                                onTap: () {
+                                  chekWlanToNotifyToAll(
+                                      orderList[index]['id'], context);
+                                },
+                                child: Icon(
+                                  Icons.notifications_active,
+                                  size: 28,
+                                ),
                               ),
                               SizedBox(
                                 width: 10,
@@ -416,6 +420,41 @@ class OrderLineCard extends StatelessWidget {
   }
 }
 
+void chekWlanToNotifyToAll(int rentalLineId, BuildContext context) {
+  getStringPreference('apiUrl').then((apiUrl) async {
+    try {
+      getStringPreference('accessToken').then((token) async {
+        if (apiUrl.toString().startsWith("192")) {
+          showConnectivity().then((result) async {
+            if (result == ConnectivityResult.wifi) {
+              notifyToAll(apiUrl, token, rentalLineId, context);
+            } else {
+              dialog(
+                  context, "Connect to Showroom Network", Colors.red.shade300);
+            }
+          });
+        } else {}
+      });
+    } on SocketException catch (err) {
+      dialog(context, "Connect to Showroom Network", Colors.red.shade300);
+    }
+  });
+}
+
+Future<void> notifyToAll(
+    apiUrl, token, int rentalLineId, BuildContext context) async {
+  final response = await http.put(
+    Uri.parse(
+        "http://$apiUrl/api/rental.line/$rentalLineId/send_msg_to_all_user"),
+    headers: {'Access-Token': token},
+  );
+  if (response.statusCode == 200) {
+    dialog(context, "Notification sent SuccessFully", Colors.green.shade400);
+  } else {
+    dialog(context, "Error In Sending Notification", Colors.red.shade300);
+  }
+}
+
 void cheCkWlanForOrderLineData(BuildContext context, bool isLoadAll) {
   getStringPreference('apiUrl').then((value) async {
     try {
@@ -482,7 +521,6 @@ checkWlanForServicePopUpInOrderLine(BuildContext context, int orderId,
 
 int orderLineOffset = 0;
 
-
 Future<void> getDataForOrderLine(
     apiUrl, token, BuildContext context, bool isLoadAll) async {
   String dayBefore = get5daysBeforeDate();
@@ -526,7 +564,6 @@ Future<void> getDataForOrderLine(
 
 void addDataInOrderLineProductList(List productList) {
   MyGetxController myGetxController = Get.find();
-  print(myGetxController.orderLineScreenList.length);
   productList.forEach((element) {
     if (element['product_details_ids'] != []) {
       List<dynamic> data = element['product_details_ids'];

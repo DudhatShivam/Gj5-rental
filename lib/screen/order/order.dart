@@ -53,13 +53,13 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     super.initState();
     myGetxController.filteredOrderList.clear();
     if (myGetxController.orderData.isEmpty) {
-      getData();
+      getData(false);
     }
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
         orderScreenOffset = orderScreenOffset + 5;
-        getData();
+        getData(false);
       }
     });
   }
@@ -80,7 +80,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                 children: [
                   InkWell(
                       onTap: () {
-                        pushRemoveUntilMethod(context, HomeScreen());
+                        pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
                       },
                       child: FadeInLeft(child: backArrowIcon)),
                   SizedBox(
@@ -101,7 +101,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         orderScreenOffset = 0;
                         myGetxController.orderData.clear();
                         myGetxController.filteredOrderList.clear();
-                        getData();
+                        getData(false);
                       },
                       child: FadeInRight(
                           child: Padding(
@@ -231,7 +231,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                             isSearchLoadData = true;
                             isExpandSearch = false;
                           });
-                          searchProduct();
+                          getData(true);
                         },
                         child: Text("Search")),
                   ),
@@ -295,21 +295,25 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     ));
   }
 
-  getData() async {
+  getData(bool isSearchData) async {
     getStringPreference('apiUrl').then((apiUrl) async {
       try {
         getStringPreference('accessToken').then((token) async {
           if (apiUrl.toString().startsWith("192")) {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
-                getOrderData(apiUrl, token);
+                isSearchData == true
+                    ? getSearchData(apiUrl, token)
+                    : getOrderData(apiUrl, token);
               } else {
                 dialog(context, "Connect to Showroom Network",
                     Colors.red.shade300);
               }
             });
           } else {
-            getOrderData(apiUrl, token);
+            isSearchData == true
+                ? getSearchData(apiUrl, token)
+                : getOrderData(apiUrl, token);
           }
         });
       } on SocketException catch (err) {
@@ -351,30 +355,6 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
           }
         }
       });
-    });
-  }
-
-  searchProduct() {
-    print(MediaQuery.of(context).viewInsets.bottom);
-    getStringPreference('apiUrl').then((apiUrl) async {
-      try {
-        getStringPreference('accessToken').then((token) async {
-          if (apiUrl.toString().startsWith("192")) {
-            showConnectivity().then((result) async {
-              if (result == ConnectivityResult.wifi) {
-                getSearchData(apiUrl, token);
-              } else {
-                dialog(context, "Connect to Showroom Network",
-                    Colors.red.shade300);
-              }
-            });
-          } else {
-            getSearchData(apiUrl, token);
-          }
-        });
-      } on SocketException catch (err) {
-        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
-      }
     });
   }
 

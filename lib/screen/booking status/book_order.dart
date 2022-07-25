@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -55,6 +56,9 @@ class _BookOrderState extends State<BookOrder> {
     deliveryNotFormatedDate = new DateFormat("dd/MM/yyyy").parse(deliveryDate);
     returnNotFormatedDate = DateFormat("dd/MM/yyyy").parse(returnDate);
     rentController.text = widget.rent.toString() ?? "";
+    nameController.text = "Dishant";
+    numberController.text = "8511514177";
+    addressController.text = "VSAVAV VADODADA";
   }
 
   @override
@@ -125,29 +129,31 @@ class _BookOrderState extends State<BookOrder> {
                           SizedBox(
                             height: 15,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Address : ",
-                                style: primaryStyle,
-                              ),
-                              FittedBox(
-                                child: Container(
-                                  width: getWidth(0.33, context),
-                                  child: textFieldWidget(
-                                      "Address",
-                                      addressController,
-                                      false,
-                                      false,
-                                      Colors.grey.withOpacity(0.1),
-                                      TextInputType.text,
-                                      0,
-                                      Colors.greenAccent,
-                                      3),
+                          FittedBox(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Address : ",
+                                  style: primaryStyle,
                                 ),
-                              )
-                            ],
+                                FittedBox(
+                                  child: Container(
+                                    width: getWidth(0.33, context),
+                                    child: textFieldWidget(
+                                        "Address",
+                                        addressController,
+                                        false,
+                                        false,
+                                        Colors.grey.withOpacity(0.1),
+                                        TextInputType.text,
+                                        0,
+                                        Colors.greenAccent,
+                                        3),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 15,
@@ -176,19 +182,21 @@ class _BookOrderState extends State<BookOrder> {
                     SizedBox(
                       height: 15,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Mobile2 : ",
-                          style: primaryStyle,
-                        ),
-                        Container(
-                          width: getWidth(0.33, context),
-                          child: numberValidatorTextfield(
-                              number2Controller, "Mobile number2"),
-                        )
-                      ],
+                    FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Mobile2 :",
+                            style: primaryStyle,
+                          ),
+                          Container(
+                            width: getWidth(0.33, context),
+                            child: numberValidatorTextfield(
+                                number2Controller, "Mobile number2"),
+                          )
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 15,
@@ -400,6 +408,7 @@ class _BookOrderState extends State<BookOrder> {
   }
 
   Future<void> bookOrder(apiUrl, token) async {
+    MyGetxController myGetxController = Get.find();
     setState(() {
       isBtnLoading = true;
     });
@@ -420,25 +429,19 @@ class _BookOrderState extends State<BookOrder> {
       'Access-Token': token,
     });
     var data = jsonDecode(response.body);
-    print(response.statusCode);
-    print(response.body);
     if (response.statusCode == 200) {
       if (data['status'] == 1) {
         setState(() {
           isBtnLoading = false;
         });
-        pushRemoveUntilMethod(
+        myGetxController.quotationData.clear();
+        myGetxController.filteredQuotationData.clear();
+        pushMethod(
             context,
             QuatationDetailScreen(
               id: data['rental_id'],
               isFromAnotherScreen: true,
             ));
-        // pushMethod(
-        //     context,
-        //     QuatationDetailScreen(
-        //       id: data['rental_id'],
-        //       isFromAnotherScreen: true,
-        //     ));
       } else {
         setState(() {
           isBtnLoading = false;

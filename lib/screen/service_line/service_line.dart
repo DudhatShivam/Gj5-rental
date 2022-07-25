@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
-import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../Utils/utils.dart';
@@ -475,6 +474,8 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                                   list: lst,
                                                   index: indexs,
                                                   isServiceLineSceen: true,
+                                                  isFromNotificationScreen:
+                                                      false,
                                                 );
                                               })
                                           : Container()
@@ -500,6 +501,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                   return ServiceDetailCard(
                                     list: myGetxController
                                         .serviceLineFilteredList,
+                                    isFromNotificationScreen: false,
                                     index: index,
                                     isServiceLineSceen: true,
                                   );
@@ -526,6 +528,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                   return ServiceDetailCard(
                                     list:
                                         myGetxController.serviceLineScreenList,
+                                    isFromNotificationScreen: false,
                                     index: index,
                                     isServiceLineSceen: true,
                                   );
@@ -721,7 +724,6 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
       final finalUri = uri.replace(queryParameters: params);
       final response =
           await http.get(finalUri, headers: {'Access-Token': token});
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['count'] > 0) {
@@ -735,7 +737,6 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
         dialog(context, "Something Went Wrong !", Colors.red.shade300);
       }
     } catch (e) {
-      print(e);
     }
   }
 }

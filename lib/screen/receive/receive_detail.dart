@@ -32,9 +32,11 @@ class ReceiveDetail extends StatefulWidget {
 
 class _ReceiveDetailState extends State<ReceiveDetail> {
   MyGetxController myGetxController = Get.find();
+  late var extraProductReceiveResponse;
 
   @override
   void initState() {
+    myGetxController.receiveSelectedExtraProductList.clear();
     clearList();
     checkWlanForData(false);
   }
@@ -131,6 +133,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                                           extraProductList: myGetxController
                                               .receiveExtraProductList,
                                           index: index,
+                                          isReceiveScreen: true,
                                         );
                                       }),
                                 ],
@@ -144,7 +147,9 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                       myGetxController
                                   .receiveSelectedOrderLineList.isNotEmpty ||
                               myGetxController
-                                  .receiveSelectedSubProductList.isNotEmpty
+                                  .receiveSelectedSubProductList.isNotEmpty ||
+                              myGetxController
+                                  .receiveSelectedExtraProductList.isNotEmpty
                           ? Container(
                               margin: EdgeInsets.only(
                                   left: 15, bottom: 20, right: 15),
@@ -154,6 +159,8 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                                   onPressed: () {
                                     confirmationDialogForIsReceive();
                                   },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: primary2Color),
                                   child: Text("RECEIVE")))
                           : Container()
                     ],
@@ -220,7 +227,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.green.shade300),
+                              backgroundColor: Colors.green.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                             checkWlanForData(true);
@@ -231,7 +238,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red.shade300),
+                              backgroundColor: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -282,51 +289,90 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
   }
 
   changeStatusToReceive(apiUrl, token) async {
-    String idList = myGetxController.receiveSelectedOrderLineList
-        .toString()
-        .replaceAll('[', '')
-        .replaceAll(']', '');
-    var body = {'is_receive': 'True'};
-    final response = await http.put(
-      Uri.parse("http://$apiUrl/api/rental.line/$idList"),
-      body: jsonEncode(body),
-      headers: {
-        'Access-Token': token,
-      },
-    );
-    if (myGetxController.receiveSelectedSubProductList.isNotEmpty) {
-      String productIdList = myGetxController.receiveSelectedSubProductList
+    if (myGetxController.receiveSelectedOrderLineList.isNotEmpty ||
+        myGetxController.receiveSelectedSubProductList.isNotEmpty) {
+      String idList = myGetxController.receiveSelectedOrderLineList
           .toString()
           .replaceAll('[', '')
           .replaceAll(']', '');
-      var body1 = {'is_receive': 'True'};
-      final response1 = await http.put(
-        Uri.parse("http://$apiUrl/api/product.details/$productIdList"),
-        body: jsonEncode(body1),
+      var body = {'is_receive': 'True'};
+      final response = await http.put(
+        Uri.parse("http://$apiUrl/api/rental.line/$idList"),
+        body: jsonEncode(body),
         headers: {
           'Access-Token': token,
         },
       );
-      if (response.statusCode == 200 && response1.statusCode == 200) {
-        apiResponseFunction();
+      if (myGetxController.receiveSelectedSubProductList.isNotEmpty) {
+        if (myGetxController.receiveSelectedExtraProductList.isNotEmpty) {
+          await receiveExtraProduct(apiUrl, token, false);
+        }
+        String productIdList = myGetxController.receiveSelectedSubProductList
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '');
+        var body1 = {'is_receive': 'True'};
+        final response1 = await http.put(
+          Uri.parse("http://$apiUrl/api/product.details/$productIdList"),
+          body: jsonEncode(body1),
+          headers: {
+            'Access-Token': token,
+          },
+        );
+        if (response.statusCode == 200 &&
+            response1.statusCode == 200 &&
+            extraProductReceiveResponse.statusCode == 200) {
+          apiResponseFunction();
+        } else {
+          if (myGetxController.receiveSelectedOrderLineList.isEmpty) {
+            apiResponseFunction();
+          } else {
+            dialog(
+                context, "Error Occur In Order Receive", Colors.red.shade300);
+          }
+        }
       } else {
-        if (myGetxController.receiveSelectedOrderLineList.isEmpty) {
+        if (myGetxController.receiveSelectedExtraProductList.isNotEmpty) {
+          await receiveExtraProduct(apiUrl, token, false);
+        }
+        if (response.statusCode == 200 &&
+            extraProductReceiveResponse.statusCode == 200) {
           apiResponseFunction();
         } else {
           dialog(context, "Error Occur In Order Receive", Colors.red.shade300);
         }
       }
     } else {
-      if (response.statusCode == 200) {
+      print("else called");
+      receiveExtraProduct(apiUrl, token, true);
+    }
+  }
+
+  void apiResponseFunction() {
+    myGetxController.receiveSelectedExtraProductList.clear();
+    clearList();
+    dialog(context, "Order Received Successfully !", Colors.green.shade300);
+  }
+
+  Future<void> receiveExtraProduct(apiUrl, token, bool showMsg) async {
+    String idList = myGetxController.receiveSelectedExtraProductList
+        .toString()
+        .replaceAll('[', '')
+        .replaceAll(']', '');
+    var body = {'is_receive': 'true'};
+    extraProductReceiveResponse = await http.put(
+      Uri.parse("http://$apiUrl/api/extra.product/$idList"),
+      body: jsonEncode(body),
+      headers: {
+        'Access-Token': token,
+      },
+    );
+    if (showMsg == true) {
+      if (extraProductReceiveResponse.statusCode == 200) {
         apiResponseFunction();
       } else {
         dialog(context, "Error Occur In Order Receive", Colors.red.shade300);
       }
     }
-  }
-
-  void apiResponseFunction() {
-    clearList();
-    dialog(context, "Order Received Successfully !", Colors.green.shade300);
   }
 }

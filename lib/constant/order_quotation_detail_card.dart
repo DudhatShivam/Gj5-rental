@@ -10,6 +10,7 @@ import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../Utils/utils.dart';
+import '../screen/order/change_product/change_product_dialog.dart';
 import '../screen/quatation/edit_order_line.dart';
 import '../screen/quatation/quotation_const/quotation_constant.dart';
 import '../screen/receive/dialog_select_subproduct.dart';
@@ -24,6 +25,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
   final bool isDeliveryScreen;
   final bool isReceiveScreen;
   final bool? isFromBookingOrderScreen;
+  final bool? ARChangeProduct;
 
   OrderQuotationDetailCard({
     Key? key,
@@ -35,6 +37,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
     required this.isDeliveryScreen,
     required this.isReceiveScreen,
     this.isFromBookingOrderScreen,
+    this.ARChangeProduct,
   }) : super(key: key);
 
   MyGetxController myGetxController = Get.find();
@@ -139,7 +142,32 @@ class OrderQuotationDetailCard extends StatelessWidget {
                           },
                           color: Colors.blue),
                     ]
-                  : [],
+                  : (orderDetailsList[index]['state'] != "deliver" &&
+                              orderDetailsList[index]['state'] != "receive") &&
+                          isOrderScreen == true &&
+                          ARChangeProduct == true
+                      ? [
+                          SwipeAction(
+                              onTap: (CompletionHandler handler) async {
+                                controller.closeAllOpenCell();
+                                showDialog(
+                                    context: context,
+                                    builder: (_) {
+                                      return ChangeProductDialog(
+                                          orderDetailList: orderDetailsList,
+                                          productId: orderDetailsList[index]
+                                              ['product_id']['id'],
+                                          index: index);
+                                    });
+                              },
+                              icon: Icon(
+                                Icons.published_with_changes,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              color: Colors.blue),
+                        ]
+                      : [],
       leadingActions: isDeliveryScreen == true &&
               orderDetailsList[index]['state'] == "ready"
           ? <SwipeAction>[
@@ -208,24 +236,14 @@ class OrderQuotationDetailCard extends StatelessWidget {
                 ? Obx(() => myGetxController.selectedOrderLineList
                             .contains(orderDetailsList[index]['id']) ==
                         true
-                    ? Container(
-                        width: double.infinity,
-                        height: 3,
-                        color: Colors.blue.shade400,
-                        margin: EdgeInsets.only(bottom: 10),
-                      )
+                    ? selectionIndicator()
                     : Container())
                 : isReceiveScreen == true
                     ? Obx(() => myGetxController.receiveSelectedOrderLineList
                                     .contains(orderDetailsList[index]['id']) ==
                                 true ||
                             orderDetailsList[index]['is_receive'] == true
-                        ? Container(
-                            width: double.infinity,
-                            height: 3,
-                            color: Colors.blue.shade400,
-                            margin: EdgeInsets.only(bottom: 10),
-                          )
+                        ? selectionIndicator()
                         : Container())
                     : Container(),
             Row(
@@ -485,4 +503,13 @@ class OrderQuotationDetailCard extends StatelessWidget {
       });
     }
   }
+}
+
+selectionIndicator() {
+  return Container(
+    width: double.infinity,
+    height: 3,
+    color: Colors.blue.shade400,
+    margin: EdgeInsets.only(bottom: 10),
+  );
 }

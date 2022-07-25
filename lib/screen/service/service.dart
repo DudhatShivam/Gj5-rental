@@ -51,7 +51,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => pushRemoveUntilMethod(context, HomeScreen()),
+      onWillPop: () => pushRemoveUntilMethod(context, HomeScreen(userId: 0,)),
       child: Scaffold(
         floatingActionButton: CustomFABWidget(
           transitionType: ContainerTransitionType.fade,
@@ -69,7 +69,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     children: [
                       InkWell(
                           onTap: () {
-                            pushRemoveUntilMethod(context, HomeScreen());
+                            pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
                           },
                           child: FadeInLeft(
                             child: backArrowIcon,

@@ -34,6 +34,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
   @override
   void initState() {
     super.initState();
+    print(isFromAnotherScreen);
     clearList();
     getData(false);
     scrollController.addListener(() {
@@ -48,7 +49,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => pushRemoveUntilMethod(context, HomeScreen()),
+      onWillPop: () => pushRemoveUntilMethod(context, HomeScreen(userId: 0,)),
       child: Scaffold(
           floatingActionButton: FadeInRight(
             child: CustomFABWidget(
@@ -68,7 +69,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                       children: [
                         InkWell(
                             onTap: () {
-                              pushRemoveUntilMethod(context, HomeScreen());
+                              pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
                             },
                             child: FadeInLeft(
                               child: backArrowIcon,
@@ -219,7 +220,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                                         QuatationDetailScreen(
                                           id: myGetxController
                                               .quotationData[index]['id'],
-                                          isFromAnotherScreen: false,
+                                          isFromAnotherScreen: isFromAnotherScreen,
                                         ));
                                   },
                                   child: OrderQuatationCommanCard(
@@ -250,7 +251,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                                         QuatationDetailScreen(
                                           id: myGetxController
                                               .quotationData[indexs]['id'],
-                                          isFromAnotherScreen: false,
+                                          isFromAnotherScreen: isFromAnotherScreen,
                                         ));
                                   },
                                   child: OrderQuatationCommanCard(
