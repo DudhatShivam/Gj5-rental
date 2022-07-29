@@ -11,12 +11,10 @@ import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/delivery/delivery_detail.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../../home/home.dart';
-import '../booking status/booking_status.dart';
 
 class DeliveryScreen extends StatefulWidget {
   const DeliveryScreen({Key? key}) : super(key: key);
@@ -58,56 +56,58 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
         allScreenInitialSizedBox(context),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                      onTap: () {
-                        pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
-                      },
-                      child: FadeInLeft(
-                        child: backArrowIcon,
-                      )),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  FadeInLeft(
-                    child: Text(
-                      "Deliver Order Status",
-                      style: pageTitleTextStyle,
+          child: FittedBox(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
+                        },
+                        child: FadeInLeft(
+                          child: backArrowIcon,
+                        )),
+                    SizedBox(
+                      width: 10,
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  InkWell(
-                      onTap: () {
-                        deliverScreenOffset = 0;
-                        myGetxController.deliveryScreenFilteredOrderList
-                            .clear();
-                        myGetxController.deliveryScreenOrderList.clear();
-                        checkWlanForgetDeliveryData(false);
-                      },
-                      child: FadeInRight(
-                          child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: refreshIcon,
-                      ))),
-                  InkWell(
-                      onTap: () {
-                        setState(() {
-                          isExpandSearch = !isExpandSearch;
-                        });
-                      },
-                      child: isExpandSearch == false
-                          ? FadeInRight(child: searchIcon)
-                          : cancelIcon)
-                ],
-              )
-            ],
+                    FadeInLeft(
+                      child: Text(
+                        "Deliver Order Status",
+                        style: pageTitleTextStyle,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          deliverScreenOffset = 0;
+                          myGetxController.deliveryScreenFilteredOrderList
+                              .clear();
+                          myGetxController.deliveryScreenOrderList.clear();
+                          checkWlanForgetDeliveryData(false);
+                        },
+                        child: FadeInRight(
+                            child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: refreshIcon,
+                        ))),
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            isExpandSearch = !isExpandSearch;
+                          });
+                        },
+                        child: isExpandSearch == false
+                            ? FadeInRight(child: searchIcon)
+                            : cancelIcon)
+                  ],
+                )
+              ],
+            ),
           ),
         ),
         AnimatedSize(
@@ -135,7 +135,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Order Number",
                             orderNumberController,
@@ -163,7 +163,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Mobile Number",
                             numberController,
@@ -191,7 +191,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Customer name",
                             nameController,

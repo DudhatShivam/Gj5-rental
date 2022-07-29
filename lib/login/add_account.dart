@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
 import 'package:gj5_rental/home/home.dart';
+import 'package:gj5_rental/login/account_db/account_database.dart';
 import 'package:gj5_rental/login/login_page.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'account_model/account_model.dart';
 
 class AddAccount extends StatefulWidget {
   const AddAccount({Key? key}) : super(key: key);
@@ -21,7 +22,8 @@ class AddAccount extends StatefulWidget {
 }
 
 class _AddAccountState extends State<AddAccount> {
-  List<dynamic> finalData = [];
+  List<AccountModel> accountList = [];
+  AccountDatabase accountDatabase = AccountDatabase();
 
   @override
   void initState() {
@@ -33,20 +35,20 @@ class _AddAccountState extends State<AddAccount> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Color(0xffFB578E).withOpacity(0.2),
-        Color(0xffFEA78D).withOpacity(0.15)
-      ])),
-      child: finalData.isNotEmpty
-          ? Center(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+              Color(0xffFB578E).withOpacity(0.2),
+              Color(0xffFEA78D).withOpacity(0.15)
+            ])),
+            child: Center(
               child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: finalData.length,
+                  itemCount: accountList.length,
                   itemBuilder: (context, index) {
+                    AccountModel data = accountList[index];
                     return InkWell(
                       onTap: () {
-                        checkAccountListLoginStatus(index);
+                        checkAccountListLoginStatus(accountList[index]);
                       },
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 15),
@@ -61,11 +63,11 @@ class _AddAccountState extends State<AddAccount> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      finalData[index]['username'].toString(),
+                                      data.userName.toString(),
                                       style: allCardSubText,
                                     ),
                                     Text(
-                                      finalData[index]['branchName'].toString(),
+                                      data.branchName.toString(),
                                       style: allCardMainText,
                                     ),
                                   ],
@@ -78,13 +80,13 @@ class _AddAccountState extends State<AddAccount> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      finalData[index]['serverUrl'].toString(),
+                                      data.serverUrl.toString(),
                                       style: allCardMainText,
                                     ),
                                     InkWell(
                                       onTap: () {
                                         confirmationDialogForDeleteAccount(
-                                            index);
+                                            index, data.id ?? 0);
                                       },
                                       child: Icon(
                                         Icons.delete,
@@ -101,22 +103,10 @@ class _AddAccountState extends State<AddAccount> {
                       ),
                     );
                   }),
-            )
-          : Container(
-              child: Center(
-                child: Text(
-                  "No Account added",
-                  style: TextStyle(
-                      color: Colors.grey.shade400,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 23),
-                ),
-              ),
-            ),
-    ));
+            )));
   }
 
-  confirmationDialogForDeleteAccount(int index) {
+  confirmationDialogForDeleteAccount(int index, int id) {
     return showDialog(
         context: context,
         builder: (_) {
@@ -146,7 +136,7 @@ class _AddAccountState extends State<AddAccount> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green.shade300),
                           onPressed: () {
-                            deleteAccount(index);
+                            deleteAccount(index, id);
                             Navigator.pop(context);
                           },
                           child: Text("Ok")),
@@ -170,36 +160,32 @@ class _AddAccountState extends State<AddAccount> {
   }
 
   getAccountData() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var retreiveData = preferences.getString('accountList');
-    setState(() {
-      finalData = jsonDecode(retreiveData ?? "");
-    });
+    accountList = await accountDatabase.dbSelect();
+    setState(() {});
   }
 
-  Future<void> checkAccountListLoginStatus(int index) async {
-    String serverUrl = finalData[index]['serverUrl'];
-    String username = finalData[index]['name'];
-    String password = finalData[index]['password'];
+  Future<void> checkAccountListLoginStatus(AccountModel data) async {
+    String serverUrl = data.serverUrl.toString();
+    String username = data.name.toString();
+    String password = data.password.toString();
     try {
       if (serverUrl.startsWith("192")) {
         showConnectivity().then((result) async {
           if (result == ConnectivityResult.wifi) {
-            checkAccountData(index, serverUrl, username, password);
+            checkAccountData(serverUrl, username, password);
           } else {
             dialog(context, "Connect to Showroom Network", Colors.red.shade300);
           }
         });
       } else {
-        checkAccountData(index, serverUrl, username, password);
+        checkAccountData(serverUrl, username, password);
       }
     } on SocketException catch (err) {
       dialog(context, "Connect to Showroom Network", Colors.red.shade300);
     }
   }
 
-  checkAccountData(
-      int index, String serverUrl, String username, String password) async {
+  checkAccountData(String serverUrl, String username, String password) async {
     try {
       String dbListUrl = "http://$serverUrl/api/dblist";
       final dbListResponse = await http.get(Uri.parse(dbListUrl));
@@ -238,7 +224,8 @@ class _AddAccountState extends State<AddAccount> {
                         data['change_product'],
                         data['is_manager'])
                     .whenComplete(() {
-                  pushRemoveUntilMethod(context, HomeScreen(userId: data['uid']));
+                  pushRemoveUntilMethod(
+                      context, HomeScreen(userId: data['partner_id']));
                 });
               }
             });
@@ -264,7 +251,10 @@ class _AddAccountState extends State<AddAccount> {
     if (isAvailableBioMetrics && isDeviceSupport) {
       final bool didAuthenticate = await auth.authenticate(
         localizedReason: 'Please authenticate to Logged In',
-        options: AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),
+        options: AuthenticationOptions(
+            useErrorDialogs: true,
+            stickyAuth: true,
+            sensitiveTransaction: false),
       );
       if (didAuthenticate) {
         return true;
@@ -276,15 +266,10 @@ class _AddAccountState extends State<AddAccount> {
     }
   }
 
-  Future<void> deleteAccount(int index) async {
+  Future<void> deleteAccount(int index, int id) async {
     setState(() {
-      finalData.removeAt(index);
+      accountList.removeAt(index);
     });
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var list = jsonEncode(finalData);
-    preferences.setString('accountList', list);
-    if (finalData.isEmpty) {
-      pushRemoveUntilMethod(context, LogInPage());
-    }
+    await accountDatabase.dbDelete(id);
   }
 }

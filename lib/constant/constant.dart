@@ -1,33 +1,20 @@
 import 'dart:convert';
 import 'dart:io' show Platform, SocketException, exit;
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:animate_do/animate_do.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_swipe_action_cell/core/cell.dart';
-import 'package:flutter_swipe_action_cell/core/controller.dart';
-import 'package:gj5_rental/getx/getx_controller.dart';
-import 'package:gj5_rental/screen/quatation/edit_order_line.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
-import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
+import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'dart:math' as math;
 
 import '../screen/Order_line/orderline_constant/order_line_card.dart';
-import '../screen/order/order_detail.dart';
-import '../screen/quatation/edit_order.dart';
-import '../screen/quatation/quotation_const/quotation_constant.dart';
 
 ExitDialog(BuildContext context) {
   return showGeneralDialog(
@@ -98,8 +85,8 @@ ExitDialog(BuildContext context) {
                                                 Colors.white.withOpacity(0.5),
                                             borderRadius:
                                                 BorderRadius.circular(15)),
-                                        height: getHeight(0.045, context),
-                                        width: getWidth(0.09, context),
+                                        height: getHeight(0.05, context),
+                                        width: getWidth(0.2, context),
                                         alignment: Alignment.center,
                                         child: Text(
                                           "Ok",
@@ -125,8 +112,8 @@ ExitDialog(BuildContext context) {
                                                   Colors.white.withOpacity(0.2),
                                               borderRadius:
                                                   BorderRadius.circular(15)),
-                                          height: getHeight(0.045, context),
-                                          width: getWidth(0.09, context),
+                                          height: getHeight(0.05, context),
+                                          width: getWidth(0.2, context),
                                           alignment: Alignment.center,
                                           child: Text(
                                             "Cancel",
@@ -532,24 +519,17 @@ bookingStatusResponseCard(List<dynamic> responseOfApi, int index) {
             Expanded(
               child: Row(
                 children: [
-                  Text("Bill No : ", style: primaryStyle),
+                  Text("Bill No : ", style: allCardMainText),
                   Text(
                     responseOfApi[index]['bill_no'],
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                        color: primaryColor.withOpacity(0.9)),
+                    style: allCardSubText,
                   )
                 ],
               ),
             ),
-            Text("Status : ", style: primaryStyle),
             Text(
               responseOfApi[index]['status'],
-              style: TextStyle(
-                  fontSize: 17,
-                  color: primaryColor.withOpacity(0.6),
-                  fontWeight: FontWeight.w500),
+              style: allCardMainText,
             )
           ],
         ),
@@ -564,44 +544,37 @@ bookingStatusResponseCard(List<dynamic> responseOfApi, int index) {
             ),
             Text(
               responseOfApi[index]['customer_name'],
-              style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade600),
+              style: primaryStyle,
             )
           ],
         ),
         SizedBox(
           height: 8,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Text("D. Date : ", style: primaryStyle),
-                Text(
-                  responseOfApi[index]['delivery_date'],
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.green),
-                )
-              ],
-            ),
-            Row(
-              children: [
-                Text("R. Date : ", style: primaryStyle),
-                Text(
-                  responseOfApi[index]['return_date'],
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.red),
-                )
-              ],
-            )
-          ],
+        FittedBox(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text("D. Date : ", style: primaryStyle),
+                  Text(
+                    responseOfApi[index]['delivery_date'],
+                    style: deliveryDateStyle,
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Text("  R. Date : ", style: primaryStyle),
+                  Text(
+                    responseOfApi[index]['return_date'],
+                    style: returnDateStyle,
+                  )
+                ],
+              )
+            ],
+          ),
         )
       ],
     ),

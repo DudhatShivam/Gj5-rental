@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
@@ -10,9 +10,10 @@ import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:gj5_rental/screen/quatation/quatation.dart';
 import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
-import 'package:intl/intl.dart';
 
 class CreateOrder extends StatefulWidget {
   const CreateOrder({Key? key}) : super(key: key);
@@ -58,228 +59,215 @@ class _CreateOrderState extends State<CreateOrder> {
             SizedBox(
               height: 25,
             ),
-            Form(
-              key: _formKey,
+            Padding(
+              padding:
+                  EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
               child: Column(
                 children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                        horizontal: getWidth(0.02, context)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Form(
+                    key: _formKey,
+                    child: Column(
                       children: [
-                        Text(
-                          "Name : ",
-                          style: primaryStyle,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Name : ",
+                              style: primaryStyle,
+                            ),
+                            Container(
+                              width: getWidth(0.65, context),
+                              child: textFieldWidget(
+                                  "Name",
+                                  nameController,
+                                  false,
+                                  false,
+                                  Colors.grey.withOpacity(0.1),
+                                  TextInputType.text,
+                                  0,
+                                  Colors.greenAccent,
+                                  1),
+                            )
+                          ],
+                        ), //name
+                        SizedBox(
+                          height: 25,
                         ),
-                        Container(
-                          width: getWidth(0.33, context),
-                          child: textFieldWidget(
-                              "Name",
-                              nameController,
-                              false,
-                              false,
-                              Colors.grey.withOpacity(0.1),
-                              TextInputType.text,
-                              0,
-                              Colors.greenAccent,
-                              1),
-                        )
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Address : ",
+                              style: primaryStyle,
+                            ),
+                            Container(
+                              width: getWidth(0.65, context),
+                              child: textFieldWidget(
+                                  "Address",
+                                  addressController,
+                                  false,
+                                  false,
+                                  Colors.grey.withOpacity(0.1),
+                                  TextInputType.text,
+                                  0,
+                                  Colors.greenAccent,
+                                  3),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Mobile : ",
+                              style: primaryStyle,
+                            ),
+                            Container(
+                              width: getWidth(0.65, context),
+                              child: numberValidatorTextfield(
+                                  numberController, "Mobile number"),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        //number
                       ],
                     ),
-                  ), //name
-                  SizedBox(
-                    height: 25,
                   ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                        horizontal: getWidth(0.02, context)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Address : ",
-                          style: primaryStyle,
-                        ),
-                        Container(
-                          width: getWidth(0.33, context),
-                          child: textFieldWidget(
-                              "Address",
-                              addressController,
-                              false,
-                              false,
-                              Colors.grey.withOpacity(0.1),
-                              TextInputType.text,
-                              0,
-                              Colors.greenAccent,
-                              3),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                        horizontal: getWidth(0.02, context)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Mobile : ",
-                          style: primaryStyle,
-                        ),
-                        Container(
-                          width: getWidth(0.33, context),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Mobile2 : ",
+                        style: primaryStyle,
+                      ),
+                      FittedBox(
+                        child: Container(
+                          width: getWidth(0.65, context),
                           child: numberValidatorTextfield(
-                              numberController, "Mobile number"),
-                        )
-                      ],
-                    ),
+                              number2Controller, "Mobile number2"),
+                        ),
+                      )
+                    ],
                   ),
                   SizedBox(
                     height: 25,
                   ),
-                  //number
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Mobile2 : ",
-                    style: primaryStyle,
+                  remarkContainer(context, remarkController, 0.65, 0,
+                      MainAxisAlignment.spaceBetween),
+                  SizedBox(
+                    height: 25,
                   ),
-                  FittedBox(
-                    child: Container(
-                      width: getWidth(0.33, context),
-                      child: numberValidatorTextfield(
-                          number2Controller, "Mobile number2"),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            remarkContainer(context, remarkController, 0.33, 0.02,
-                MainAxisAlignment.spaceBetween),
-            SizedBox(
-              height: 25,
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "D Date : ",
-                    style: primaryStyle,
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      FocusScope.of(context).unfocus();
-                      pickedDate(context).then((value) {
-                        if (value != null) {
-                          deliveryNotFormatedDate = value;
-                          setState(() {
-                            isValidDDate = true;
-                            initialValidDDate = true;
-                            deliveryDate = DateFormat('MM/dd/yyyy')
-                                .format(deliveryNotFormatedDate);
-                            DformatedDate = DateFormat('dd/MM/yyyy')
-                                .format(deliveryNotFormatedDate);
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "D Date : ",
+                        style: primaryStyle,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          FocusScope.of(context).unfocus();
+                          pickedDate(context).then((value) {
+                            if (value != null) {
+                              deliveryNotFormatedDate = value;
+                              setState(() {
+                                isValidDDate = true;
+                                initialValidDDate = true;
+                                deliveryDate = DateFormat('MM/dd/yyyy')
+                                    .format(deliveryNotFormatedDate);
+                                DformatedDate = DateFormat('dd/MM/yyyy')
+                                    .format(deliveryNotFormatedDate);
+                              });
+                            }
                           });
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: getWidth(0.33, context),
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      height: 48,
-                      decoration: BoxDecoration(
-                        border:
-                            isValidDDate == true && initialValidDDate == true
+                        },
+                        child: Container(
+                          width: getWidth(0.65, context),
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          height: 48,
+                          decoration: BoxDecoration(
+                            border: isValidDDate == true &&
+                                    initialValidDDate == true
                                 ? null
                                 : Border.all(color: Colors.red),
-                        color: Colors.grey.withOpacity(0.1),
-                      ),
-                      child: Row(
-                        children: [
-                          calenderIcon,
-                          SizedBox(
-                            width: 10,
+                            color: Colors.grey.withOpacity(0.1),
                           ),
-                          Text(
-                            DformatedDate,
-                            style: primaryStyle,
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "R Date : ",
-                    style: primaryStyle,
+                          child: Row(
+                            children: [
+                              calenderIcon,
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                DformatedDate,
+                                style: primaryStyle,
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                  InkWell(
-                    onTap: () async {
-                      FocusScope.of(context).unfocus();
-                      pickedDate(context).then((value) {
-                        if (value != null) {
-                          returnNotFormatedDate = value;
-                          setState(() {
-                            isValidRDate = true;
-                            initialValidRDate = true;
-                            returnDate = DateFormat('MM/dd/yyyy')
-                                .format(returnNotFormatedDate!);
-                            RformatedDate = DateFormat('dd/MM/yyyy')
-                                .format(returnNotFormatedDate!);
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "R Date : ",
+                        style: primaryStyle,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          FocusScope.of(context).unfocus();
+                          pickedDate(context).then((value) {
+                            if (value != null) {
+                              returnNotFormatedDate = value;
+                              setState(() {
+                                isValidRDate = true;
+                                initialValidRDate = true;
+                                returnDate = DateFormat('MM/dd/yyyy')
+                                    .format(returnNotFormatedDate!);
+                                RformatedDate = DateFormat('dd/MM/yyyy')
+                                    .format(returnNotFormatedDate!);
+                              });
+                            }
                           });
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: getWidth(0.33, context),
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      height: 48,
-                      decoration: BoxDecoration(
-                        border:
-                            isValidRDate == true && initialValidRDate == true
+                        },
+                        child: Container(
+                          width: getWidth(0.65, context),
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          height: 48,
+                          decoration: BoxDecoration(
+                            border: isValidRDate == true &&
+                                    initialValidRDate == true
                                 ? null
                                 : Border.all(color: Colors.red),
-                        color: Colors.grey.withOpacity(0.1),
-                      ),
-                      child: Row(
-                        children: [
-                          calenderIcon,
-                          SizedBox(
-                            width: 10,
+                            color: Colors.grey.withOpacity(0.1),
                           ),
-                          Text(
-                            RformatedDate,
-                            style: primaryStyle,
-                          )
-                        ],
-                      ),
-                    ),
-                  )
+                          child: Row(
+                            children: [
+                              calenderIcon,
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                RformatedDate,
+                                style: primaryStyle,
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -408,7 +396,7 @@ class _CreateOrderState extends State<CreateOrder> {
             ));
       });
     } else {
-      dialog(context, "Something Went Wrong !", Colors.red.shade300);
+      dialog(context, "Error in Order Creation !", Colors.red.shade300);
     }
   }
 }

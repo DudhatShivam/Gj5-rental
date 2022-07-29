@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../Utils/utils.dart';
 
 class OrderQuotationAmountCard extends StatelessWidget {
@@ -12,9 +11,8 @@ class OrderQuotationAmountCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(getWidth(0.01, context)),
-      margin: EdgeInsets.symmetric(
-          horizontal: getWidth(0.018, context), vertical: 5),
+      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       width: double.infinity,
       decoration: BoxDecoration(
           color: Colors.cyan.shade100.withOpacity(0.5),
@@ -25,7 +23,7 @@ class OrderQuotationAmountCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              width: getWidth(0.18, context),
+              width: getWidth(0.38, context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -58,7 +56,7 @@ class OrderQuotationAmountCard extends StatelessWidget {
               thickness: 0.5,
             ),
             Container(
-              width: getWidth(0.18, context),
+              width: getWidth(0.42, context),
               child: Column(
                 children: [
                   CommanRowInAmountCard(

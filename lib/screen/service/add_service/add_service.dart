@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:gj5_rental/screen/service/servicecontroller.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
+import 'package:gj5_rental/screen/service/servicecontroller.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../Utils/utils.dart';
 import '../../../constant/constant.dart';
@@ -39,63 +40,65 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           ScreenAppBar(
             screenName: "Create Service",
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: getWidth(0.02, context), vertical: 10),
-            child: Row(
-              children: [
-                Text(
-                  "Service Type :",
-                  style: primaryStyle,
-                ),
-                Row(
-                  children: [
-                    Radio(
-                        fillColor: MaterialStateColor.resolveWith(
-                            (states) => primary2Color),
-                        value: "washing",
-                        groupValue: serviceSelection,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedValue = null;
-                            serviceOrderLineDropDownList.clear();
-                            serviceSelection = value.toString();
-                            checkWlanForServiceCreation(true, value.toString());
-                          });
-                        }),
-                    Text(
-                      "Washing",
-                      style: primaryStyle,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Radio(
-                        fillColor: MaterialStateColor.resolveWith(
-                            (states) => primary2Color),
-                        value: "stitching",
-                        groupValue: serviceSelection,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedValue = null;
-                            serviceOrderLineDropDownList.clear();
-                            serviceSelection = value.toString();
-                            checkWlanForServiceCreation(true, value.toString());
-                          });
-                        }),
-                    Text(
-                      "Stitching",
-                      style: primaryStyle,
-                    ),
-                  ],
-                ),
-              ],
+          FittedBox(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: getWidth(0.04, context), vertical: 10),
+              child: Row(
+                children: [
+                  Text(
+                    "Service Type :",
+                    style: primaryStyle,
+                  ),
+                  Row(
+                    children: [
+                      Radio(
+                          fillColor: MaterialStateColor.resolveWith(
+                              (states) => primary2Color),
+                          value: "washing",
+                          groupValue: serviceSelection,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedValue = null;
+                              serviceOrderLineDropDownList.clear();
+                              serviceSelection = value.toString();
+                              checkWlanForServiceCreation(true, value.toString());
+                            });
+                          }),
+                      Text(
+                        "Washing",
+                        style: primaryStyle,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Radio(
+                          fillColor: MaterialStateColor.resolveWith(
+                              (states) => primary2Color),
+                          value: "stitching",
+                          groupValue: serviceSelection,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedValue = null;
+                              serviceOrderLineDropDownList.clear();
+                              serviceSelection = value.toString();
+                              checkWlanForServiceCreation(true, value.toString());
+                            });
+                          }),
+                      Text(
+                        "Stitching",
+                        style: primaryStyle,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(
-                vertical: 10, horizontal: getWidth(0.02, context)),
+                vertical: 10, horizontal: getWidth(0.04, context)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -114,7 +117,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         color: Colors.grey.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10)),
                     height: 48,
-                    width: getWidth(0.31, context),
+                    width: getWidth(0.65, context),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton2(
                         buttonDecoration: BoxDecoration(
@@ -149,7 +152,6 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                           });
                         },
                         buttonHeight: 40,
-                        buttonWidth: getWidth(0.25, context),
                         itemHeight: 40,
                       ),
                     ),
@@ -161,7 +163,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
           SizedBox(
             height: 20,
           ),
-          remarkContainer(context, remarkController, 0.31, 0.02,
+          remarkContainer(context, remarkController, 0.65, 0.04,
               MainAxisAlignment.spaceBetween),
           SizedBox(
             height: 10,

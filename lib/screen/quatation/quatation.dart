@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -11,6 +12,7 @@ import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
 import 'package:http/http.dart' as http;
+
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../../home/home.dart';
@@ -134,7 +136,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                               style: primaryStyle,
                             ),
                             Container(
-                              width: getWidth(0.30, context),
+                              width: getWidth(0.6, context),
                               child: textFieldWidget(
                                   "Customer Name",
                                   nameController,
@@ -162,7 +164,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                               style: primaryStyle,
                             ),
                             Container(
-                              width: getWidth(0.30, context),
+                              width: getWidth(0.6, context),
                               child: textFieldWidget(
                                   "Mobile number",
                                   numberController,

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
@@ -10,6 +9,8 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/home/home.dart';
+import 'package:gj5_rental/login/account_db/account_database.dart';
+import 'package:gj5_rental/login/account_model/account_model.dart';
 import 'package:gj5_rental/login/add_account.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
@@ -48,12 +49,15 @@ class _LogInPageState extends State<LogInPage> {
     getAccountData();
   }
 
+  AccountDatabase accountDatabase = AccountDatabase();
+
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController serverCode = TextEditingController();
   MyGetxController myGetxController = Get.put(MyGetxController());
   final form = GlobalKey<FormState>();
   List<dynamic> finalData = [];
+
 
   @override
   Widget build(BuildContext context) {
@@ -290,60 +294,36 @@ class _LogInPageState extends State<LogInPage> {
 
   void setAddAccountData(String serverUrl, String dbName, String profileName,
       String username, String password, String branchName) async {
-    getAccountData().then((value) async {
-      if (value != null) {
-        List<dynamic> getdata = value;
-        var toRemove = [];
-        getdata.forEach((element) {
-          if (element['serverUrl'] == serverUrl &&
-              element['dbName'] == dbName &&
-              element['name'] == username) {
-            toRemove.add(element);
-          }
-        });
-        getdata.removeWhere((element) => toRemove.contains(element));
-        Map data = {
-          'serverUrl': serverUrl,
-          'dbName': dbName,
-          'name': username,
-          'username': profileName,
-          'password': password,
-          'branchName': branchName
-        };
-        List<dynamic> accountData = [];
-        accountData.add(getdata);
-        getdata.add(data);
-        var list = jsonEncode(getdata);
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences
-            .setString("accountList", list);
-      } else {
-        Map data = {
-          'serverUrl': serverUrl,
-          'dbName': dbName,
-          'name': username,
-          'username': profileName,
-          'password': password,
-          'branchName': branchName
-        };
-        List<dynamic> accountData = [];
-        accountData.add(data);
-        var list = jsonEncode(accountData);
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences
-            .setString("accountList", list);
-      }
-    });
+    List<AccountModel> accountList = await accountDatabase.dbSelect();
+    if (accountList.isNotEmpty) {
+      accountList.forEach((element) async {
+        if (element.serverUrl == serverUrl &&
+            element.dbName == dbName &&
+            element.name == username) {
+          await accountDatabase.dbDelete(element.id);
+        }
+      });
+      insertData(
+          serverUrl, dbName, profileName, username, password, branchName);
+    } else {
+      insertData(
+          serverUrl, dbName, profileName, username, password, branchName);
+    }
   }
 
-  Future getAccountData() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var retreiveData = preferences.getString('accountList');
-    if (retreiveData?.isNotEmpty == true) {
-      finalData = jsonDecode(retreiveData ?? "");
-      return finalData;
-    }
-    return null;
+  insertData(String serverUrl, String dbName, String profileName,
+      String username, String password, String branchName) async {
+    AccountModel accountModel = AccountModel(
+        serverUrl: serverUrl,
+        dbName: dbName,
+        userName: profileName,
+        name: username,
+        password: password,
+        branchName: branchName);
+    await accountDatabase.dbInsert(accountModel);
+  }
+   getAccountData() async {
+     finalData = await accountDatabase.dbSelect();
   }
 
   getAndSetData(String serverUrl, String username, String password) async {
@@ -393,10 +373,15 @@ class _LogInPageState extends State<LogInPage> {
                 .whenComplete(() {
               setLogIn(true);
               myGetxController.isLoggedIn.value = false;
-              pushRemoveUntilMethod(context, HomeScreen(userId: data['uid'],));
+              pushRemoveUntilMethod(
+                  context,
+                  HomeScreen(
+                    userId: data['partner_id'],
+                  ));
             });
           } else {
-            dialog(context, "You have no Access-Rights to Login", Colors.red.shade300);
+            dialog(context, "You have no Access-Rights to Login",
+                Colors.red.shade300);
           }
         } else if (response.statusCode == 400) {
           myGetxController.isLoggedIn.value = false;

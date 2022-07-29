@@ -7,9 +7,8 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
-import 'package:gj5_rental/screen/quatation/quatation.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -71,7 +70,7 @@ class _EditOrderState extends State<EditOrder> {
           ),
           Container(
             margin: EdgeInsets.symmetric(
-                horizontal: getWidth(0.02, context), vertical: 5),
+                horizontal: getWidth(0.04, context), vertical: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -80,7 +79,7 @@ class _EditOrderState extends State<EditOrder> {
                   style: primaryStyle,
                 ),
                 Container(
-                  width: getWidth(0.33, context),
+                  width: getWidth(0.65, context),
                   child: textFieldWidget(
                       "Name",
                       nameController,
@@ -100,7 +99,7 @@ class _EditOrderState extends State<EditOrder> {
           ),
           Container(
             margin: EdgeInsets.symmetric(
-              horizontal: getWidth(0.02, context),
+              horizontal: getWidth(0.04, context),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,7 +109,7 @@ class _EditOrderState extends State<EditOrder> {
                   style: primaryStyle,
                 ),
                 Container(
-                  width: getWidth(0.33, context),
+                  width: getWidth(0.65, context),
                   child: textFieldWidget(
                       "Mobile Number",
                       numberController,
@@ -130,7 +129,7 @@ class _EditOrderState extends State<EditOrder> {
           ),
           Container(
             margin: EdgeInsets.symmetric(
-                horizontal: getWidth(0.02, context), vertical: 5),
+                horizontal: getWidth(0.04, context), vertical: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -139,7 +138,7 @@ class _EditOrderState extends State<EditOrder> {
                   style: primaryStyle,
                 ),
                 Container(
-                  width: getWidth(0.33, context),
+                  width: getWidth(0.65, context),
                   child: textFieldWidget(
                       "Remark",
                       remarkController,
@@ -158,7 +157,7 @@ class _EditOrderState extends State<EditOrder> {
             height: 15,
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
+            margin: EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -179,7 +178,7 @@ class _EditOrderState extends State<EditOrder> {
                     });
                   },
                   child: Container(
-                    width: getWidth(0.33, context),
+                    width: getWidth(0.65, context),
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     height: 48,
                     decoration: BoxDecoration(
@@ -206,7 +205,7 @@ class _EditOrderState extends State<EditOrder> {
             height: 15,
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
+            margin: EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -227,7 +226,7 @@ class _EditOrderState extends State<EditOrder> {
                     });
                   },
                   child: Container(
-                    width: getWidth(0.33, context),
+                    width: getWidth(0.65, context),
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     height: 48,
                     decoration: BoxDecoration(

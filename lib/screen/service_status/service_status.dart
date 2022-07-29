@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/screen/service/servicecontroller.dart';
+import 'package:http/http.dart' as http;
 import 'package:searchfield/searchfield.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../booking status/booking_status.dart';
-import '../service/service_card.dart';
 import '../service/service_status_card.dart';
 
 class ServiceStatusScreen extends StatefulWidget {
@@ -93,7 +92,7 @@ class _ServiceStatusScreenState extends State<ServiceStatusScreen> {
                   itemHeight: 55,
                   suggestions:
                       serviceController.serviceIsMainProductTrueList.map((e) {
-                    String search = "${e['default_code']} - ${e['name']}";
+                    String search = "${e['default_code']} -- ${e['name']}";
                     return SearchFieldListItem(search);
                   }).toList(),
                   suggestionAction: SuggestionAction.next,
@@ -162,7 +161,7 @@ class _ServiceStatusScreenState extends State<ServiceStatusScreen> {
 
   int? getIdFromTextFieldData() {
     int? id;
-    String value = productSearchController.text.split(' ').first;
+    String value = productSearchController.text.split('--').first.removeAllWhitespace;
     serviceController.serviceIsMainProductTrueList.forEach((element) {
       if (element['default_code'] == value) {
         id = element['id'];

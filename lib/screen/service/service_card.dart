@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gj5_rental/Utils/utils.dart';
@@ -170,33 +171,49 @@ class ServiceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 list[index]['delivery_date'] != null
-                    ? Row(
-                        children: [
-                          Text(
-                            "D. Date : ",
-                            style: allCardMainText,
+                    ? Expanded(
+                        child: FittedBox(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "D. Date : ",
+                                style: allCardMainText,
+                                maxLines: 1,
+                              ),
+                              Text(
+                                DateFormat("dd/MM/yyyy").format(
+                                    DateTime.parse(
+                                        list[index]['delivery_date'])),
+                                style: deliveryDateStyle,
+                                maxLines: 1,
+                              )
+                            ],
                           ),
-                          Text(
-                            DateFormat("dd/MM/yyyy").format(
-                                DateTime.parse(list[index]['delivery_date'])),
-                            style: deliveryDateStyle,
-                          )
-                        ],
+                        ),
                       )
                     : Container(),
                 list[index]['return_date'] != null
-                    ? Row(
-                        children: [
-                          Text(
-                            "R. Date : ",
-                            style: allCardMainText,
+                    ? Expanded(
+                        child: FittedBox(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "  R. Date : ",
+                                style: allCardMainText,
+                                maxLines: 1,
+                              ),
+                              Text(
+                                DateFormat("dd/MM/yyyy").format(
+                                    DateTime.parse(
+                                        list[index]['return_date'])),
+                                style: returnDateStyle,
+                                maxLines: 1,
+                              )
+                            ],
                           ),
-                          Text(
-                            DateFormat("dd/MM/yyyy").format(
-                                DateTime.parse(list[index]['return_date'])),
-                            style: returnDateStyle,
-                          )
-                        ],
+                        ),
                       )
                     : Container()
               ],

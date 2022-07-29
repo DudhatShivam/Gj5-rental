@@ -7,10 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
-import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:gj5_rental/screen/order/order_detail.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -34,7 +32,7 @@ class DeliveryDetailScreen extends StatefulWidget {
 class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
   MyGetxController myGetxController = Get.find();
   bool isSelectAll = false;
-  late var extraProductDeliverResponse;
+  var extraProductDeliverResponse;
 
   @override
   void initState() {
@@ -391,12 +389,20 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
       } else {
         if (myGetxController.deliverySelectedExtraProductList.isNotEmpty) {
           await deliverExtraProduct(apiUrl, token, false);
-        }
-        if (response.statusCode == 200 &&
-            extraProductDeliverResponse.statusCode == 200) {
-          apiResponseFunction();
+          if (response.statusCode == 200 &&
+              extraProductDeliverResponse.statusCode == 200) {
+            apiResponseFunction();
+          } else {
+            dialog(
+                context, "Error Occur In Order Deliver", Colors.red.shade300);
+          }
         } else {
-          dialog(context, "Error Occur In Order Deliver", Colors.red.shade300);
+          if (response.statusCode == 200) {
+            apiResponseFunction();
+          } else {
+            dialog(
+                context, "Error Occur In Order Deliver", Colors.red.shade300);
+          }
         }
       }
     } else {

@@ -1,22 +1,13 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
-import 'package:gj5_rental/home/home.dart';
-import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:gj5_rental/screen/quatation/quatation.dart';
 import 'package:gj5_rental/screen/quatation/quotation_const/quotation_constant.dart';
 import 'package:gj5_rental/screen/quatation/quotation_detail_add_product.dart';
 import 'package:gj5_rental/screen/service/servicecontroller.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';

@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
-import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'dart:math' as math;
 import 'package:gj5_rental/Utils/utils.dart';
 import 'package:gj5_rental/constant/constant.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
+import 'package:http/http.dart' as http;
 
 import '../../constant/extraproduct_screen_card.dart';
 
@@ -100,7 +100,7 @@ class _ExtraProductState extends State<ExtraProduct> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Order Number",
                             orderNumberController,
@@ -128,7 +128,7 @@ class _ExtraProductState extends State<ExtraProduct> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Product Code",
                             productCodeController,

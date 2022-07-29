@@ -346,34 +346,36 @@ class OrderQuotationDetailCard extends StatelessWidget {
             SizedBox(
               height: 5,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "D. Date : ",
-                      style: allCardMainText,
-                    ),
-                    Text(
-                      deliveryDate,
-                      style: deliveryDateStyle,
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "R. Date : ",
-                      style: allCardMainText,
-                    ),
-                    Text(
-                      returnDate,
-                      style: returnDateStyle,
-                    )
-                  ],
-                )
-              ],
+            FittedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "D. Date : ",
+                        style: allCardMainText,
+                      ),
+                      Text(
+                        deliveryDate,
+                        style: deliveryDateStyle,
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "  R. Date : ",
+                        style: allCardMainText,
+                      ),
+                      Text(
+                        returnDate,
+                        style: returnDateStyle,
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
             SizedBox(
               height: 5,

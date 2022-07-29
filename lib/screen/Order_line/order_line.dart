@@ -1,18 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:animate_do/animate_do.dart';
 import 'package:collection/collection.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:gj5_rental/screen/Order_line/orderline_constant/order_line_card.dart';
-import 'package:gj5_rental/getx/getx_controller.dart';
-import 'package:animate_do/animate_do.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
 import 'package:gj5_rental/Utils/utils.dart';
-import 'package:grouped_list/grouped_list.dart';
-import 'package:intl/intl.dart';
+import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:gj5_rental/screen/Order_line/orderline_constant/order_line_card.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
 import '../../constant/constant.dart';
 
 class OrderLineScreen extends StatefulWidget {
@@ -129,16 +130,18 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                         child: Container(
                           margin: EdgeInsets.symmetric(vertical: 15),
                           height: getHeight(0.04, context),
-                          width: getWidth(0.15, context),
+                          width: getWidth(0.35, context),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                            "Clear / Refresh",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
+                          child: FittedBox(
+                            child: Text(
+                              "Clear / Refresh",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500),
+                            ),
                           ),
                         ),
                       ),
@@ -174,7 +177,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                         },
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: getHeight(0.011, context),
+                              vertical: getHeight(0.008, context),
                               horizontal: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -216,7 +219,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                         },
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: getHeight(0.011, context),
+                              vertical: getHeight(0.008, context),
                               horizontal: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -322,7 +325,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             style: primaryStyle,
                           ),
                           Container(
-                            width: getWidth(0.315, context),
+                            width: getWidth(0.68, context),
                             child: textFieldWidget(
                                 "Order Number",
                                 orderNumberController,
@@ -350,7 +353,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             style: primaryStyle,
                           ),
                           Container(
-                            width: getWidth(0.315, context),
+                            width: getWidth(0.68, context),
                             child: textFieldWidget(
                                 "Product Code",
                                 orderCodeController,
@@ -393,7 +396,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                   });
                                 },
                                 child: Container(
-                                  width: getWidth(0.275, context),
+                                  width: getWidth(0.6, context),
                                   padding: EdgeInsets.symmetric(horizontal: 10),
                                   height: 48,
                                   decoration: BoxDecoration(
@@ -481,7 +484,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                     });
                                   },
                                   child: Container(
-                                    width: getWidth(0.275, context),
+                                    width: getWidth(0.6, context),
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 10),
                                     height: 48,
@@ -678,16 +681,14 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                     })
                                 : myGetxController.noDataInOrderLine.value ==
                                         true
-                                    ? Container(
-                                        child: Center(
-                                            child: Text(
-                                          "No Order !",
-                                          style: TextStyle(
-                                              color: Colors.grey.shade300,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.w500),
-                                        )),
-                                      )
+                                    ? Center(
+                                        child: Text(
+                                      "No Order !",
+                                      style: TextStyle(
+                                          color: Colors.grey.shade300,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.w500),
+                                    ))
                                     : CenterCircularProgressIndicator())
                         : Expanded(
                             child: myGetxController

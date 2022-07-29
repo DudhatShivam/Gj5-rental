@@ -120,7 +120,7 @@ class _BookingStatusState extends State<BookingStatus> {
                               .isMainProductTrueProductList
                               .map((e) {
                             String search =
-                                "${e['default_code']} - ${e['name']}";
+                                "${e['default_code']} -- ${e['name']}";
                             return SearchFieldListItem(search);
                           }).toList(),
                           suggestionAction: SuggestionAction.next,
@@ -277,11 +277,12 @@ class _BookingStatusState extends State<BookingStatus> {
 
   getResponseProductApiList() {
     int? id;
-    String value = productSearchController.text.split(' ').first;
+    String value =
+        productSearchController.text.split('--').first.removeAllWhitespace;
     myGetxController.isMainProductTrueProductList.forEach((element) {
       if (element['default_code'] == value.trim()) {
         id = element['id'];
-
+        print(id);
         productRent = element['rent'];
       }
     });
@@ -442,6 +443,7 @@ class ScreenAppBar extends StatelessWidget {
         children: [
           InkWell(
               onTap: () {
+                FocusScope.of(context).unfocus();
                 Navigator.pop(context);
               },
               child: FadeInLeft(

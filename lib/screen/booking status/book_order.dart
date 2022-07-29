@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
-
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -56,9 +55,6 @@ class _BookOrderState extends State<BookOrder> {
     deliveryNotFormatedDate = new DateFormat("dd/MM/yyyy").parse(deliveryDate);
     returnNotFormatedDate = DateFormat("dd/MM/yyyy").parse(returnDate);
     rentController.text = widget.rent.toString() ?? "";
-    nameController.text = "Dishant";
-    numberController.text = "8511514177";
-    addressController.text = "VSAVAV VADODADA";
   }
 
   @override
@@ -80,7 +76,7 @@ class _BookOrderState extends State<BookOrder> {
               ),
               Container(
                 margin:
-                    EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
+                    EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
                 child: Column(
                   children: [
                     Container(
@@ -112,7 +108,7 @@ class _BookOrderState extends State<BookOrder> {
                                 style: primaryStyle,
                               ),
                               Container(
-                                width: getWidth(0.33, context),
+                                width: getWidth(0.65, context),
                                 child: textFieldWidget(
                                     "Customer Name",
                                     nameController,
@@ -129,31 +125,29 @@ class _BookOrderState extends State<BookOrder> {
                           SizedBox(
                             height: 15,
                           ),
-                          FittedBox(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Address : ",
-                                  style: primaryStyle,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Address : ",
+                                style: primaryStyle,
+                              ),
+                              FittedBox(
+                                child: Container(
+                                  width: getWidth(0.65, context),
+                                  child: textFieldWidget(
+                                      "Address",
+                                      addressController,
+                                      false,
+                                      false,
+                                      Colors.grey.withOpacity(0.1),
+                                      TextInputType.text,
+                                      0,
+                                      Colors.greenAccent,
+                                      3),
                                 ),
-                                FittedBox(
-                                  child: Container(
-                                    width: getWidth(0.33, context),
-                                    child: textFieldWidget(
-                                        "Address",
-                                        addressController,
-                                        false,
-                                        false,
-                                        Colors.grey.withOpacity(0.1),
-                                        TextInputType.text,
-                                        0,
-                                        Colors.greenAccent,
-                                        3),
-                                  ),
-                                )
-                              ],
-                            ),
+                              )
+                            ],
                           ),
                           SizedBox(
                             height: 15,
@@ -167,7 +161,7 @@ class _BookOrderState extends State<BookOrder> {
                               ),
                               FittedBox(
                                 child: Container(
-                                  width: getWidth(0.33, context),
+                                  width: getWidth(0.65, context),
                                   child: numberValidatorTextfield(
                                       numberController, "Mobile number"),
                                 ),
@@ -182,21 +176,19 @@ class _BookOrderState extends State<BookOrder> {
                     SizedBox(
                       height: 15,
                     ),
-                    FittedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Mobile2 :",
-                            style: primaryStyle,
-                          ),
-                          Container(
-                            width: getWidth(0.33, context),
-                            child: numberValidatorTextfield(
-                                number2Controller, "Mobile number2"),
-                          )
-                        ],
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Mobile2 :",
+                          style: primaryStyle,
+                        ),
+                        Container(
+                          width: getWidth(0.65, context),
+                          child: numberValidatorTextfield(
+                              number2Controller, "Mobile number2"),
+                        )
+                      ],
                     ),
                     SizedBox(
                       height: 15,
@@ -209,7 +201,7 @@ class _BookOrderState extends State<BookOrder> {
                           style: primaryStyle,
                         ),
                         Container(
-                          width: getWidth(0.33, context),
+                          width: getWidth(0.65, context),
                           child: textFieldWidget(
                               "Rent",
                               rentController,
@@ -248,7 +240,7 @@ class _BookOrderState extends State<BookOrder> {
                               });
                             },
                             child: Container(
-                              width: getWidth(0.33, context),
+                              width: getWidth(0.65, context),
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               height: 48,
                               decoration: BoxDecoration(
@@ -301,7 +293,7 @@ class _BookOrderState extends State<BookOrder> {
                               });
                             },
                             child: Container(
-                              width: getWidth(0.33, context),
+                              width: getWidth(0.65, context),
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               height: 48,
                               decoration: BoxDecoration(

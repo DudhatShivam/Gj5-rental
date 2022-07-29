@@ -1,11 +1,13 @@
+import 'dart:math' as math;
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../constant/constant.dart';
 import '../home/home.dart';
@@ -14,10 +16,10 @@ import '../main.dart';
 getHeight(double height, BuildContext context) {
   return MediaQuery.of(context).size.height * height;
 }
-
 getWidth(double width, BuildContext context) {
-  return MediaQuery.of(context).size.height * width;
+  return MediaQuery.of(context).size.width * width;
 }
+
 
 bool isFromAnotherScreen = false;
 int editQuotationCount = 0;
@@ -42,6 +44,18 @@ int receiveScreenOffset = 0;
 int serviceScreenOffset = 0;
 int cancelOrderOffset = 0;
 int productDetailOffset = 0;
+
+makingPhoneCall(String PhoneNumber, BuildContext context) async {
+  try {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: PhoneNumber,
+    );
+    await launchUrl(launchUri);
+  } catch (e) {
+    dialog(context, e.toString(), Colors.red.shade300);
+  }
+}
 
 popFunction(BuildContext context, isFromAnotherScreen) async {
   if (isFromAnotherScreen) {
@@ -68,7 +82,8 @@ pushRemoveUntilMethod(BuildContext context, Widget name) {
       MaterialPageRoute(builder: (context) => name),
       (Route<dynamic> route) => false);
 }
-
+TextStyle contactusTitleText = TextStyle(
+    color: Color(0xff9C5789), fontWeight: FontWeight.w500, fontSize: 12);
 TextStyle dialogTitleStyle =
     TextStyle(color: primary2Color, fontWeight: FontWeight.w500, fontSize: 24);
 
@@ -194,7 +209,6 @@ Future dialog(BuildContext context, String text, Color color) {
                             Text(
                               text,
                               style: TextStyle(
-                                  fontSize: 17,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.transparent),
                             ),

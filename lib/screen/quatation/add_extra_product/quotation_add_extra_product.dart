@@ -6,9 +6,9 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:searchfield/searchfield.dart';
-import 'package:http/http.dart' as http;
 
 import '../../../Utils/utils.dart';
 import '../../../constant/constant.dart';
@@ -68,7 +68,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: getWidth(0.1, context),
+                        width: getWidth(0.25, context),
                         child: Text(
                           "Original product : ",
                           style: primaryStyle,
@@ -102,7 +102,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                               padding: const EdgeInsets.only(
                                                   left: 15),
                                               child: Container(
-                                                width: getWidth(0.26, context),
+                                                width: getWidth(0.52, context),
                                                 child: SingleChildScrollView(
                                                   scrollDirection:
                                                       Axis.horizontal,
@@ -146,7 +146,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                 color: Colors.grey.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(10)),
                             height: 55,
-                            width: getWidth(0.33, context),
+                            width: getWidth(0.68, context),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton2(
                                 buttonDecoration: BoxDecoration(
@@ -178,6 +178,8 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                     .toList(),
                                 value: selectedValue,
                                 onChanged: (value) {
+                                  myGetxController.quotationMainProductList
+                                      .clear();
                                   setState(() {
                                     selectedValue = value as String;
                                     checkWlanForGetProductData(false);
@@ -281,7 +283,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.33, context),
+                        width: getWidth(0.68, context),
                         child: textFieldWidget(
                             "Rent",
                             rentController,
@@ -298,7 +300,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                   SizedBox(
                     height: 15,
                   ),
-                  remarkContainer(context, remarkController, 0.33, 0,
+                  remarkContainer(context, remarkController, 0.68, 0,
                       MainAxisAlignment.spaceBetween),
                   SizedBox(
                     height: 25,

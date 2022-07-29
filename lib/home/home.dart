@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:animated_background/animated_background.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fancy_drawer/fancy_drawer.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -31,6 +32,9 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../drawer_pages/about_us.dart';
+import '../drawer_pages/contact_us.dart';
+import '../drawer_pages/notification.dart';
 import '../screen/Order_line/order_line.dart';
 import '../screen/booking status/booking_status.dart';
 import '../screen/cancel_order/cancel_order.dart';
@@ -98,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             controller: _controller,
             drawerItems: <Widget>[
               Container(
-                height: MediaQuery.of(context).size.height * 0.8,
+                height: MediaQuery.of(context).size.height * 0.85,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -106,9 +110,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     _bytesImage != null && _bytesImage?.isNotEmpty == true
                         ? CircleAvatar(
                             radius: 40,
-                            child: Image.memory(
-                              _bytesImage!,
-                              fit: BoxFit.cover,
+                            child: ClipRRect(
+                              child: Image.memory(
+                                _bytesImage!,
+                                fit: BoxFit.cover,
+                                width: getWidth(0.25, context),
+                                height: getWidth(0.25, context),
+                              ),
+                              borderRadius: BorderRadius.circular(50.0),
                             ),
                           )
                         : CircleAvatar(
@@ -130,17 +139,30 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           style: drawerTextStyle),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.10,
+                      height: MediaQuery.of(context).size.height * 0.1,
                     ),
                     Text("Home", style: drawerTextStyle),
                     customDrawerDivider(),
-                    Text("My Notification", style: drawerTextStyle),
+                    InkWell(
+                        onTap: () {
+                          _controller.close();
+                          pushMethod(context, ShowNotification());
+                        },
+                        child: Text("My Notification", style: drawerTextStyle)),
                     customDrawerDivider(),
-                    Text("Change Password", style: drawerTextStyle),
+                    InkWell(
+                        onTap: () {
+                          _controller.close();
+                          pushMethod(context, ContactUsPage());
+                        },
+                        child: Text("Contact Us", style: drawerTextStyle)),
                     customDrawerDivider(),
-                    Text("Contact Us", style: drawerTextStyle),
-                    customDrawerDivider(),
-                    Text("About Us", style: drawerTextStyle),
+                    InkWell(
+                        onTap: () {
+                          _controller.close();
+                          pushMethod(context, AboutUsPage());
+                        },
+                        child: Text("About Us", style: drawerTextStyle)),
                     customDrawerDivider(),
                     InkWell(
                       onTap: () {
@@ -195,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           GridView.builder(
                               physics: BouncingScrollPhysics(),
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 20),
+                                  horizontal: 20, vertical: 15),
                               shrinkWrap: true,
                               itemCount: serviceName.length,
                               gridDelegate:
@@ -281,18 +303,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                     padding:
                                                         const EdgeInsets.only(
                                                             top: 5),
-                                                    child: Image.asset(
-                                                      'assets/images/gj5_logo.png',
-                                                      height: 50,
-                                                      width: 50,
+                                                    child: FittedBox(
+                                                      child: Image.asset(
+                                                        'assets/images/gj5_logo.png',
+                                                        height: 50,
+                                                        width: 50,
+                                                      ),
                                                     ),
                                                   ),
                                             SizedBox(
                                               height: 5,
                                             ),
-                                            Text(
+                                            AutoSizeText(
                                               serviceName[index],
                                               textAlign: TextAlign.center,
+                                              maxLines: 1,
                                               style: TextStyle(
                                                 color: Colors.grey.shade700,
                                                 fontWeight: FontWeight.w500,
@@ -457,14 +482,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     bool ARService = await getBoolPreference('ARService');
     bool ARReceive = await getBoolPreference('ARReceive');
     bool ARDeliver = await getBoolPreference('ARDeliver');
-    bool ARChangeProduct = await getBoolPreference('ARChangeProduct');
     bool ARManager = await getBoolPreference('ARManager');
     if (ARManager == true) {
       serviceName.add('Service');
       serviceName.add('Service Line');
       serviceName.add('Receive');
       serviceName.add('Delivery');
-      serviceName.add('Change Product');
     } else {
       if (ARService == true) {
         serviceName.add('Service');
@@ -475,9 +498,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
       if (ARReceive == true) {
         serviceName.add('Receive');
-      }
-      if (ARChangeProduct == true) {
-        serviceName.add('Change Product');
       }
     }
   }
@@ -523,9 +543,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     int uid = widget.userId;
     final _firebaseMessaging = await FirebaseMessaging.instance;
     _firebaseMessaging.getToken().then((deviceToken) async {
-      await http.put(
+      print(deviceToken);
+      final response = await http.put(
         Uri.parse(
-            "http://$apiUrl/api/res.users/$uid?device_token=$deviceToken"),
+            "http://$apiUrl/api/res.partner/$uid?device_token=$deviceToken"),
         headers: {'Access-Token': token},
       );
     });

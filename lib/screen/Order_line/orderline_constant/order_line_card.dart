@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../../Utils/utils.dart';
 import '../../../constant/constant.dart';
@@ -233,40 +234,42 @@ class OrderLineCard extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "D. Date : ",
-                              style: primaryStyle,
-                            ),
-                            Text(
-                              DateFormat("dd/MM/yyyy")
-                                  .format(DateTime.parse(
-                                      orderList[index]['delivery_date']))
-                                  .toString(),
-                              style: deliveryDateStyle,
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "R. Date : ",
-                              style: primaryStyle,
-                            ),
-                            Text(
-                              DateFormat("dd/MM/yyyy")
-                                  .format(DateTime.parse(
-                                      orderList[index]['return_date']))
-                                  .toString(),
-                              style: returnDateStyle,
-                            )
-                          ],
-                        )
-                      ],
+                    FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "D. Date : ",
+                                style: primaryStyle,
+                              ),
+                              Text(
+                                DateFormat("dd/MM/yyyy")
+                                    .format(DateTime.parse(
+                                        orderList[index]['delivery_date']))
+                                    .toString(),
+                                style: deliveryDateStyle,
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "  R. Date : ",
+                                style: primaryStyle,
+                              ),
+                              Text(
+                                DateFormat("dd/MM/yyyy")
+                                    .format(DateTime.parse(
+                                        orderList[index]['return_date']))
+                                    .toString(),
+                                style: returnDateStyle,
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 10,
@@ -433,7 +436,9 @@ void chekWlanToNotifyToAll(int rentalLineId, BuildContext context) {
                   context, "Connect to Showroom Network", Colors.red.shade300);
             }
           });
-        } else {}
+        } else {
+          notifyToAll(apiUrl, token, rentalLineId, context);
+        }
       });
     } on SocketException catch (err) {
       dialog(context, "Connect to Showroom Network", Colors.red.shade300);
@@ -441,15 +446,14 @@ void chekWlanToNotifyToAll(int rentalLineId, BuildContext context) {
   });
 }
 
-Future<void> notifyToAll(
-    apiUrl, token, int rentalLineId, BuildContext context) async {
+notifyToAll(apiUrl, token, int rentalLineId, BuildContext context) async {
   final response = await http.put(
     Uri.parse(
         "http://$apiUrl/api/rental.line/$rentalLineId/send_msg_to_all_user"),
     headers: {'Access-Token': token},
   );
   if (response.statusCode == 200) {
-    dialog(context, "Notification sent SuccessFully", Colors.green.shade400);
+    dialog(context, "Notification Sent Successfully", Colors.green.shade300);
   } else {
     dialog(context, "Error In Sending Notification", Colors.red.shade300);
   }

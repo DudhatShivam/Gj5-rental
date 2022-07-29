@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
@@ -262,44 +263,44 @@ class ServiceDetailCard extends StatelessWidget {
                         : Container()
               ],
             ),
+            list[index]['delivery_date'] != null ||
+                    list[index]['return_date'] != null
+                ? SizedBox(
+                    height: 10,
+                  )
+                : Container(),
             Row(
               mainAxisAlignment: list[index]['delivery_date'] != null
                   ? MainAxisAlignment.spaceBetween
                   : MainAxisAlignment.start,
               children: [
                 list[index]['delivery_date'] != null
-                    ? Column(
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
+                    ? Expanded(
+                        child: FittedBox(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
                                 "D Date : ",
                                 style: allCardMainText,
                               ),
                               Text(
-                                DateFormat("dd/MM/yyyy").format(DateTime.parse(
-                                        list[index]['delivery_date'])) ??
-                                    "",
+                                "${DateFormat("dd/MM/yyyy").format(DateTime.parse(list[index]['delivery_date']))} ",
                                 style: deliveryDateStyle,
                               )
                             ],
                           ),
-                        ],
+                        ),
                       )
                     : Container(),
                 list[index]['return_date'] != null
-                    ? Column(
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
+                    ? Expanded(
+                        child: FittedBox(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                "R Date : ",
+                                " R Date : ",
                                 style: allCardMainText,
                               ),
                               Text(
@@ -309,7 +310,7 @@ class ServiceDetailCard extends StatelessWidget {
                               )
                             ],
                           ),
-                        ],
+                        ),
                       )
                     : Container()
               ],

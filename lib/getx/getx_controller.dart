@@ -8,8 +8,14 @@ class MyGetxController extends GetxController {
   RxBool isSetTextFieldData = false.obs;
   RxBool isSyncData = false.obs;
 
-  //booking status screen
+  //About us
+  RxList<dynamic> showRoomList = [].obs;
 
+
+  //Notification screen
+  RxList<dynamic> notificationList = [].obs;
+
+  //booking status screen
   RxList<dynamic> isMainProductTrueProductList = [].obs;
 
   //orderScreen

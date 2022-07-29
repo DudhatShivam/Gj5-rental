@@ -16,8 +16,6 @@ import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../home/home.dart';
-import '../../main.dart';
-import '../Order_line/orderline_constant/order_line_card.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key}) : super(key: key);
@@ -147,7 +145,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Order Number",
                             orderNumberController,
@@ -175,7 +173,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Mobile Number",
                             numberController,
@@ -203,7 +201,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Customer Name",
                             nameController,

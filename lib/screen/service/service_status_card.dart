@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 
@@ -120,34 +119,36 @@ class ServiceStatusCard extends StatelessWidget {
                     SizedBox(
                       height: 7,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "D. Date : ",
-                              style: allCardMainText,
-                            ),
-                            Text(
-                              list[index]['delivery_date'],
-                              style: deliveryDateStyle,
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "R. Date : ",
-                              style: allCardMainText,
-                            ),
-                            Text(
-                              list[index]['return_date'],
-                              style: returnDateStyle,
-                            )
-                          ],
-                        )
-                      ],
+                    FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "D. Date : ",
+                                style: allCardMainText,
+                              ),
+                              Text(
+                                list[index]['delivery_date'],
+                                style: deliveryDateStyle,
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                " R. Date : ",
+                                style: allCardMainText,
+                              ),
+                              Text(
+                                list[index]['return_date'],
+                                style: returnDateStyle,
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 )

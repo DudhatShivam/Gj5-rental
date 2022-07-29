@@ -16,7 +16,6 @@ import '../../constant/order_quotation_amount_card.dart';
 import '../../constant/order_quotation_comman_card.dart';
 import '../../constant/order_quotation_detail_card.dart';
 import '../../getx/getx_controller.dart';
-import '../booking status/booking_status.dart';
 
 class ReceiveDetail extends StatefulWidget {
   final int orderId;
@@ -334,16 +333,23 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
       } else {
         if (myGetxController.receiveSelectedExtraProductList.isNotEmpty) {
           await receiveExtraProduct(apiUrl, token, false);
-        }
-        if (response.statusCode == 200 &&
-            extraProductReceiveResponse.statusCode == 200) {
-          apiResponseFunction();
+          if (response.statusCode == 200 &&
+              extraProductReceiveResponse.statusCode == 200) {
+            apiResponseFunction();
+          } else {
+            dialog(
+                context, "Error Occur In Order Receive", Colors.red.shade300);
+          }
         } else {
-          dialog(context, "Error Occur In Order Receive", Colors.red.shade300);
+          if (response.statusCode == 200) {
+            apiResponseFunction();
+          } else {
+            dialog(
+                context, "Error Occur In Order Receive", Colors.red.shade300);
+          }
         }
       }
     } else {
-      print("else called");
       receiveExtraProduct(apiUrl, token, true);
     }
   }

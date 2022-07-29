@@ -1,25 +1,14 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-
 import 'package:animate_do/animate_do.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
-import 'package:gj5_rental/getx/getx_controller.dart';
-import 'package:gj5_rental/home/home.dart';
-import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
-import 'package:http/http.dart' as http;
 import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
-import 'dart:math' as math;
 import 'package:gj5_rental/constant/order_quotation_detail_card.dart';
+import 'package:gj5_rental/getx/getx_controller.dart';
+
 import '../../constant/constant.dart';
 import '../../constant/order_quotation_amount_card.dart';
-import '../../constant/order_quotation_comman_card.dart';
-import '../quatation/quotation_const/quotation_constant.dart';
-import 'order.dart';
 
 class OrderDetail extends StatefulWidget {
   final int? id;

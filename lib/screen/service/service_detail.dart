@@ -1,18 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
-import 'package:gj5_rental/screen/service/add_service/add_service.dart';
-import 'package:gj5_rental/screen/service/service.dart';
-import 'package:gj5_rental/screen/service/service_card.dart';
-import 'package:gj5_rental/screen/service/service_detail_card.dart';
-import 'package:gj5_rental/screen/service/servicecontroller.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:gj5_rental/screen/service/service_card.dart';
+import 'package:gj5_rental/screen/service/service_detail_card.dart';
+import 'package:gj5_rental/screen/service/servicecontroller.dart';
+import 'package:http/http.dart' as http;
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';

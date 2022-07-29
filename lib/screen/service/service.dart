@@ -1,18 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:animations/animations.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:gj5_rental/screen/service/service_detail.dart';
-import 'package:gj5_rental/screen/service/servicecontroller.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:animate_do/animate_do.dart';
+import 'package:animations/animations.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/screen/service/service_card.dart';
-import 'package:intl/intl.dart';
+import 'package:gj5_rental/screen/service/service_detail.dart';
+import 'package:gj5_rental/screen/service/servicecontroller.dart';
+import 'package:http/http.dart' as http;
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -137,7 +136,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             style: primaryStyle,
                           ),
                           Container(
-                            width: getWidth(0.30, context),
+                            width: getWidth(0.6, context),
                             child: textFieldWidget(
                                 "Service Number",
                                 serviceNumberController,
@@ -165,63 +164,65 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             style: primaryStyle,
                           ),
                           Container(
-                            width: getWidth(0.31, context),
-                            child: Row(
-                              children: [
-                                Row(
-                                  children: [
-                                    Radio(
-                                        materialTapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        fillColor:
-                                            MaterialStateColor.resolveWith(
-                                                (states) => primary2Color),
-                                        value: "washing",
-                                        groupValue: serviceType,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            serviceType = value.toString();
-                                          });
-                                        }),
-                                    Text(
-                                      "Washing",
-                                      style: primaryStyle,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Radio(
-                                        materialTapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        fillColor:
-                                            MaterialStateColor.resolveWith(
-                                                (states) => primary2Color),
-                                        value: "stitching",
-                                        groupValue: serviceType,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            serviceType = value.toString();
-                                          });
-                                        }),
-                                    Text(
-                                      "Stitching",
-                                      style: primaryStyle,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: getWidth(0.015, context),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      serviceType = null;
-                                    });
-                                  },
-                                  child: textFieldCancelIcon,
-                                )
-                              ],
+                            width: getWidth(0.62, context),
+                            child: FittedBox(
+                              child: Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Radio(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          fillColor:
+                                              MaterialStateColor.resolveWith(
+                                                  (states) => primary2Color),
+                                          value: "washing",
+                                          groupValue: serviceType,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              serviceType = value.toString();
+                                            });
+                                          }),
+                                      Text(
+                                        "Washing",
+                                        style: primaryStyle,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Radio(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          fillColor:
+                                              MaterialStateColor.resolveWith(
+                                                  (states) => primary2Color),
+                                          value: "stitching",
+                                          groupValue: serviceType,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              serviceType = value.toString();
+                                            });
+                                          }),
+                                      Text(
+                                        "Stitching",
+                                        style: primaryStyle,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: getWidth(0.02, context),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        serviceType = null;
+                                      });
+                                    },
+                                    child: textFieldCancelIcon,
+                                  )
+                                ],
+                              ),
                             ),
                           )
                         ],
@@ -240,7 +241,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             style: primaryStyle,
                           ),
                           Container(
-                            width: getWidth(0.30, context),
+                            width: getWidth(0.6, context),
                             child: textFieldWidget(
                                 "Partner Name",
                                 partnerController,

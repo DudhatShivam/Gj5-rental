@@ -16,13 +16,13 @@ class ExtraProductScreenCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String deliveryDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(extraProductList[index]['delivery_date']));
+        .format(DateTime.parse(extraProductList[index]['delivery_date'] ?? "0000-00-00"));
     String returnDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(extraProductList[index]['return_date']));
+        .format(DateTime.parse(extraProductList[index]['return_date'] ?? "0000-00-00"));
     return Container(
-      padding: EdgeInsets.all(getWidth(0.01, context)),
+      padding: EdgeInsets.all(15),
       margin: EdgeInsets.symmetric(
-          horizontal: getWidth(0.018, context), vertical: 5),
+          horizontal: 15, vertical: 5),
       width: double.infinity,
       decoration: BoxDecoration(
           color: statusBackGroundColor(extraProductList, index),
@@ -38,7 +38,7 @@ class ExtraProductScreenCard extends StatelessWidget {
                   children: [
                     Text("Order No : ", style: primaryStyle),
                     Text(
-                      extraProductList[index]['rental_id']['name'],
+                      extraProductList[index]['rental_id']['name'] ?? "",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -54,7 +54,7 @@ class ExtraProductScreenCard extends StatelessWidget {
                   color: statusBackGroundColor(extraProductList, index),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text(extraProductList[index]['state'],
+                child: Text(extraProductList[index]['state'] ?? "",
                     style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w500,
@@ -75,11 +75,11 @@ class ExtraProductScreenCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        "[${extraProductList[index]['product_id']['default_code']}] ",
+                        "[${extraProductList[index]['product_id']['default_code'] ?? ""}] ",
                         style: allCardSubText,
                       ),
                       Text(
-                        extraProductList[index]['product_id']['name'],
+                        extraProductList[index]['product_id']['name'] ?? "",
                         style: allCardSubText,
                       ),
                     ],
@@ -90,91 +90,93 @@ class ExtraProductScreenCard extends StatelessWidget {
           ),
           extraProductList[index]['origin_product_id']['id'] != null
               ? Column(
-                  children: [
-                    SizedBox(
-                      height: 7,
+            children: [
+              SizedBox(
+                height: 7,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Origin Product : ", style: primaryStyle),
+                  Text(
+                    "[${extraProductList[index]['origin_product_id']['default_code'] ?? ""}] "
+                        "",
+                    style: allCardSubText,
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        extraProductList[index]['origin_product_id']
+                        ['name'] ??
+                            "",
+                        style: allCardSubText,
+                      ),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Origin Product : ", style: primaryStyle),
-                        Text(
-                          "[${extraProductList[index]['origin_product_id']['default_code'] ?? ""}] "
-                          "",
-                          style: allCardSubText,
-                        ),
-                        Flexible(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Text(
-                              extraProductList[index]['origin_product_id']
-                                      ['name'] ??
-                                  "",
-                              style: allCardSubText,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
+                  ),
+                ],
+              ),
+            ],
+          )
               : Container(),
           extraProductList[index]['remarks'] == null
               ? Container()
               : Column(
-                  children: [
-                    SizedBox(
-                      height: 7,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Remarks : ", style: primaryStyle),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            child: Text(
-                              extraProductList[index]['remarks'],
-                              style: remarkTextStyle,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-          SizedBox(
-            height: 7,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              SizedBox(
+                height: 7,
+              ),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "D. Date : ",
-                    style: primaryStyle,
-                  ),
-                  Text(
-                    deliveryDate,
-                    style: deliveryDateStyle,
+                  Text("Remarks : ", style: primaryStyle),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        extraProductList[index]['remarks'],
+                        style: remarkTextStyle,
+                      ),
+                    ),
                   )
                 ],
               ),
-              Row(
-                children: [
-                  Text(
-                    "R. Date : ",
-                    style: primaryStyle,
-                  ),
-                  Text(
-                    returnDate,
-                    style: returnDateStyle,
-                  )
-                ],
-              )
             ],
+          ),
+          SizedBox(
+            height: 7,
+          ),
+          FittedBox(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "D. Date : ",
+                      style: primaryStyle,
+                    ),
+                    Text(
+                      deliveryDate,
+                      style: deliveryDateStyle,
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "  R. Date : ",
+                      style: primaryStyle,
+                    ),
+                    Text(
+                      returnDate,
+                      style: returnDateStyle,
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),

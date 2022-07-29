@@ -1,14 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:developer' as devtools show inspect;
-import 'package:animate_do/animate_do.dart';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:gj5_rental/getx/getx_controller.dart';
-import 'package:gj5_rental/screen/quatation/quotation_const/quotation_constant.dart';
 import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -220,14 +214,14 @@ class _EditOrderLineState extends State<EditOrderLine> {
               SizedBox(
                 height: 15,
               ),
-              remarkContainer(context, remarkController, 0.33, 0.02,
+              remarkContainer(context, remarkController, 0.65, 0.04,
                   MainAxisAlignment.spaceBetween),
               SizedBox(
                 height: 15,
               ),
               Container(
                 margin:
-                    EdgeInsets.symmetric(horizontal: getWidth(0.02, context)),
+                    EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -236,7 +230,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                       style: primaryStyle,
                     ),
                     Container(
-                      width: getWidth(0.33, context),
+                      width: getWidth(0.65, context),
                       child: textFieldWidget(
                           "Rent",
                           rentController,
@@ -256,14 +250,14 @@ class _EditOrderLineState extends State<EditOrderLine> {
               ),
               subProductList.length == wholeSubProductList.length
                   ? ListView.builder(
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: wholeSubProductList.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              EdgeInsets.symmetric( vertical: 5),
                           child: Container(
                             child: Column(
                               children: [
@@ -273,7 +267,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                   children: [
                                     FittedBox(
                                       child: Container(
-                                        width: getWidth(0.072, context),
+                                        width: getWidth(0.15, context),
                                         child: Text(
                                           wholeSubProductList[index]
                                               ['product_type'],
@@ -282,7 +276,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                       ),
                                     ),
                                     Container(
-                                      width: getWidth(0.31, context),
+                                      width: getWidth(0.65, context),
                                       margin: EdgeInsets.only(left: 10),
                                       child: SearchField(
                                         controller: productControllers[index],

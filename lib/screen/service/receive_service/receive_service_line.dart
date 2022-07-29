@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:gj5_rental/screen/service_line/service_line.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../../../Utils/utils.dart';
@@ -70,7 +73,6 @@ class ReceiveServiceLine extends StatelessWidget {
                         backgroundColor: Colors.green.shade300),
                     onPressed: () {
                       checkWlanForReceiveService(context);
-                      Navigator.pop(context);
                     },
                     child: Text("Ok")),
                 SizedBox(
@@ -116,17 +118,16 @@ class ReceiveServiceLine extends StatelessWidget {
 
   Future<void> receiveService(
       String apiUrl, String token, BuildContext context) async {
-    String outDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
-    var body = {'out_date': outDate};
     final response = await http.put(
-        Uri.parse(
-            "http://$apiUrl/api/product.service.line/${list[index]['id']}"),
-        headers: {
-          'Access-Token': token,
-        },
-        body: jsonEncode(body));
+      Uri.parse(
+          "http://$apiUrl/api/product.service.line/${list[index]['id']}/receive_product"),
+      headers: {
+        'Access-Token': token,
+      },
+    );
     if (response.statusCode == 200) {
       list.removeAt(index);
+      Navigator.of(context, rootNavigator: true).pop();
       dialog(context, "Product Receive Successfully", Colors.green.shade300);
     } else {
       dialog(context, "Error In Receive Product", Colors.red.shade300);

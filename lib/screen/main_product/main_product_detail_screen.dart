@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../../getx/getx_controller.dart';
-import '../booking status/booking_status.dart';
 
 class MainProductdetailScreen extends StatefulWidget {
   const MainProductdetailScreen({Key? key, required this.productTypeCode})
@@ -112,7 +112,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                           style: primaryStyle,
                         ),
                         Container(
-                          width: getWidth(0.30, context),
+                          width: getWidth(0.6, context),
                           child: textFieldWidget(
                               "Product Code",
                               codeController,
@@ -140,7 +140,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                           style: primaryStyle,
                         ),
                         Container(
-                          width: getWidth(0.30, context),
+                          width: getWidth(0.6, context),
                           child: textFieldWidget(
                               "Product Name",
                               productNameController,
@@ -209,13 +209,15 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                                       ),
                                     ),
                                     FadeInLeft(
-                                      child: Container(
-                                        width: getWidth(0.2, context),
-                                        child: Text(
-                                          myGetxController
-                                                  .mainProductDetailList[index]
-                                              ['default_code'] ?? "",
-                                          style: allCardSubText,
+                                      child: FittedBox(
+                                        child: Container(
+                                          width: getWidth(0.3, context),
+                                          child: Text(
+                                            myGetxController
+                                                    .mainProductDetailList[index]
+                                                ['default_code'] ?? "",
+                                            style: allCardSubText,
+                                          ),
                                         ),
                                       ),
                                     )

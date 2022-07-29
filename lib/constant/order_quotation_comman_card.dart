@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:flutter_swipe_action_cell/core/controller.dart';
 import 'package:intl/intl.dart';
@@ -10,8 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../Utils/utils.dart';
 import '../screen/quatation/edit_order.dart';
-import '../screen/quatation/edit_order_line.dart';
-import '../screen/quatation/quotation_const/quotation_constant.dart';
 import 'constant.dart';
 
 class OrderQuatationCommanCard extends StatelessWidget {
@@ -149,7 +144,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                         onTap: () async {
                           // bool? res = await FlutterPhoneDirectCaller.callNumber(
                           //     list[index]['mobile1']);
-                          _makingPhoneCall(list[index]['mobile1'], context);
+                          makingPhoneCall(list[index]['mobile1'], context);
                         },
                         child: CircleAvatar(
                             radius: 13,
@@ -175,7 +170,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                                   onTap: () async {
                                     // bool? res = await FlutterPhoneDirectCaller
                                     //     .callNumber(list[index]['mobile2']);
-                                    _makingPhoneCall(
+                                    makingPhoneCall(
                                         list[index]['mobile2'], context);
                                   },
                                   child: CircleAvatar(
@@ -235,34 +230,36 @@ class OrderQuatationCommanCard extends StatelessWidget {
                 SizedBox(
                   height: 7,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "D. Date : ",
-                          style: primaryStyle,
-                        ),
-                        Text(
-                          deliveryDate,
-                          style: deliveryDateStyle,
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "R. Date : ",
-                          style: primaryStyle,
-                        ),
-                        Text(
-                          returnDate,
-                          style: returnDateStyle,
-                        )
-                      ],
-                    )
-                  ],
+                FittedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "D. Date : ",
+                            style: primaryStyle,
+                          ),
+                          Text(
+                            deliveryDate,
+                            style: deliveryDateStyle,
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "  R. Date : ",
+                            style: primaryStyle,
+                          ),
+                          Text(
+                            returnDate,
+                            style: returnDateStyle,
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -273,14 +270,4 @@ class OrderQuatationCommanCard extends StatelessWidget {
   }
 }
 
-_makingPhoneCall(String PhoneNumber, BuildContext context) async {
-  try {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: PhoneNumber,
-    );
-    await launchUrl(launchUri);
-  } catch (e) {
-    dialog(context, e.toString(), Colors.red.shade300);
-  }
-}
+

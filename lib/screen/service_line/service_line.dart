@@ -11,10 +11,10 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../service/service_detail_card.dart';
-
 class ServiceLineScreen extends StatefulWidget {
   const ServiceLineScreen({Key? key}) : super(key: key);
 
@@ -62,6 +62,11 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: _key,
@@ -106,16 +111,18 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                           child: Container(
                             margin: EdgeInsets.symmetric(vertical: 15),
                             height: getHeight(0.04, context),
-                            width: getWidth(0.15, context),
+                            width: getWidth(0.35, context),
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10)),
-                            child: Text(
-                              "Clear / Refresh",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500),
+                            child: FittedBox(
+                              child: Text(
+                                "Clear / Refresh",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                              ),
                             ),
                           ),
                         ),
@@ -155,7 +162,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                vertical: getHeight(0.011, context),
+                                vertical: getHeight(0.008, context),
                                 horizontal: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -195,7 +202,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                vertical: getHeight(0.011, context),
+                                vertical: getHeight(0.008, context),
                                 horizontal: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -285,7 +292,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                             style: primaryStyle,
                           ),
                           Container(
-                            width: getWidth(0.30, context),
+                            width: getWidth(0.6, context),
                             child: textFieldWidget(
                                 "Product Code",
                                 productCodeSearchController,
@@ -326,7 +333,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                               });
                             },
                             child: Container(
-                              width: getWidth(0.30, context),
+                              width: getWidth(0.6, context),
                               padding: EdgeInsets.symmetric(horizontal: 10),
                               height: 48,
                               decoration: BoxDecoration(
@@ -736,7 +743,6 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
       } else {
         dialog(context, "Something Went Wrong !", Colors.red.shade300);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 }

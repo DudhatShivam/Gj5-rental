@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,10 +10,10 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/receive/receive_detail.dart';
 import 'package:http/http.dart' as http;
+
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../../constant/order_quotation_comman_card.dart';
-import '../Order_line/orderline_constant/order_line_card.dart';
 
 class ReceiveScreen extends StatefulWidget {
   const ReceiveScreen({Key? key}) : super(key: key);
@@ -56,54 +55,56 @@ class _RceiveScreenState extends State<ReceiveScreen> {
         allScreenInitialSizedBox(context),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: FadeInLeft(
-                        child: backArrowIcon,
-                      )),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  FadeInLeft(
-                    child: Text(
-                      "Receive Order Status",
-                      style: pageTitleTextStyle,
+          child: FittedBox(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: FadeInLeft(
+                          child: backArrowIcon,
+                        )),
+                    SizedBox(
+                      width: 10,
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  InkWell(
-                      onTap: () {
-                        myGetxController.receiveFilteredOrderList.clear();
-                        myGetxController.receiveOrderList.clear();
-                        checkWlanForReceiveScreenData(false);
-                      },
-                      child: FadeInRight(
-                          child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: refreshIcon,
-                      ))),
-                  InkWell(
-                      onTap: () {
-                        setState(() {
-                          isExpandSearch = !isExpandSearch;
-                        });
-                      },
-                      child: isExpandSearch == false
-                          ? FadeInRight(child: searchIcon)
-                          : cancelIcon)
-                ],
-              )
-            ],
+                    FadeInLeft(
+                      child: Text(
+                        "Receive Order Status",
+                        style: pageTitleTextStyle,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          myGetxController.receiveFilteredOrderList.clear();
+                          myGetxController.receiveOrderList.clear();
+                          checkWlanForReceiveScreenData(false);
+                        },
+                        child: FadeInRight(
+                            child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: refreshIcon,
+                        ))),
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            isExpandSearch = !isExpandSearch;
+                          });
+                        },
+                        child: isExpandSearch == false
+                            ? FadeInRight(child: searchIcon)
+                            : cancelIcon)
+                  ],
+                )
+              ],
+            ),
           ),
         ),
         AnimatedSize(
@@ -128,7 +129,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Order Number",
                             orderNumberController,
@@ -156,7 +157,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Mobile Number",
                             numberController,
@@ -184,7 +185,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                         style: primaryStyle,
                       ),
                       Container(
-                        width: getWidth(0.30, context),
+                        width: getWidth(0.6, context),
                         child: textFieldWidget(
                             "Customer name",
                             nameController,

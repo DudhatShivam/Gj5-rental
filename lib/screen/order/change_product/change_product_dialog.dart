@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:searchfield/searchfield.dart';
 
@@ -135,7 +136,7 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                     });
                   },
                   child: Container(
-                    width: getWidth(0.25, context),
+                    width: getWidth(0.5, context),
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     height: 48,
                     decoration: BoxDecoration(
@@ -180,7 +181,7 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                     });
                   },
                   child: Container(
-                    width: getWidth(0.25, context),
+                    width: getWidth(0.5, context),
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     height: 48,
                     decoration: BoxDecoration(
@@ -213,7 +214,7 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                   style: primaryStyle,
                 ),
                 Container(
-                  width: getWidth(0.25, context),
+                  width: getWidth(0.5, context),
                   child: textFieldWidget(
                       "Remark",
                       remarkController,
