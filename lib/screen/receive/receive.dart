@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:gj5_rental/screen/cancel_order/cancel_order.dart';
 import 'package:gj5_rental/screen/receive/receive_detail.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,6 +36,8 @@ class _RceiveScreenState extends State<ReceiveScreen> {
   void initState() {
     super.initState();
     myGetxController.receiveFilteredOrderList.clear();
+    myGetxController.noDataInReceiveScreen.value = false;
+
     if (myGetxController.receiveOrderList.isEmpty) {
       checkWlanForReceiveScreenData(false);
     }
@@ -85,6 +88,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                         onTap: () {
                           myGetxController.receiveFilteredOrderList.clear();
                           myGetxController.receiveOrderList.clear();
+                          myGetxController.noDataInReceiveScreen.value = false;
                           checkWlanForReceiveScreenData(false);
                         },
                         child: FadeInRight(
@@ -209,6 +213,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: primary2Color),
                         onPressed: () {
+                          myGetxController.noDataInReceiveScreen.value = false;
                           myGetxController.receiveFilteredOrderList.clear();
                           setState(() {
                             isSearchLoadData = true;
@@ -275,7 +280,9 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                         );
                       },
                     )
-              : CenterCircularProgressIndicator()),
+              : myGetxController.noDataInReceiveScreen.value == false
+                  ? CenterCircularProgressIndicator()
+                  : centerNoOrderText("No Order Found")),
         )
       ],
     ));
@@ -326,13 +333,12 @@ class _RceiveScreenState extends State<ReceiveScreen> {
       'Connection': 'keep-alive'
     });
     if (response.statusCode == 200) {
-
       var data = jsonDecode(response.body);
       if (data['count'] != 0) {
         myGetxController.receiveOrderList.addAll(data['results']);
       } else {
         if (receiveScreenOffset <= 0) {
-          dialog(context, "No Data Found !", Colors.red.shade300);
+          myGetxController.noDataInReceiveScreen.value = true;
         }
       }
     } else {

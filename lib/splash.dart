@@ -4,9 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/login/login_page.dart';
 import 'package:gj5_rental/screen/Order_line/notification_orderline.dart';
 import 'package:gj5_rental/screen/cancel_order/cancel_order_detail.dart';
@@ -30,7 +27,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Timer? timer;
   int seconds = 60;
-  MyGetxController myGetxController = Get.put(MyGetxController());
 
   var init = InitializationSettings(android: androidInit, iOS: iosInit);
   FCM firebaseMessaging = FCM();

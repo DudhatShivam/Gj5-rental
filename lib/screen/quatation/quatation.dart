@@ -36,7 +36,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
   @override
   void initState() {
     super.initState();
-    print(isFromAnotherScreen);
+
     clearList();
     getData(false);
     scrollController.addListener(() {

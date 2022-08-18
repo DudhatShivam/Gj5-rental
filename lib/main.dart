@@ -9,6 +9,8 @@ import 'package:gj5_rental/notification/notification_database.dart';
 import 'package:gj5_rental/splash.dart';
 import 'package:intl/intl.dart';
 
+import 'demo.dart';
+import 'drawer_pages/change_theme_screen.dart';
 import 'notification/notification_model.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

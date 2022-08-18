@@ -221,20 +221,19 @@ class ContactUsPage extends StatelessWidget {
       ),
     );
   }
-
-  launchApp(BuildContext context, String url) async {
-    try {
-      final Uri launchUri = Uri.parse(url);
-      if (await canLaunchUrl(launchUri)) {
-        await launchUrl(launchUri, mode: LaunchMode.externalApplication);
-      } else if (await canLaunchUrl(launchUri)) {
-        await launchUrl(launchUri);
-      } else {
-        dialog(context, "Failed To Open", Colors.red.shade300);
-      }
-    } catch (e) {
-      print(e);
-      dialog(context, e.toString(), Colors.red.shade300);
+}
+launchApp(BuildContext context, String url) async {
+  try {
+    final Uri launchUri = Uri.parse(url);
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri, mode: LaunchMode.externalApplication);
+    } else if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      dialog(context, "Failed To Open", Colors.red.shade300);
     }
+  } catch (e) {
+    print(e);
+    dialog(context, e.toString(), Colors.red.shade300);
   }
 }

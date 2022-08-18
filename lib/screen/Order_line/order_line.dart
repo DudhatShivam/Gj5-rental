@@ -11,6 +11,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/Order_line/orderline_constant/order_line_card.dart';
+import 'package:gj5_rental/screen/cancel_order/cancel_order.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -25,7 +26,11 @@ class OrderLineScreen extends StatefulWidget {
 
 class _OrderLineScreenState extends State<OrderLineScreen>
     with TickerProviderStateMixin {
+  int filterOffset = 0;
+  int? startDay;
+  int? endDay;
   ScrollController scrollController = ScrollController();
+  ScrollController filterScrollController = ScrollController();
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   MyGetxController myGetxController = Get.find();
   bool isExpand = false;
@@ -72,6 +77,13 @@ class _OrderLineScreenState extends State<OrderLineScreen>
           scrollController.position.maxScrollExtent) {
         orderLineOffset = orderLineOffset + 5;
         cheCkWlanForOrderLineData(context, false);
+      }
+    });
+    filterScrollController.addListener(() {
+      if (filterScrollController.position.pixels ==
+          filterScrollController.position.maxScrollExtent) {
+        filterOffset = filterOffset + 5;
+        checkWlanForDrawerFilterData(startDay!, endDay!, "");
       }
     });
   }
@@ -121,6 +133,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             setState(() {
                               isShowGroupByData = false;
                               orderLineOffset = 0;
+                              filterOffset = 0;
                               drawerSelectedIndex = null;
                               drawerGroupBySelectedIndex = null;
                             });
@@ -156,24 +169,48 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          setState(() {
-                            drawerSelectedIndex = index;
-                          });
+                          myGetxController.orderLineFilteredTag.clear();
+                          myGetxController.filteredListOrderLine.clear();
                           if (index == 0) {
-                            setFilteredData(0, 0);
+                            startDay = 0;
+                            endDay = 0;
+                            checkWlanForDrawerFilterData(
+                                startDay!, endDay!, "Today Deliver");
                           } else if (index == 1) {
-                            setFilteredData(1, 0);
+                            startDay = 1;
+                            endDay = 0;
+                            checkWlanForDrawerFilterData(
+                                1, 0, "Tomorrow Deliver");
                           } else if (index == 2) {
-                            setFilteredData(2, 0);
+                            startDay = 2;
+                            endDay = 0;
+                            checkWlanForDrawerFilterData(
+                                2, 0, "2 days After Deliver");
                           } else if (index == 3) {
-                            setFilteredData(3, 0);
+                            startDay = 3;
+                            endDay = 0;
+                            checkWlanForDrawerFilterData(
+                                3, 0, "3 days After Deliver");
                           } else if (index == 4) {
-                            setFilteredData(4, 0);
+                            startDay = 4;
+                            endDay = 0;
+                            checkWlanForDrawerFilterData(
+                                4, 0, "4 days After Deliver");
                           } else if (index == 5) {
-                            setFilteredData(5, 0);
+                            startDay = 5;
+                            endDay = 0;
+                            checkWlanForDrawerFilterData(
+                                5, 0, "5 days After Deliver");
                           } else if (index == 6) {
-                            setFilteredData(0, 1);
+                            startDay = 0;
+                            endDay = 1;
+                            checkWlanForDrawerFilterData(
+                                0, 1, "This Week Deliver");
                           }
+                          drawerSelectedIndex = index;
+                          _key.currentState?.closeDrawer();
+                          filterOffset = 0;
+                          setState(() {});
                         },
                         child: Padding(
                           padding: EdgeInsets.symmetric(
@@ -258,6 +295,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
           ),
         ),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             allScreenInitialSizedBox(context),
             Padding(
@@ -463,7 +501,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  "To Date",
+                                  "To Date   ",
                                   style: primaryStyle,
                                 ),
                                 SizedBox(
@@ -533,6 +571,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: primary2Color),
                             onPressed: () {
+                              myGetxController.orderLineFilteredTag.clear();
                               if (toDeliveryDate != "") {
                                 if (notFormatedToDDate
                                         .isAfter(notFormatedDDate) ==
@@ -553,6 +592,32 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                     ),
                   ],
                 ),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Row(
+                    children:
+                        myGetxController.orderLineFilteredTag.map((element) {
+                  return element != ""
+                      ? Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(5),
+                          height: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: primary2Color.withOpacity(0.5)),
+                          margin: EdgeInsets.only(right: 8),
+                          child: Text(
+                            element,
+                            style: allCardSubText,
+                          ),
+                        )
+                      : Container();
+                }).toList()),
               ),
             ),
             isShowGroupByData == true
@@ -658,10 +723,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             child: myGetxController
                                     .filteredListOrderLine.isNotEmpty
                                 ? ListView.builder(
-                                    controller: scrollController,
-                                    padding: isExpandSearch == true
-                                        ? EdgeInsets.zero
-                                        : EdgeInsets.symmetric(vertical: 15),
+                                    controller: filterScrollController,
+                                    padding: EdgeInsets.zero,
                                     scrollDirection: Axis.vertical,
                                     itemCount: myGetxController
                                         .filteredListOrderLine.length,
@@ -681,23 +744,14 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                     })
                                 : myGetxController.noDataInOrderLine.value ==
                                         true
-                                    ? Center(
-                                        child: Text(
-                                      "No Order !",
-                                      style: TextStyle(
-                                          color: Colors.grey.shade300,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.w500),
-                                    ))
+                                    ? centerNoOrderText("No Order !")
                                     : CenterCircularProgressIndicator())
                         : Expanded(
                             child: myGetxController
                                     .orderLineScreenList.isNotEmpty
                                 ? ListView.builder(
                                     controller: scrollController,
-                                    padding: isExpandSearch == true
-                                        ? EdgeInsets.zero
-                                        : EdgeInsets.symmetric(vertical: 15),
+                                    padding: EdgeInsets.zero,
                                     scrollDirection: Axis.vertical,
                                     itemCount: myGetxController
                                         .orderLineScreenList.length,
@@ -715,11 +769,38 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                         ARService: ARService,
                                       );
                                     })
-                                : CenterCircularProgressIndicator(),
+                                : myGetxController.noDataInOrderLine.value ==
+                                        false
+                                    ? CenterCircularProgressIndicator()
+                                    : centerNoOrderText("No Order !"),
                           ),
                   )
           ],
         ));
+  }
+
+  checkWlanForDrawerFilterData(int startDay, int endDay, String whenDeliver) {
+    myGetxController.orderLineFilteredTag.add(whenDeliver);
+    getStringPreference('apiUrl').then((apiUrl) async {
+      try {
+        getStringPreference('accessToken').then((token) async {
+          if (apiUrl.toString().startsWith("192")) {
+            showConnectivity().then((result) async {
+              if (result == ConnectivityResult.wifi) {
+                setFilteredData(startDay, endDay, apiUrl, token);
+              } else {
+                dialog(context, "Connect to Showroom Network",
+                    Colors.red.shade300);
+              }
+            });
+          } else {
+            setFilteredData(startDay, endDay, apiUrl, token);
+          }
+        });
+      } on SocketException catch (err) {
+        dialog(context, "Connect to Showroom Network", Colors.red.shade300);
+      }
+    });
   }
 
   searchTimeCall() {
@@ -728,6 +809,10 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     checkWlanForFilteredData();
     setState(() {
       isExpandSearch = false;
+      isShowGroupByData = false;
+      drawerGroupBySelectedIndex = null;
+      drawerSelectedIndex = null;
+      filterOffset = 0;
     });
   }
 
@@ -761,18 +846,26 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     String dDate = DateFormat('yyyy/MM/dd').format(notFormatedDDate);
     String toDDate = DateFormat('yyyy/MM/dd').format(notFormatedToDDate);
     if (orderNumberController.text != "") {
+      myGetxController.orderLineFilteredTag
+          .add("Order : ${orderNumberController.text}");
       datas.add(
           "('order_no', 'ilike', '${orderNumberController.text}'),('order_status' , 'not in' , ('cancel','done'))");
     }
     if (orderCodeController.text != "") {
+      myGetxController.orderLineFilteredTag
+          .add("Product Code : ${orderCodeController.text}");
       datas.add(
           "('p_default_code', 'ilike', '${orderCodeController.text}'),('order_status' , 'not in' , ('draft','cancel','done')), ('state' , 'not in' , ('cancel','receive','deliver'))");
     }
     if (deliveryDate != "") {
       if (toDeliveryDate != "") {
+        myGetxController.orderLineFilteredTag
+            .add("Delivery Date : ${deliveryDate} to ${toDeliveryDate}");
         datas.add(
             "('delivery_date', '>=', '${dDate}'),('delivery_date', '<=', '${toDDate}'),('order_status' , 'not in' , ('cancel','done')), ('state' , 'not in' , ('cancel','receive'))");
       } else {
+        myGetxController.orderLineFilteredTag
+            .add("Delivery Date : ${deliveryDate}");
         datas.add(
             "('delivery_date', '=', '${dDate}'),('order_status' , 'not in' , ('cancel','done')), ('state' , 'not in' , ('cancel','receive'))");
       }
@@ -787,10 +880,13 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     } else {
       myGetxController.filteredListOrderLine.value = [];
     }
-
     var params = {
-      'filters': domain.toString(),
+      'filters': domain,
     };
+    getFilterData(params, apiUrl, token);
+  }
+
+  getFilterData(var params, String apiUrl, String token) async {
     Uri uri = Uri.parse("http://$apiUrl/api/rental.line");
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri,
@@ -807,8 +903,9 @@ class _OrderLineScreenState extends State<OrderLineScreen>
           isShowGroupByData = false;
         });
       } else {
-        myGetxController.noDataInOrderLine.value = true;
-        dialog(context, "No Order Found", Colors.red.shade300);
+        if (myGetxController.filteredListOrderLine.isEmpty) {
+          myGetxController.noDataInOrderLine.value = true;
+        }
       }
     } else {
       dialog(context, "Something Went Wrong !", Colors.red.shade300);
@@ -820,10 +917,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
       isShowGroupByData = true;
     });
     myGetxController.groupByList.clear();
-    if (myGetxController.orderLineScreenList.isNotEmpty) {
-      _key.currentState?.closeDrawer();
-      setDataInGroupByList(firstField, secondField, index);
-    }
+    _key.currentState?.closeDrawer();
+    setDataInGroupByList(firstField, secondField, index);
   }
 
   setDataInGroupByList(String firstField, String secondField, int index) {
@@ -858,6 +953,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
   }
 
   clearList() async {
+    myGetxController.orderLineFilteredTag.clear();
     orderLineOffset = 0;
     myGetxController.orderLineScreenList.clear();
     myGetxController.orderLineScreenProductList.clear();
@@ -868,45 +964,34 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     _key.currentState?.closeDrawer();
   }
 
-  setFilteredData(int startDay, int endDay) {
-    setState(() {
-      isShowGroupByData = false;
-    });
-    myGetxController.groupByList.clear();
-    myGetxController.groupByDetailList.clear();
-    myGetxController.filteredListOrderLine.clear();
+  setFilteredData(int startDay, int endDay, String apiUrl, String token) async {
     String deliveryDate1 = "";
-    if (myGetxController.orderLineScreenList.isNotEmpty) {
-      if (endDay == 0) {
-        if (startDay == 0) {
-          deliveryDate1 = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        } else {
-          DateTime dateTime = DateTime.now().add(Duration(days: startDay));
-          deliveryDate1 = DateFormat('yyyy-MM-dd').format(dateTime);
-        }
-        myGetxController.orderLineScreenList.forEach((element) {
-          if (element['delivery_date'] == deliveryDate1) {
-            myGetxController.filteredListOrderLine.add(element);
-          }
-        });
+    String domain = "";
+    if (endDay == 0) {
+      if (startDay == 0) {
+        deliveryDate1 = DateFormat('yyyy-MM-dd').format(DateTime.now());
       } else {
-        DateTime now = DateTime.now();
-        int currentDay = now.weekday;
-        DateTime firstDayOfWeek = now.subtract(Duration(days: currentDay));
-        DateTime lastDayOfWeek =
-            now.add(Duration(days: DateTime.daysPerWeek - now.weekday + 1));
-        myGetxController.orderLineScreenList.forEach((element) {
-          DateTime dateTime =
-              DateFormat("yyyy-MM-dd").parse(element['delivery_date']);
-          if (dateTime.isAfter(firstDayOfWeek) &&
-              dateTime.isBefore(lastDayOfWeek)) {
-            myGetxController.filteredListOrderLine.add(element);
-          }
-        });
+        DateTime dateTime = DateTime.now().add(Duration(days: startDay));
+        deliveryDate1 = DateFormat('yyyy-MM-dd').format(dateTime);
       }
+      domain =
+          "('delivery_date', '=', '${deliveryDate1}'),('order_status' , 'not in' , ('cancel','done')), ('state' , 'not in' , ('cancel','receive'))";
+    } else {
+      DateTime now = DateTime.now();
+      int currentDay = now.weekday;
+      DateTime firstDayOfWeek = now.subtract(Duration(days: currentDay));
+      DateTime lastDayOfWeek =
+          now.add(Duration(days: DateTime.daysPerWeek - now.weekday + 1));
+      domain =
+          "('delivery_date', '>', '${firstDayOfWeek}'),('delivery_date', '<', '${lastDayOfWeek}'),('order_status' , 'not in' , ('cancel','done')), ('state' , 'not in' , ('cancel','receive'))";
     }
-    myGetxController.isShowFilteredDataInOrderLine.value = true;
-    _key.currentState?.closeDrawer();
+    var params = {
+      'filters': domain,
+      'limit': '5',
+      'offset': '$filterOffset',
+      'order': 'id desc'
+    };
+    getFilterData(params, apiUrl, token);
   }
 
   Future<void> getAccessRight() async {

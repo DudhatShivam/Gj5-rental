@@ -82,6 +82,7 @@ class _ShowNotificationState extends State<ShowNotification> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SingleChildScrollView(
+                                physics: BouncingScrollPhysics(),
                                 child: Text(
                                   data.title.toString(),
                                   style: remarkTextStyle,
@@ -91,6 +92,7 @@ class _ShowNotificationState extends State<ShowNotification> {
                                 height: 5,
                               ),
                               SingleChildScrollView(
+                                physics: BouncingScrollPhysics(),
                                 scrollDirection: Axis.horizontal,
                                 child: Text(
                                   data.body.toString(),

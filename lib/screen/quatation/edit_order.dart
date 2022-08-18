@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,25 +14,14 @@ import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
+import 'create_order.dart';
 
 class EditOrder extends StatefulWidget {
-  const EditOrder(
-      {Key? key,
-      this.name,
-      this.number,
-      this.deliveryDate,
-      this.returnDate,
-      this.id,
-      this.remarks,
-      this.index})
+  final List list;
+  final int index;
+
+  const EditOrder({Key? key, required this.list, required this.index})
       : super(key: key);
-  final String? name;
-  final String? number;
-  final String? deliveryDate;
-  final String? returnDate;
-  final String? remarks;
-  final String? id;
-  final int? index;
 
   @override
   State<EditOrder> createState() => _EditOrderState();
@@ -45,17 +36,20 @@ class _EditOrderState extends State<EditOrder> {
   DateTime notFormatedDDate = DateTime.now();
   DateTime? notFormatedRDate = DateTime.now();
   MyGetxController myGetxController = Get.find();
+  List<dynamic> lists = [];
+  int indexs = 0;
+  File? image1;
+  File? image2;
+  String? binaryImage1;
+  String? binaryImage2;
 
   @override
   void initState() {
     super.initState();
-    nameController.text = widget.name ?? "";
-    numberController.text = widget.number ?? "";
-    remarkController.text = widget.remarks ?? "";
-    deliveryDate = widget.deliveryDate ?? "";
-    returnDate = widget.returnDate ?? "";
-    notFormatedDDate = DateFormat("dd/MM/yyyy").parse(deliveryDate);
-    notFormatedRDate = DateFormat("dd/MM/yyyy").parse(returnDate);
+    lists = widget.list;
+    indexs = widget.index;
+    setDefaultData();
+    setImage();
   }
 
   @override
@@ -69,183 +63,261 @@ class _EditOrderState extends State<EditOrder> {
             screenName: "Edit Order",
           ),
           Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: getWidth(0.04, context), vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Name : ",
-                  style: primaryStyle,
-                ),
-                Container(
-                  width: getWidth(0.65, context),
-                  child: textFieldWidget(
-                      "Name",
-                      nameController,
-                      false,
-                      false,
-                      Colors.grey.withOpacity(0.1),
-                      TextInputType.text,
-                      0,
-                      Colors.greenAccent,
-                      1),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: getWidth(0.04, context),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Mobile : ",
-                  style: primaryStyle,
-                ),
-                Container(
-                  width: getWidth(0.65, context),
-                  child: textFieldWidget(
-                      "Mobile Number",
-                      numberController,
-                      false,
-                      false,
-                      Colors.grey.withOpacity(0.1),
-                      TextInputType.number,
-                      0,
-                      Colors.greenAccent,
-                      1),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: getWidth(0.04, context), vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Remark :",
-                  style: primaryStyle,
-                ),
-                Container(
-                  width: getWidth(0.65, context),
-                  child: textFieldWidget(
-                      "Remark",
-                      remarkController,
-                      false,
-                      false,
-                      Colors.grey.withOpacity(0.1),
-                      TextInputType.text,
-                      0,
-                      Colors.greenAccent,
-                      1),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
             margin: EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                Text(
-                  "D Date",
-                  style: primaryStyle,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Name : ",
+                      style: primaryStyle,
+                    ),
+                    Container(
+                      width: getWidth(0.65, context),
+                      child: textFieldWidget(
+                          "Name",
+                          nameController,
+                          false,
+                          false,
+                          Colors.grey.withOpacity(0.1),
+                          TextInputType.text,
+                          0,
+                          Colors.greenAccent,
+                          1),
+                    )
+                  ],
                 ),
-                InkWell(
-                  onTap: () async {
-                    FocusScope.of(context).unfocus();
-                    pickedDate(context).then((value) {
-                      if (value != null) {
-                        notFormatedDDate = value;
-                        setState(() {
-                          deliveryDate = DateFormat('dd/MM/yyyy').format(value);
-                        });
-                      }
-                    });
-                  },
-                  child: Container(
-                    width: getWidth(0.65, context),
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.1),
-                    ),
-                    child: Row(
-                      children: [
-                        calenderIcon,
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          deliveryDate,
-                          style: primaryStyle,
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "R Date",
-                  style: primaryStyle,
+                SizedBox(
+                  height: 15,
                 ),
-                InkWell(
-                  onTap: () async {
-                    FocusScope.of(context).unfocus();
-                    pickedDate(context).then((value) {
-                      notFormatedRDate = value;
-                      if (value != null) {
-                        setState(() {
-                          returnDate = DateFormat('dd/MM/yyyy').format(value);
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Mobile : ",
+                      style: primaryStyle,
+                    ),
+                    Container(
+                      width: getWidth(0.65, context),
+                      child: textFieldWidget(
+                          "Mobile Number",
+                          numberController,
+                          false,
+                          false,
+                          Colors.grey.withOpacity(0.1),
+                          TextInputType.number,
+                          0,
+                          Colors.greenAccent,
+                          1),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Remark :",
+                      style: primaryStyle,
+                    ),
+                    Container(
+                      width: getWidth(0.65, context),
+                      child: textFieldWidget(
+                          "Remark",
+                          remarkController,
+                          false,
+                          false,
+                          Colors.grey.withOpacity(0.1),
+                          TextInputType.text,
+                          0,
+                          Colors.greenAccent,
+                          1),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "D Date",
+                      style: primaryStyle,
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        FocusScope.of(context).unfocus();
+                        pickedDate(context).then((value) {
+                          if (value != null) {
+                            notFormatedDDate = value;
+                            setState(() {
+                              deliveryDate =
+                                  DateFormat('dd/MM/yyyy').format(value);
+                            });
+                          }
                         });
-                      }
-                    });
-                  },
-                  child: Container(
-                    width: getWidth(0.65, context),
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.1),
-                    ),
-                    child: Row(
-                      children: [
-                        calenderIcon,
-                        SizedBox(
-                          width: 10,
+                      },
+                      child: Container(
+                        width: getWidth(0.65, context),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.1),
                         ),
-                        Text(
-                          returnDate,
-                          style: primaryStyle,
-                        )
-                      ],
+                        child: Row(
+                          children: [
+                            calenderIcon,
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              deliveryDate,
+                              style: primaryStyle,
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "R Date",
+                      style: primaryStyle,
                     ),
-                  ),
-                )
+                    InkWell(
+                      onTap: () async {
+                        FocusScope.of(context).unfocus();
+                        pickedDate(context).then((value) {
+                          notFormatedRDate = value;
+                          if (value != null) {
+                            setState(() {
+                              returnDate =
+                                  DateFormat('dd/MM/yyyy').format(value);
+                            });
+                          }
+                        });
+                      },
+                      child: Container(
+                        width: getWidth(0.65, context),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.1),
+                        ),
+                        child: Row(
+                          children: [
+                            calenderIcon,
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              returnDate,
+                              style: primaryStyle,
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Image 1",
+                      style: primaryStyle,
+                    ),
+                    image1 != null
+                        ? Container(
+                            width: getWidth(0.65, context),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: primary2Color)),
+                                  child: Image.file(
+                                    image1!,
+                                    height: 100,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        image1 = null;
+                                      });
+                                    },
+                                    child: cancelIcon)
+                              ],
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () {
+                              showImageOption(true);
+                            },
+                            child: imageContainer(context, "Pick Image"),
+                          )
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Image 2",
+                      style: primaryStyle,
+                    ),
+                    image2 != null
+                        ? Container(
+                            width: getWidth(0.65, context),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: primary2Color)),
+                                  child: Image.file(
+                                    image2!,
+                                    height: 100,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        image2 = null;
+                                      });
+                                    },
+                                    child: cancelIcon)
+                              ],
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () {
+                              showImageOption(false);
+                            },
+                            child: imageContainer(context, "Pick Image 2"),
+                          )
+                  ],
+                ),
               ],
             ),
           ),
@@ -275,6 +347,54 @@ class _EditOrderState extends State<EditOrder> {
     );
   }
 
+  void showImageOption(bool image1) {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                height: 15,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  _getFromGallery(ImageSource.gallery, image1);
+                },
+                child: modelSheetContainer("Gallery"),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  _getFromGallery(ImageSource.camera, image1);
+                },
+                child: modelSheetContainer("Camera"),
+              )
+            ],
+          );
+        });
+  }
+
+  _getFromGallery(ImageSource imageSource, bool isImage1) async {
+    var pickedFile = await ImagePicker().pickImage(source: imageSource);
+    if (pickedFile != null) {
+      setState(() {
+        isImage1 == true
+            ? image1 = File(pickedFile.path)
+            : image2 = File(pickedFile.path);
+      });
+      if (isImage1 == true) {
+        Uint8List? imageBytes = await image1?.readAsBytes(); //convert to bytes
+        binaryImage1 = base64.encode(imageBytes!);
+      } else {
+        Uint8List? imageBytes = await image2?.readAsBytes(); //convert to bytes
+        binaryImage2 = base64.encode(imageBytes!);
+      }
+    }
+  }
+
   Future<void> checkWifiForupdateOrder() async {
     getStringPreference('apiUrl').then((value) async {
       try {
@@ -282,7 +402,7 @@ class _EditOrderState extends State<EditOrder> {
           if (value.toString().startsWith("192")) {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
-                updateData(value, token, widget.id ?? "");
+                updateData(value, token, lists[indexs]['id'].toString());
                 // updateDetail(value, token, widget.lineId);
               } else {
                 dialog(context, "Connect to Showroom Network",
@@ -290,7 +410,7 @@ class _EditOrderState extends State<EditOrder> {
               }
             });
           } else {
-            updateData(value, token, widget.id ?? "");
+            updateData(value, token, lists[indexs]['id'].toString());
           }
         });
       } on SocketException catch (err) {
@@ -300,19 +420,35 @@ class _EditOrderState extends State<EditOrder> {
   }
 
   Future<void> updateData(String apiUrl, String token, String orderId) async {
+    Map tempBody;
+    Map body;
     String name = nameController.text;
     String number = numberController.text;
     String remark = remarkController.text;
     String dDate = DateFormat('MM/dd/yyyy').format(notFormatedDDate);
     String rDate =
         DateFormat('MM/dd/yyyy').format(notFormatedRDate ?? DateTime.now());
-    var body = {
+    body = {
       'customer_name': name,
       'mobile1': number,
       'remarks': remark,
       'delivery_date': dDate,
       'return_date': rDate
     };
+    if (image1 != null) {
+      tempBody = {'document_1': binaryImage1};
+      body.addAll(tempBody);
+    } else {
+      tempBody = {'document_1': null};
+      body.addAll(tempBody);
+    }
+    if (image2 != null) {
+      tempBody = {'document_2': binaryImage2};
+      body.addAll(tempBody);
+    } else {
+      tempBody = {'document_2': null};
+      body.addAll(tempBody);
+    }
     final response = await http.put(
         Uri.parse("http://$apiUrl/api/rental.rental/$orderId"),
         body: jsonEncode(body),
@@ -334,11 +470,40 @@ class _EditOrderState extends State<EditOrder> {
         headers: {'Access-Token': token, 'Content-Type': 'application/http'});
     var data = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      myGetxController.quotationData.removeAt(widget.index ?? 0);
-      myGetxController.quotationData.insert(widget.index ?? 0, data);
+      myGetxController.quotationData.removeAt(widget.index);
+      myGetxController.quotationData.insert(widget.index, data);
       Navigator.pop(context);
     } else {
       dialog(context, "Error In Getting Data", Colors.red.shade300);
     }
+  }
+
+  void setDefaultData() {
+    nameController.text = lists[indexs]['customer_name'];
+    numberController.text = lists[indexs]['mobile1'];
+    remarkController.text = lists[indexs]['remarks'] ?? "";
+    deliveryDate = DateFormat("dd/MM/yyyy")
+        .format(DateTime.parse(lists[indexs]['delivery_date']));
+    returnDate = DateFormat("dd/MM/yyyy")
+        .format(DateTime.parse(lists[indexs]['return_date']));
+    notFormatedDDate = DateFormat("dd/MM/yyyy").parse(deliveryDate);
+    notFormatedRDate = DateFormat("dd/MM/yyyy").parse(returnDate);
+  }
+
+  setImage() async {
+    final tempDir = await getTemporaryDirectory();
+    if (lists[indexs]['document_1'] != null) {
+      binaryImage1 = lists[indexs]['document_1'];
+      image1 = await File('${tempDir.path}/image1.png').create();
+      image1?.writeAsBytesSync(
+          Base64Decoder().convert(lists[indexs]['document_1'].toString()));
+    }
+    if (lists[indexs]['document_2'] != null) {
+      binaryImage2 = lists[indexs]['document_2'];
+      image2 = await File('${tempDir.path}/image2.png').create();
+      image2?.writeAsBytesSync(
+          Base64Decoder().convert(lists[indexs]['document_2'].toString()));
+    }
+    setState(() {});
   }
 }

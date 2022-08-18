@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:gj5_rental/screen/cancel_order/cancel_order.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Utils/utils.dart';
@@ -22,6 +23,7 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   ScrollController scrollController = ScrollController();
+  bool noData = false;
 
   @override
   void initState() {
@@ -67,7 +69,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         ARService: false,
                       );
                     })
-                : CenterCircularProgressIndicator()),
+                : noData == false
+                    ? CenterCircularProgressIndicator()
+                    : centerNoOrderText("No Data Found")),
           ),
         ],
       ),
@@ -115,7 +119,9 @@ class _ProductDetailState extends State<ProductDetail> {
         myGetxController.productDetailList.addAll(data['results']);
       } else {
         if (myGetxController.productDetailList.isEmpty) {
-          dialog(context, "No Data Found !", Colors.red.shade300);
+          setState(() {
+            noData = true;
+          });
         }
       }
     } else {

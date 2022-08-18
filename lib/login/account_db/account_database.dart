@@ -27,7 +27,7 @@ class AccountDatabase {
     Database? db = await database;
     await db
         ?.insert('ACCOUNT', accountModel.toJson());
-  }
+    }
 
   dbSelect() async {
     Database? db = await database;

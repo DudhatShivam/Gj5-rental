@@ -11,7 +11,6 @@ class MyGetxController extends GetxController {
   //About us
   RxList<dynamic> showRoomList = [].obs;
 
-
   //Notification screen
   RxList<dynamic> notificationList = [].obs;
 
@@ -48,6 +47,7 @@ class MyGetxController extends GetxController {
   RxList<dynamic> mainProductList = [].obs;
   RxList<dynamic> mainProductDetailList = [].obs;
 
+
   //delivery screen
   RxList<dynamic> deliveryScreenOrderList = [].obs;
   RxList<dynamic> deliveryScreenFilteredOrderList = [].obs;
@@ -58,6 +58,8 @@ class MyGetxController extends GetxController {
   RxList<dynamic> selectedOrderLineList = [].obs;
   RxList<dynamic> selectedOrderLineSubProductList = [].obs;
   RxList<dynamic> deliverySelectedExtraProductList = [].obs;
+  RxBool noDataInDeliveryScreen = false.obs;
+
 
   //OrderLine Screen
   RxList<dynamic> orderLineScreenList = [].obs;
@@ -67,6 +69,7 @@ class MyGetxController extends GetxController {
   RxList<dynamic> groupByDetailList = [].obs;
   RxList<dynamic> filteredListOrderLine = [].obs;
   RxBool isShowFilteredDataInOrderLine = false.obs;
+  RxList<dynamic> orderLineFilteredTag = [].obs;
 
   //productDetail screen
   RxList<dynamic> productDetailList = [].obs;
@@ -81,6 +84,7 @@ class MyGetxController extends GetxController {
   RxList<dynamic> receiveSelectedOrderLineList = [].obs;
   RxList<dynamic> receiveSelectedSubProductList = [].obs;
   RxList<dynamic> receiveSelectedExtraProductList = [].obs;
+  RxBool noDataInReceiveScreen = false.obs;
 
   //ServiceLineScreen
   RxList<dynamic> serviceLineScreenList = [].obs;
@@ -89,6 +93,7 @@ class MyGetxController extends GetxController {
   RxBool serviceLineIsShowFilteredData = false.obs;
   RxBool serviceLineIsShowGroupByData = false.obs;
   RxBool serviceLineIsExpand = false.obs;
+  RxBool noDataInServiceLineScreen = false.obs;
 
   //CancelOrderScreen
   RxList<dynamic> cancelOrderList = [].obs;
@@ -102,4 +107,5 @@ class MyGetxController extends GetxController {
   //extra Product Screen
   RxList<dynamic> extraProductList = [].obs;
   RxList<dynamic> extraProductFilteredList = [].obs;
+  RxBool noDataInExtraProductScreen=false.obs;
 }

@@ -437,7 +437,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
               ),
             ),
             isOrderScreen == true &&
-                    orderDetailsList[index]['state'] == "waiting"
+                    orderDetailsList[index]['state']  == "waiting"
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

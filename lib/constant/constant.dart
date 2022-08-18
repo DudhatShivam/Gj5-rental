@@ -258,14 +258,14 @@ numberValidatorTextfield(
         filled: true,
         fillColor: Colors.grey.withOpacity(0.1),
         border: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-        ),
+            borderSide: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(10)),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-        ),
+            borderSide: BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(10)),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: primary2Color),
-        )),
+            borderSide: BorderSide(color: primary2Color),
+            borderRadius: BorderRadius.circular(10))),
   );
 }
 
@@ -649,7 +649,6 @@ void checkForOrderScreenProductDetail() {
   });
 }
 
-
 Future<void> checkWlanForDataOrderDetailScreen(
     BuildContext context, int id) async {
   getStringPreference('apiUrl').then((apiUrl) async {
@@ -888,7 +887,7 @@ popUpForWaitingThumbInOrderScreen(
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.green.shade300),
+                              backgroundColor: Colors.green.shade300),
                           onPressed: () {
                             checkWlanForConfirmOrderThumbAndWaiting(
                                 orderId,
@@ -933,6 +932,7 @@ submitReasonForWaiting(
         'Access-Token': token,
       });
   if (response.statusCode == 200) {
+
     isOrderLineScreen == true
         ? isShowFromGroupBy == true
             ? setDataOfUpdatedIdInGroupByListOrderLineScreen(
@@ -948,12 +948,12 @@ submitReasonForWaiting(
 
 get5daysBeforeDate() {
   DateTime dateTime = DateTime.now().subtract(Duration(days: 5));
-  return DateFormat('MM/dd/yyyy').format(dateTime);
+  return DateFormat('dd/MM/yyyy').format(dateTime);
 }
 
 get7DaysAfterDate() {
   DateTime dateTime2 = DateTime.now().add(Duration(days: 7));
-  return DateFormat('MM/dd/yyyy').format(dateTime2);
+  return DateFormat('dd/MM/yyyy').format(dateTime2);
 }
 
 orderDetailContainer() {
@@ -997,7 +997,9 @@ Color statusBackGroundColor(List list, int index) {
           : list[index]['state'] == 'return' ||
                   list[index]['state'] == 'pending'
               ? color = dangerColor.withOpacity(0.08)
-              : color = defaultColor.withOpacity(0.08);
+              : list[index]['state'] == 'ready'
+                  ? color = successColor.withOpacity(0.15)
+                  : color = defaultColor.withOpacity(0.08);
   return color;
 }
 
@@ -1010,6 +1012,8 @@ Color statusColor(List list, int index) {
           : list[index]['state'] == 'return' ||
                   list[index]['state'] == 'pending'
               ? color = dangerColor
-              : color = defaultColor;
+              : list[index]['state'] == 'ready'
+                  ? color = successColor
+                  : color = defaultColor;
   return color;
 }

@@ -16,10 +16,10 @@ import '../main.dart';
 getHeight(double height, BuildContext context) {
   return MediaQuery.of(context).size.height * height;
 }
+
 getWidth(double width, BuildContext context) {
   return MediaQuery.of(context).size.width * width;
 }
-
 
 bool isFromAnotherScreen = false;
 int editQuotationCount = 0;
@@ -38,6 +38,7 @@ Color defaultColor = Colors.black;
 Color stitchingColor = Color(0xffDEA551);
 
 int orderScreenOffset = 0;
+int filterOrderScreenOffset = 0;
 int deliverScreenOffset = 0;
 int quotationOffset = 0;
 int receiveScreenOffset = 0;
@@ -59,7 +60,11 @@ makingPhoneCall(String PhoneNumber, BuildContext context) async {
 
 popFunction(BuildContext context, isFromAnotherScreen) async {
   if (isFromAnotherScreen) {
-    pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
+    pushRemoveUntilMethod(
+        context,
+        HomeScreen(
+          userId: 0,
+        ));
   } else {
     Navigator.of(context).pop();
   }
@@ -82,6 +87,7 @@ pushRemoveUntilMethod(BuildContext context, Widget name) {
       MaterialPageRoute(builder: (context) => name),
       (Route<dynamic> route) => false);
 }
+
 TextStyle contactusTitleText = TextStyle(
     color: Color(0xff9C5789), fontWeight: FontWeight.w500, fontSize: 12);
 TextStyle dialogTitleStyle =

@@ -262,7 +262,7 @@ class _BookingStatusState extends State<BookingStatus> {
                             });
                             checkWlanForCheckStatus();
                           },
-                          child: Text("CHECK STATUS"),
+                          child: Text("CHECK STATUS / BOOK ORDER"),
                         ))
                     : Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
@@ -282,7 +282,6 @@ class _BookingStatusState extends State<BookingStatus> {
     myGetxController.isMainProductTrueProductList.forEach((element) {
       if (element['default_code'] == value.trim()) {
         id = element['id'];
-        print(id);
         productRent = element['rent'];
       }
     });

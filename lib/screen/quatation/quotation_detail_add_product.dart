@@ -401,8 +401,6 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
         headers: {
           'Access-Token': token,
         });
-    print(response.body);
-    print(response.statusCode);
     final data = jsonDecode(response.body);
     if (data['status'] == 1) {
       checkQuotationAndOrderDetailData(context, orderId ?? 0, false);

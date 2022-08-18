@@ -66,7 +66,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
     deliveryNotFormatedDate = new DateFormat("dd/MM/yyy").parse(deliveryDate);
     returnNotFormatedDate = DateFormat("dd/MM/yyy").parse(returnDate);
     remarkController.text = widget.remark ?? "";
-    rentController.text = widget.rent.toString() ?? "0";
+    rentController.text = widget.rent.toString();
     wholeSubProductList.addAll(widget.wholeSubProductList ?? []);
     checkWifiForupdateDetail(false);
   }

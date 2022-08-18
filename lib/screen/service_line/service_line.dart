@@ -14,7 +14,9 @@ import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
+import '../cancel_order/cancel_order.dart';
 import '../service/service_detail_card.dart';
+
 class ServiceLineScreen extends StatefulWidget {
   const ServiceLineScreen({Key? key}) : super(key: key);
 
@@ -55,9 +57,8 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
   @override
   void initState() {
     super.initState();
-    if (myGetxController.serviceLineScreenList.isEmpty) {
-      checkWlanForServiceLineData(false);
-    }
+    myGetxController.serviceLineScreenList.clear();
+    checkWlanForServiceLineData(false);
     showDefaultData();
   }
 
@@ -378,6 +379,8 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: primary2Color),
                             onPressed: () {
+                              myGetxController.noDataInServiceLineScreen.value =
+                                  false;
                               checkWlanForServiceLineData(true);
                               setState(() {
                                 isExpandSearch = false;
@@ -483,6 +486,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                                   isServiceLineSceen: true,
                                                   isFromNotificationScreen:
                                                       false,
+                                                  isFromServiceScreen: false,
                                                 );
                                               })
                                           : Container()
@@ -511,6 +515,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                     isFromNotificationScreen: false,
                                     index: index,
                                     isServiceLineSceen: true,
+                                    isFromServiceScreen: false,
                                   );
                                 },
                               )
@@ -538,10 +543,15 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                     isFromNotificationScreen: false,
                                     index: index,
                                     isServiceLineSceen: true,
+                                    isFromServiceScreen: false,
                                   );
                                 },
                               )
-                            : CenterCircularProgressIndicator()))
+                            : myGetxController
+                                        .noDataInServiceLineScreen.value ==
+                                    false
+                                ? CenterCircularProgressIndicator()
+                                : centerNoOrderText("No Service Line")))
           ],
         ));
   }
@@ -587,7 +597,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
       if (data['count'] > 0) {
         myGetxController.serviceLineScreenList.addAll(data['results']);
       } else {
-        dialog(context, "No Data Found !", Colors.red.shade300);
+        myGetxController.noDataInServiceLineScreen.value = true;
       }
     } else {
       dialog(context, "Something Went Wrong", Colors.red.shade300);
@@ -682,6 +692,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
   }
 
   showDefaultData() {
+    myGetxController.noDataInServiceLineScreen.value = false;
     myGetxController.serviceLineFilteredList.clear();
     myGetxController.serviceLineIsShowFilteredData.value = false;
     myGetxController.serviceLineIsShowGroupByData.value = false;

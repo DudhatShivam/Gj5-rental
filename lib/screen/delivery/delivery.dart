@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:gj5_rental/screen/cancel_order/cancel_order.dart';
 import 'package:gj5_rental/screen/delivery/delivery_detail.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,10 +36,8 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
   @override
   void initState() {
     super.initState();
-    myGetxController.deliveryScreenFilteredOrderList.clear();
-    if (myGetxController.deliveryScreenOrderList.isEmpty) {
-      checkWlanForgetDeliveryData(false);
-    }
+    clearList();
+    checkWlanForgetDeliveryData(false);
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -64,7 +63,11 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                   children: [
                     InkWell(
                         onTap: () {
-                          pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
+                          pushRemoveUntilMethod(
+                              context,
+                              HomeScreen(
+                                userId: 0,
+                              ));
                         },
                         child: FadeInLeft(
                           child: backArrowIcon,
@@ -85,9 +88,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                     InkWell(
                         onTap: () {
                           deliverScreenOffset = 0;
-                          myGetxController.deliveryScreenFilteredOrderList
-                              .clear();
-                          myGetxController.deliveryScreenOrderList.clear();
+                          clearList();
                           checkWlanForgetDeliveryData(false);
                         },
                         child: FadeInRight(
@@ -217,6 +218,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                         onPressed: () {
                           myGetxController.deliveryScreenFilteredOrderList
                               .clear();
+                          myGetxController.noDataInDeliveryScreen.value = false;
                           setState(() {
                             isSearchLoadData = true;
                             isExpandSearch = false;
@@ -286,7 +288,9 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                         );
                       },
                     )
-              : CenterCircularProgressIndicator()),
+              : myGetxController.noDataInDeliveryScreen.value == false
+                  ? CenterCircularProgressIndicator()
+                  : centerNoOrderText("No Order")),
         )
       ],
     ));
@@ -342,7 +346,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
         myGetxController.deliveryScreenOrderList.addAll(data['results']);
       } else {
         if (deliverScreenOffset <= 0) {
-          dialog(context, "No Data Found !", Colors.red.shade300);
+          myGetxController.noDataInDeliveryScreen.value == true;
         }
       }
     } else {
@@ -402,5 +406,11 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
       });
       dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
+  }
+
+  void clearList() {
+    myGetxController.deliveryScreenFilteredOrderList.clear();
+    myGetxController.deliveryScreenOrderList.clear();
+    myGetxController.noDataInDeliveryScreen.value = false;
   }
 }

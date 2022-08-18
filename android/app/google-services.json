@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:124824952931:android:c2425b776669588bcfd856",
         "android_client_info": {
-          "package_name": "com.example.gj5_rental"
+          "package_name": "com.lax.gj5.rental"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "124824952931-5h5ea2g6t1j89r5prpncmsp8bv4v9c2t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.gj5_rental",
+            "package_name": "com.lax.gj5.rental",
             "certificate_hash": "a132911213ed26afab9260ee13332d898f0eb24b"
           }
         },

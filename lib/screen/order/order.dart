@@ -44,20 +44,31 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
   TextEditingController numberController = TextEditingController();
   bool isSearchLoadData = false;
   ScrollController scrollController = ScrollController();
+  ScrollController filterScrollController = ScrollController();
   bool isExpandSearch = false;
+  bool? isToday;
+  bool? isBook;
 
   @override
   void initState() {
     super.initState();
     myGetxController.filteredOrderList.clear();
-    if (myGetxController.orderData.isEmpty) {
-      getData(false);
-    }
+    myGetxController.orderData.clear();
+    orderScreenOffset = 0;
+    getData(false, null, null,false);
+
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
         orderScreenOffset = orderScreenOffset + 5;
-        getData(false);
+        getData(false, null, null,false);
+      }
+    });
+    filterScrollController.addListener(() {
+      if (filterScrollController.position.pixels ==
+          filterScrollController.position.maxScrollExtent) {
+        filterOrderScreenOffset = filterOrderScreenOffset + 5;
+        getData(true, isToday, isBook,true);
       }
     });
   }
@@ -78,7 +89,11 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                 children: [
                   InkWell(
                       onTap: () {
-                        pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
+                        pushRemoveUntilMethod(
+                            context,
+                            HomeScreen(
+                              userId: 0,
+                            ));
                       },
                       child: FadeInLeft(child: backArrowIcon)),
                   SizedBox(
@@ -99,7 +114,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         orderScreenOffset = 0;
                         myGetxController.orderData.clear();
                         myGetxController.filteredOrderList.clear();
-                        getData(false);
+                        getData(false, isToday, isBook,false);
                       },
                       child: FadeInRight(
                           child: Padding(
@@ -219,19 +234,70 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: primary2Color),
-                        onPressed: () {
-                          setState(() {
-                            isSearchLoadData = true;
-                            isExpandSearch = false;
-                          });
-                          getData(true);
-                        },
-                        child: Text("Search")),
+                  child: FittedBox(
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white),
+                            onPressed: () {
+                              clearController();
+                              getData(true, isToday = true, isBook,false);
+                            },
+                            child: Text(
+                              "Today Book",
+                              style: TextStyle(
+                                  color: primary2Color,
+                                  fontWeight: FontWeight.w500),
+                            )),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white),
+                            onPressed: () {
+                              clearController();
+                              getData(true, isToday = true, isBook = true,false);
+                            },
+                            child: Text("Today deliver",
+                                style: TextStyle(color: primary2Color))),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white),
+                            onPressed: () {
+                              clearController();
+                              getData(true, isToday = false, isBook = true,false);
+                            },
+                            child: Text("Tomorrow deliver",
+                                style: TextStyle(color: primary2Color))),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          height: 48,
+                          width: 100,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: primary2Color),
+                              onPressed: () {
+                                setState(() {
+                                  isSearchLoadData = true;
+                                  isExpandSearch = false;
+                                });
+                                getData(true, isToday, isBook,false);
+                              },
+                              child: Text(
+                                "Search",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w700),
+                              )),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -268,8 +334,8 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                       padding: isExpandSearch == false
                           ? EdgeInsets.symmetric(vertical: 15)
                           : EdgeInsets.zero,
-                      physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
+                      controller: filterScrollController,
                       shrinkWrap: true,
                       itemCount: myGetxController.filteredOrderList.length,
                       itemBuilder: (context, index) {
@@ -293,7 +359,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     ));
   }
 
-  getData(bool isSearchData) async {
+  getData(bool isSearchData, bool? today, bool? deliver,bool isFromFilterScrollController) async {
     getStringPreference('apiUrl').then((apiUrl) async {
       try {
         getStringPreference('accessToken').then((token) async {
@@ -301,7 +367,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
                 isSearchData == true
-                    ? getSearchData(apiUrl, token)
+                    ? getSearchData(apiUrl, token, today, deliver,isFromFilterScrollController)
                     : getOrderData(apiUrl, token);
               } else {
                 dialog(context, "Connect to Showroom Network",
@@ -310,7 +376,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
             });
           } else {
             isSearchData == true
-                ? getSearchData(apiUrl, token)
+                ? getSearchData(apiUrl, token, today, deliver,isFromFilterScrollController)
                 : getOrderData(apiUrl, token);
           }
         });
@@ -327,10 +393,10 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
             DateTime.now().subtract(Duration(days: int.parse(past)));
         DateTime dateTime2 =
             DateTime.now().add(Duration(days: int.parse(next)));
-        String bookingDate = DateFormat('MM/dd/yyyy').format(dateTime1);
-        String deliveryDate = DateFormat('MM/dd/yyyy').format(dateTime2);
+        String bookingDate = DateFormat('dd/MM/yyyy').format(dateTime1);
+        String deliveryDate = DateFormat('dd/MM/yyyy').format(dateTime2);
         String domain =
-            "[('state' , 'not in' , ('draft','cancel','done')), ('date' , '>=' , '$bookingDate'), ('delivery_date' , '<=' , '$deliveryDate')]";
+            "[('state' , 'not in' , ('draft','cancel','done')),  ('date' , '>=' , '$bookingDate'), ('delivery_date' , '<=' , '$deliveryDate')]";
         var params = {
           'filters': domain.toString(),
           'limit': '5',
@@ -342,8 +408,8 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
         final response = await http.get(finalUri, headers: {
           'Access-Token': accessToken,
           'Content-Type': 'application/http',
-          'Connection': 'keep-alive'
         });
+        print(response.statusCode);
         Map<String, dynamic> data = await jsonDecode(response.body);
         if (data['count'] != 0) {
           myGetxController.orderData.addAll(data['results']);
@@ -356,7 +422,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     });
   }
 
-  getSearchData(String apiUrl, String token) async {
+  getSearchData(String apiUrl, String token, bool? today, bool? deliver,bool isFromFilterScrollController) async {
     String? domain;
     List datas = [];
 
@@ -372,16 +438,36 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
       datas.add(
           "('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done'))");
     }
+    if (deliver == true) {
+      if (today == true) {
+        String date = DateFormat('dd/MM/yyyy').format(DateTime.now());
+        domain =
+            "[('delivery_date', '=', '$date'),('state' , 'not in' , ('cancel','done'))]";
+      } else if (today == false) {
+        String date = DateFormat('dd/MM/yyyy')
+            .format(DateTime.now().add(Duration(days: 1)));
+        domain =
+            "[('delivery_date', '=', '$date'),('state' , 'not in' , ('cancel','done'))]";
+      }
+    } else if (today == true) {
+      String date = DateFormat('dd/MM/yyyy').format(DateTime.now());
+      domain =
+          "[('date', '=', '$date'),('state' , 'not in' , ('cancel','done'))]";
+    }
+
     if (datas.length == 1) {
       domain = "[${datas[0]}]";
     } else if (datas.length == 2) {
       domain = "['|' , ${datas[0]} , ${datas[1]}]";
     } else if (datas.length == 3) {
       domain = "['|' , '|', ${datas[0]} , ${datas[1]} , ${datas[2]}]";
-    } else {
-      myGetxController.filteredOrderList.value = [];
     }
-    var params = {'filters': domain.toString()};
+    var params = {
+      'filters': domain.toString(),
+      'limit': '5',
+      'offset': '$filterOrderScreenOffset',
+      'order': 'id desc'
+    };
     Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri,
@@ -389,7 +475,9 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
-        myGetxController.filteredOrderList.clear();
+        if(isFromFilterScrollController == false){
+          myGetxController.filteredOrderList.clear();
+        }
         setState(() {
           isSearchLoadData = false;
         });
@@ -398,7 +486,9 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
         setState(() {
           isSearchLoadData = false;
         });
-        dialog(context, "No Order Found", Colors.red.shade300);
+        if (filterOrderScreenOffset <= 0) {
+          dialog(context, "No Order Found", Colors.red.shade300);
+        }
       }
     } else {
       setState(() {
@@ -406,5 +496,17 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
       });
       dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
+  }
+
+  void clearController() {
+    isSearchLoadData = true;
+    isExpandSearch = false;
+    isBook = null;
+    isToday = null;
+    numberController.clear();
+    orderNumberController.clear();
+    nameController.clear();
+    filterOrderScreenOffset=0;
+    setState(() {});
   }
 }

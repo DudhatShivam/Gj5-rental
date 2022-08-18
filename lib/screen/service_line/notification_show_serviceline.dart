@@ -50,6 +50,7 @@ class _NotificationServiceLineState extends State<NotificationServiceLine> {
                     index: index,
                     isServiceLineSceen: true,
                     isFromNotificationScreen: true,
+                    isFromServiceScreen: false,
                   );
                 })
           ],

@@ -13,13 +13,16 @@ class ServiceDetailCard extends StatelessWidget {
   final int index;
   final bool? isServiceLineSceen;
   final bool isFromNotificationScreen;
+  final bool isFromServiceScreen;
+  final int? serviceLineId;
 
   const ServiceDetailCard(
       {Key? key,
       required this.list,
       required this.index,
       this.isServiceLineSceen,
-      required this.isFromNotificationScreen})
+      required this.isFromNotificationScreen,
+      required this.isFromServiceScreen, this.serviceLineId})
       : super(key: key);
 
   @override
@@ -41,6 +44,8 @@ class ServiceDetailCard extends StatelessWidget {
                           return ReceiveServiceLine(
                             list: list,
                             index: index,
+                            isServiceScreen: isFromServiceScreen,
+                            serviceLineId: serviceLineId,
                           );
                         });
                   },

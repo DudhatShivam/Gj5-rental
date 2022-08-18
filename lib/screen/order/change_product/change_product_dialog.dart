@@ -301,12 +301,6 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
     String remark = remarkController.text;
     String rDate =
         DateFormat('MM/dd/yyyy').format(notFormatedRDate ?? DateTime.now());
-    print(orderId);
-    print(widget.productId);
-    print(newProductId);
-    print(dDate);
-    print(rDate);
-    print(rent);
     final response = await http.put(
         Uri.parse(
             "http://$apiUrl/api/rental.rental/$orderId/change_product_from_api?selected_product_id=${widget.productId}&product_id=$newProductId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark"),

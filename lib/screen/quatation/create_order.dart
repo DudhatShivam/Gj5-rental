@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,9 @@ import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:gj5_rental/screen/quatation/quatation.dart';
 import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:ndialog/ndialog.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -39,11 +42,16 @@ class _CreateOrderState extends State<CreateOrder> {
   bool initialValidRDate = true;
   bool isValidDDate = true;
   bool isValidRDate = true;
-  bool isBtnLoading = false;
+  File? image1;
+  File? image2;
+  String? binaryImage1;
+  String? binaryImage2;
 
   @override
   void initState() {
-    super.initState();
+    nameController.text = "Rajnik";
+    numberController.text = "9925286545";
+    addressController.text = "Katargam";
   }
 
   @override
@@ -57,7 +65,7 @@ class _CreateOrderState extends State<CreateOrder> {
             allScreenInitialSizedBox(context),
             ScreenAppBar(screenName: "Create Order"),
             SizedBox(
-              height: 25,
+              height: 15,
             ),
             Padding(
               padding:
@@ -91,7 +99,7 @@ class _CreateOrderState extends State<CreateOrder> {
                           ],
                         ), //name
                         SizedBox(
-                          height: 25,
+                          height: 15,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,7 +124,7 @@ class _CreateOrderState extends State<CreateOrder> {
                           ],
                         ),
                         SizedBox(
-                          height: 25,
+                          height: 15,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -133,7 +141,7 @@ class _CreateOrderState extends State<CreateOrder> {
                           ],
                         ),
                         SizedBox(
-                          height: 25,
+                          height: 15,
                         ),
                         //number
                       ],
@@ -156,12 +164,12 @@ class _CreateOrderState extends State<CreateOrder> {
                     ],
                   ),
                   SizedBox(
-                    height: 25,
+                    height: 15,
                   ),
                   remarkContainer(context, remarkController, 0.65, 0,
                       MainAxisAlignment.spaceBetween),
                   SizedBox(
-                    height: 25,
+                    height: 15,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,7 +187,7 @@ class _CreateOrderState extends State<CreateOrder> {
                               setState(() {
                                 isValidDDate = true;
                                 initialValidDDate = true;
-                                deliveryDate = DateFormat('MM/dd/yyyy')
+                                deliveryDate = DateFormat('dd/MM/yyyy')
                                     .format(deliveryNotFormatedDate);
                                 DformatedDate = DateFormat('dd/MM/yyyy')
                                     .format(deliveryNotFormatedDate);
@@ -190,7 +198,7 @@ class _CreateOrderState extends State<CreateOrder> {
                         child: Container(
                           width: getWidth(0.65, context),
                           padding: EdgeInsets.symmetric(horizontal: 10),
-                          height: 48,
+                          height: 45,
                           decoration: BoxDecoration(
                             border: isValidDDate == true &&
                                     initialValidDDate == true
@@ -215,7 +223,7 @@ class _CreateOrderState extends State<CreateOrder> {
                     ],
                   ),
                   SizedBox(
-                    height: 25,
+                    height: 15,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -233,7 +241,7 @@ class _CreateOrderState extends State<CreateOrder> {
                               setState(() {
                                 isValidRDate = true;
                                 initialValidRDate = true;
-                                returnDate = DateFormat('MM/dd/yyyy')
+                                returnDate = DateFormat('dd/MM/yyyy')
                                     .format(returnNotFormatedDate!);
                                 RformatedDate = DateFormat('dd/MM/yyyy')
                                     .format(returnNotFormatedDate!);
@@ -244,7 +252,7 @@ class _CreateOrderState extends State<CreateOrder> {
                         child: Container(
                           width: getWidth(0.65, context),
                           padding: EdgeInsets.symmetric(horizontal: 10),
-                          height: 48,
+                          height: 45,
                           decoration: BoxDecoration(
                             border: isValidRDate == true &&
                                     initialValidRDate == true
@@ -268,32 +276,119 @@ class _CreateOrderState extends State<CreateOrder> {
                       )
                     ],
                   ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Image 1 : ",
+                        style: primaryStyle,
+                      ),
+                      image1 == null
+                          ? InkWell(
+                              onTap: () {
+                                showImageOption(true);
+                              },
+                              child: imageContainer(context, "Pick Image"),
+                            )
+                          : Container(
+                              width: getWidth(0.65, context),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: primary2Color)),
+                                    child: Image.file(
+                                      image1!,
+                                      height: 100,
+                                      width: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          image1 = null;
+                                        });
+                                      },
+                                      child: cancelIcon)
+                                ],
+                              ),
+                            )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Image 2 : ",
+                        style: primaryStyle,
+                      ),
+                      image2 == null
+                          ? InkWell(
+                              onTap: () {
+                                showImageOption(false);
+                              },
+                              child: imageContainer(context, "Pick Image 2"),
+                            )
+                          : Container(
+                              width: getWidth(0.65, context),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: primary2Color)),
+                                    child: Image.file(
+                                      image2!,
+                                      height: 100,
+                                      width: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        image2 = null;
+                                      });
+                                    },
+                                    child: cancelIcon,
+                                  )
+                                ],
+                              ),
+                            )
+                    ],
+                  ),
                 ],
               ),
             ),
-            isBtnLoading == false
-                ? Container(
-                    width: double.infinity,
-                    height: 45,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 25),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: primary2Color),
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() == true &&
-                              nameController.text.isNotEmpty &&
-                              numberController.text.isNotEmpty &&
-                              addressController.text.isNotEmpty) {
-                            checkValidation();
-                          }
-                        },
-                        child: Text("CREATE ORDER")),
-                  )
-                : Padding(
-                    padding: EdgeInsets.all(25),
-                    child: CenterCircularProgressIndicator(),
-                  ),
+            Container(
+              width: double.infinity,
+              height: 45,
+              margin: const EdgeInsets.all(15),
+              child: ElevatedButton(
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: primary2Color),
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() == true &&
+                        nameController.text.isNotEmpty &&
+                        numberController.text.isNotEmpty &&
+                        addressController.text.isNotEmpty) {
+                      checkValidation();
+                    }
+                  },
+                  child: Text("CREATE ORDER")),
+            ),
             Padding(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom + 10))
@@ -351,10 +446,13 @@ class _CreateOrderState extends State<CreateOrder> {
   }
 
   Future<void> createOrder(String apiUrl, String token) async {
+    CustomProgressDialog progressDialog =
+        CustomProgressDialog(context, blur: 10, dismissable: false);
+    progressDialog.setLoadingWidget(CenterCircularProgressIndicator());
+    progressDialog.show();
     MyGetxController myGetxController = Get.find();
-    setState(() {
-      isBtnLoading = true;
-    });
+    Map body;
+    Map tempBody;
     final partnerIdResponse =
         await http.post(Uri.parse("http://$apiUrl/api/res.customer"),
             headers: {'Access-Token': token},
@@ -364,30 +462,39 @@ class _CreateOrderState extends State<CreateOrder> {
               'address': addressController.text
             }));
     Map data = jsonDecode(partnerIdResponse.body);
-    var body = {
+    body = {
       'partner_id': data['id'],
       'mobile1': numberController.text,
       'mobile2': number2Controller.text,
       'delivery_address': addressController.text,
       'delivery_date': deliveryDate,
       'return_date': returnDate,
-      'remarks': remarkController.text
+      'remarks': remarkController.text,
     };
+    if (image1 != null) {
+      tempBody = {'document_1': binaryImage1};
+      body.addAll(tempBody);
+    }
+    if (image2 != null) {
+      tempBody = {'document_2': binaryImage2};
+      body.addAll(tempBody);
+    }
+    print(deliveryDate);
+    print(returnDate);
     final response =
         await http.post(Uri.parse("http://$apiUrl/api/rental.rental"),
             headers: {
               'Access-Token': token,
             },
             body: jsonEncode(body));
-
     Map datas = jsonDecode(response.body);
-    setState(() {
-      isBtnLoading = false;
-    });
+    print(response.body);
+
     if (response.statusCode == 200) {
       myGetxController.quotationData.clear();
       quotationOffset = 0;
       getDraftOrderData(context, apiUrl, token, 0).whenComplete(() {
+        progressDialog.dismiss();
         pushMethod(
             context,
             QuatationDetailScreen(
@@ -396,7 +503,94 @@ class _CreateOrderState extends State<CreateOrder> {
             ));
       });
     } else {
+      progressDialog.dismiss();
       dialog(context, "Error in Order Creation !", Colors.red.shade300);
     }
   }
+
+  void showImageOption(bool image1) {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                height: 15,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  _getFromGallery(ImageSource.gallery, image1);
+                },
+                child: modelSheetContainer("Gallery"),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  _getFromGallery(ImageSource.camera, image1);
+                },
+                child: modelSheetContainer("Camera"),
+              )
+            ],
+          );
+        });
+  }
+
+  _getFromGallery(ImageSource imageSource, bool isImage1) async {
+    var pickedFile = await ImagePicker().pickImage(source: imageSource);
+    if (pickedFile != null) {
+      setState(() {
+        isImage1 == true
+            ? image1 = File(pickedFile.path)
+            : image2 = File(pickedFile.path);
+      });
+      if (isImage1 == true) {
+        Uint8List? imageBytes = await image1?.readAsBytes(); //convert to bytes
+        binaryImage1 = base64.encode(imageBytes!);
+      } else {
+        Uint8List? imageBytes = await image2?.readAsBytes(); //convert to bytes
+        binaryImage2 = base64.encode(imageBytes!);
+      }
+    }
+  }
+}
+
+modelSheetContainer(String text) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+    alignment: Alignment.center,
+    height: 50,
+    width: double.infinity,
+    decoration: BoxDecoration(
+        border: Border.all(color: primary2Color.withOpacity(0.5), width: 0.8),
+        color: primary2Color.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(20)),
+    child: Text(
+      text,
+      style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
+          fontSize: 19,
+          letterSpacing: 1),
+    ),
+  );
+}
+
+imageContainer(BuildContext context, String text) {
+  return Container(
+    alignment: Alignment.center,
+    width: getWidth(0.65, context),
+    padding: EdgeInsets.symmetric(horizontal: 10),
+    height: 45,
+    decoration: BoxDecoration(
+      color: Colors.grey.withOpacity(0.1),
+    ),
+    child: Text(text,
+        style: TextStyle(
+            color: Colors.grey.shade400,
+            fontWeight: FontWeight.w500,
+            fontSize: 16)),
+  );
 }

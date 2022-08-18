@@ -107,6 +107,8 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                             index: index,
                             isServiceLineSceen: false,
                             isFromNotificationScreen: false,
+                            isFromServiceScreen: true,
+                            serviceLineId: serviceController.particularServiceList[0]['id'],
                           );
                         },
                       )
@@ -146,6 +148,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     Navigator.of(context).popUntil(ModalRoute.withName("/ServiceHome"));
   }
 }
+
 
 Future<void> getDataOfServiceDetail(BuildContext context, String apiUrl,
     String token, int serviceLineId) async {

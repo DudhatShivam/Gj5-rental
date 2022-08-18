@@ -14,6 +14,7 @@ import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:http/http.dart' as http;
 
 import '../../constant/extraproduct_screen_card.dart';
+import '../cancel_order/cancel_order.dart';
 
 class ExtraProduct extends StatefulWidget {
   const ExtraProduct({Key? key}) : super(key: key);
@@ -31,6 +32,7 @@ class _ExtraProductState extends State<ExtraProduct> {
 
   @override
   void initState() {
+    myGetxController.noDataInExtraProductScreen.value = false;
     checkWlanForExtraProduct(false);
   }
 
@@ -152,6 +154,7 @@ class _ExtraProductState extends State<ExtraProduct> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: primary2Color),
                         onPressed: () {
+                          myGetxController.noDataInExtraProductScreen.value = false;
                           setState(() {
                             isSearchLoadData = true;
                             isExpandSearch = false;
@@ -191,7 +194,9 @@ class _ExtraProductState extends State<ExtraProduct> {
                           index: index,
                         );
                       })
-              : CenterCircularProgressIndicator()),
+              : myGetxController.noDataInExtraProductScreen.value == false
+                  ? CenterCircularProgressIndicator()
+                  : centerNoOrderText("No Product Found !")),
         )
       ],
     ));
@@ -238,7 +243,7 @@ class _ExtraProductState extends State<ExtraProduct> {
       if (data['count'] != 0) {
         myGetxController.extraProductList.addAll(data['results']);
       } else {
-        dialog(context, "No Product Found", Colors.red.shade300);
+        myGetxController.noDataInExtraProductScreen.value = true;
       }
     } else {
       dialog(context, "Something Went Wrong", Colors.red.shade300);
@@ -271,7 +276,7 @@ class _ExtraProductState extends State<ExtraProduct> {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
-        myGetxController.filteredOrderList.clear();
+        myGetxController.extraProductFilteredList.clear();
         setState(() {
           isSearchLoadData = false;
         });

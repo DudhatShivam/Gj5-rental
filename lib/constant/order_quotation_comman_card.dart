@@ -56,13 +56,9 @@ class OrderQuatationCommanCard extends StatelessWidget {
                         pushMethod(
                             context,
                             EditOrder(
-                                name: list[index]['customer_name'],
-                                number: list[index]['mobile1'],
-                                deliveryDate: deliveryDate,
-                                returnDate: returnDate,
-                                remarks: list[index]['remarks'],
-                                index: index,
-                                id: list[index]['id'].toString()));
+                              list: list,
+                              index: index,
+                            ));
                       },
                       closeOnTap: false,
                       color: Colors.blue),
@@ -78,7 +74,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(5))),
             child: Column(
               children: [
-                Row (
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
@@ -269,5 +265,3 @@ class OrderQuatationCommanCard extends StatelessWidget {
     });
   }
 }
-
-

@@ -1,4 +1,4 @@
-package com.example.gj5_rental
+package com.lax.gj5.rental
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterFragmentActivity

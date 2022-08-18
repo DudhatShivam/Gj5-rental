@@ -29,6 +29,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
   MyGetxController myGetxController = Get.put(MyGetxController());
   bool isExpandSearch = false;
 
+
   @override
   void initState() {
     super.initState();
@@ -204,6 +205,8 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                           onPressed: () {
                             myGetxController.isShowCancelOrderScreenFilteredList
                                 .value = true;
+                            myGetxController.noDataInCancelOrderScreen.value =
+                                false;
                             setState(() {
                               isExpandSearch = false;
                             });
@@ -245,7 +248,10 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                             );
                           },
                         )
-                      : CenterCircularProgressIndicator()
+                      : myGetxController.noDataInCancelOrderScreen.value ==
+                              false
+                          ? CenterCircularProgressIndicator()
+                          : centerNoOrderText("No Order !")
                   : myGetxController.filteredCancelOrderList.isNotEmpty
                       ? ListView.builder(
                           shrinkWrap: true,
@@ -274,14 +280,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                       : myGetxController.noDataInCancelOrderScreen.value ==
                               false
                           ? CenterCircularProgressIndicator()
-                          : Center(
-                              child: Text(
-                              "No Order !",
-                              style: TextStyle(
-                                  color: Colors.grey.shade300,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500),
-                            ))))
+                          : centerNoOrderText("No Order !")))
         ],
       ),
     );
@@ -342,6 +341,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
         myGetxController.cancelOrderList.addAll(data['results']);
       } else {
         if (cancelOrderOffset <= 0) {
+          myGetxController.noDataInCancelOrderScreen.value = true;
           dialog(context, "No Data Found !", Colors.red.shade300);
         }
       }
@@ -370,12 +370,11 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
     if (datas.length == 1) {
       domain = "[${datas[0]}]";
     } else if (datas.length == 2) {
-      domain = "[${datas[0]} , ${datas[1]}]";
+      domain = "['|' , ${datas[0]} , ${datas[1]}]";
     } else if (datas.length == 3) {
-      domain = "[${datas[0]} , ${datas[1]} , ${datas[2]}]";
-    } else {
-      myGetxController.filteredCancelOrderList.value = [];
+      domain = "['|' , '|' , ${datas[0]} , ${datas[1]} , ${datas[2]}]";
     }
+
     var params = {'filters': domain.toString()};
     Uri uri = Uri.parse("http://$apiUrl/api/rental.rental");
     final finalUri = uri.replace(queryParameters: params);
@@ -385,13 +384,23 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
+        myGetxController.filteredCancelOrderList.clear();
         myGetxController.filteredCancelOrderList.addAll(data['results']);
       } else {
         myGetxController.noDataInCancelOrderScreen.value = true;
-        dialog(context, "No Order Found", Colors.red.shade300);
       }
     } else {
       dialog(context, "Something Went Wrong !", Colors.red.shade300);
     }
   }
+}
+
+
+centerNoOrderText(String text) {
+  return Center(
+      child: Text(
+    text,
+    style: TextStyle(
+        color: Colors.grey.shade300, fontSize: 25, fontWeight: FontWeight.w500),
+  ));
 }

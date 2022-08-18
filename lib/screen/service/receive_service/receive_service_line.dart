@@ -10,15 +10,20 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../../../Utils/utils.dart';
+import '../service_detail.dart';
 
 class ReceiveServiceLine extends StatelessWidget {
   final List<dynamic> list;
   final int index;
+  final bool isServiceScreen;
+  final int? serviceLineId;
 
   const ReceiveServiceLine({
     Key? key,
     required this.list,
     required this.index,
+    required this.isServiceScreen,
+    this.serviceLineId,
   }) : super(key: key);
 
   @override
@@ -126,7 +131,11 @@ class ReceiveServiceLine extends StatelessWidget {
       },
     );
     if (response.statusCode == 200) {
-      list.removeAt(index);
+      if (isServiceScreen == false) {
+        list.removeAt(index);
+      } else {
+        getDataOfServiceDetail(context, apiUrl, token, serviceLineId ?? 0);
+      }
       Navigator.of(context, rootNavigator: true).pop();
       dialog(context, "Product Receive Successfully", Colors.green.shade300);
     } else {

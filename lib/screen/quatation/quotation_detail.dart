@@ -194,28 +194,12 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
         ? Navigator.of(context).popUntil(ModalRoute.withName("/QuotationHome"))
         : myGetxController.quotationData.isEmpty &&
                 myGetxController.filteredQuotationData.isEmpty
-            ? navvvv()
-            : Navigate();
-  }
-
-  navvvv() {
-    print("navvvv");
-    pushRemoveUntilMethod(context, QuatationScreen());
-  }
-
-  Navigate() {
-    print("this navigate called");
-    if (editQuotationCount == 0) {
-      print("this navigate called if");
-      Navigator.pop(context);
-    } else {
-      print("this navigate called else");
-      for (int i = 1;
-          i <= editQuotationCount * 3 - (editQuotationCount - 1);
-          i++) {
-        Navigator.pop(context);
-      }
-    }
+            ? Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    settings: RouteSettings(name: "/Quotation"),
+                    builder: (context) => QuatationScreen()),
+                (Route<dynamic> route) => false)
+            : Navigator.of(context).popUntil(ModalRoute.withName("/Quotation"));
   }
 }
 

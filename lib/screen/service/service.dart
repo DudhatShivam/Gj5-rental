@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:gj5_rental/screen/cancel_order/cancel_order.dart';
 import 'package:gj5_rental/screen/service/service_card.dart';
 import 'package:gj5_rental/screen/service/service_detail.dart';
 import 'package:gj5_rental/screen/service/servicecontroller.dart';
@@ -50,7 +51,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => pushRemoveUntilMethod(context, HomeScreen(userId: 0,)),
+      onWillPop: () => pushRemoveUntilMethod(
+          context,
+          HomeScreen(
+            userId: 0,
+          )),
       child: Scaffold(
         floatingActionButton: CustomFABWidget(
           transitionType: ContainerTransitionType.fade,
@@ -68,7 +73,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     children: [
                       InkWell(
                           onTap: () {
-                            pushRemoveUntilMethod(context, HomeScreen(userId: 0,));
+                            pushRemoveUntilMethod(
+                                context,
+                                HomeScreen(
+                                  userId: 0,
+                                ));
                           },
                           child: FadeInLeft(
                             child: backArrowIcon,
@@ -310,7 +319,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               );
                             },
                           )
-                        : CenterCircularProgressIndicator()
+                        : serviceController.noDataInServiceScreen.value == true
+                            ? centerNoOrderText("No Service Found !")
+                            : CenterCircularProgressIndicator()
                     : serviceController.serviceFilteredList.isNotEmpty
                         ? ListView.builder(
                             padding: EdgeInsets.symmetric(vertical: 15),
@@ -334,14 +345,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             },
                           )
                         : serviceController.noDataInServiceScreen.value == true
-                            ? Center(
-                                child: Text(
-                                "No Order !",
-                                style: TextStyle(
-                                    color: Colors.grey.shade300,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.w500),
-                              ))
+                            ? centerNoOrderText("No Service Found !")
                             : CenterCircularProgressIndicator()))
           ],
         ),
@@ -386,7 +390,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
       datas.add("('service_type', '=', '$serviceType')");
     }
     if (partnerController.text != "") {
-      datas.add("('service_partner_name', 'ilike', '${partnerController.text}')");
+      datas.add(
+          "('service_partner_name', 'ilike', '${partnerController.text}')");
     }
     if (datas.length == 1) {
       domain = "[${datas[0]}]";
@@ -453,7 +458,7 @@ Future<void> getDataOfServiceScreen(BuildContext context, apiUrl, token) async {
       serviceController.serviceList.addAll(data['results']);
     } else {
       if (serviceScreenOffset <= 0) {
-        dialog(context, "No Data Found !", Colors.red.shade300);
+        serviceController.noDataInServiceScreen.value = true;
       }
     }
   } else {
