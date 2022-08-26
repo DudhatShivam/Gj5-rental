@@ -33,7 +33,6 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
   int? selectedGroupByIndex;
   int? groupByListIndex;
   bool isExpandSearch = false;
-  DateTime? notFormatedDDate;
   String? deliveryDate;
 
   List filterList = [
@@ -325,7 +324,6 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                               FocusScope.of(context).unfocus();
                               picked7DateAbove(context).then((value) {
                                 if (value != null) {
-                                  notFormatedDDate = value;
                                   setState(() {
                                     deliveryDate =
                                         DateFormat('dd/MM/yyyy').format(value);
@@ -716,8 +714,6 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
 
   getSearchData(apiUrl, token) async {
     try {
-      String dDate =
-          DateFormat('yyyy/MM/dd').format(notFormatedDDate ?? DateTime.now());
       List datas = [];
       String? domain;
       if (productCodeSearchController.text.isNotEmpty) {
@@ -725,9 +721,8 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
             "('default_code', 'ilike', '${productCodeSearchController.text}')");
       }
       if (deliveryDate != "") {
-        datas.add("('delivery_date', '=', '${dDate}')");
+        datas.add("('delivery_date', '=', '${deliveryDate}')");
       }
-
       if (datas.length == 1) {
         domain = "[${datas[0]}]";
       } else if (datas.length == 2) {

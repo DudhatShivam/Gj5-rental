@@ -48,13 +48,6 @@ class _CreateOrderState extends State<CreateOrder> {
   String? binaryImage2;
 
   @override
-  void initState() {
-    nameController.text = "Rajnik";
-    numberController.text = "9925286545";
-    addressController.text = "Katargam";
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -415,9 +408,7 @@ class _CreateOrderState extends State<CreateOrder> {
         setState(() {
           isValidRDate = false;
         });
-        showInSnackBar(
-            "You can not select Delivery date bigger than Return Date!",
-            context);
+        showToast("You can not select Delivery date bigger than Return Date!");
       }
     }
   }
@@ -479,8 +470,6 @@ class _CreateOrderState extends State<CreateOrder> {
       tempBody = {'document_2': binaryImage2};
       body.addAll(tempBody);
     }
-    print(deliveryDate);
-    print(returnDate);
     final response =
         await http.post(Uri.parse("http://$apiUrl/api/rental.rental"),
             headers: {
@@ -488,7 +477,6 @@ class _CreateOrderState extends State<CreateOrder> {
             },
             body: jsonEncode(body));
     Map datas = jsonDecode(response.body);
-    print(response.body);
 
     if (response.statusCode == 200) {
       myGetxController.quotationData.clear();

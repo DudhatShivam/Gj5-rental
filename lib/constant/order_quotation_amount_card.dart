@@ -34,7 +34,7 @@ class OrderQuotationAmountCard extends StatelessWidget {
                   list[0]['extra_item_amount'] > 0 &&
                           list[0]['extra_item_amount'] != null
                       ? CommanRowInAmountCard(
-                          "Ex. Charge", list[0]['extra_item_amount'], false)
+                          "Ex. Charge", list[0]['extra_item_amount'] ?? 0, false)
                       : Container(),
                   CommanHorizontalDeviderInAmountCard(),
                   CommanRowInAmountCard(
@@ -66,7 +66,7 @@ class OrderQuotationAmountCard extends StatelessWidget {
                   list[0]['extra_item_amount'] != null &&
                           list[0]['damage_charge'] > 0
                       ? CommanRowInAmountCard(
-                          "Damage", list[0]['damage_charge'], false)
+                          "Damage", list[0]['damage_charge'] ?? 0, false)
                       : Container(),
                   Divider(
                     color: Colors.grey,

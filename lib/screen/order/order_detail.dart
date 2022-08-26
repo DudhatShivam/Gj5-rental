@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -6,6 +7,7 @@ import 'package:gj5_rental/Utils/utils.dart';
 import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
 import 'package:gj5_rental/constant/order_quotation_detail_card.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
+import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
 
 import '../../constant/constant.dart';
 import '../../constant/order_quotation_amount_card.dart';
@@ -29,7 +31,8 @@ class _OrderDetailState extends State<OrderDetail> {
   @override
   void initState() {
     super.initState();
-    checkWlanForDataOrderDetailScreen(context, widget.id ?? 0);
+    myGetxController.particularOrderData.clear();
+    checkWlanForOrderDetailScreen(context, widget.id ?? 0);
     getAccessRight();
   }
 
@@ -38,74 +41,79 @@ class _OrderDetailState extends State<OrderDetail> {
     return WillPopScope(
       onWillPop: () => popFunction(context, widget.idFromAnotherScreen),
       child: Scaffold(
+          floatingActionButton: CustomFABWidget(
+            transitionType: ContainerTransitionType.fade,
+            isAddProductInConfirmOrder: true,
+          ),
           body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          allScreenInitialSizedBox(context),
-          CommonPushMethodAppBar(
-              title: "Order Detail",
-              isFormAnotherScreen: widget.idFromAnotherScreen),
-          SizedBox(
-            height: 10,
-          ),
-          Obx(
-            () => myGetxController.particularOrderData.isNotEmpty
-                ? OrderQuatationCommanCard(
-                    list: myGetxController.particularOrderData,
-                    isOrderScreen: true,
-                    backGroundColor: Colors.grey.withOpacity(0.1),
-                    index: 0,
-                    isDeliveryScreen: false)
-                : Container(),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Text(
-              "Product Details : ",
-              style: pageTitleTextStyle,
-            ),
-          ),
-          Expanded(
-            child: Obx(() => SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: [
-                      myGetxController.orderLineList.isNotEmpty
-                          ? ListView.builder(
-                              physics: BouncingScrollPhysics(),
-                              scrollDirection: Axis.vertical,
-                              padding: EdgeInsets.zero,
-                              itemCount: myGetxController.orderLineList.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return OrderQuotationDetailCard(
-                                  orderDetailsList:
-                                      myGetxController.orderLineList,
-                                  index: index,
-                                  productDetail:
-                                      myGetxController.orderLineProductList,
-                                  isOrderScreen: true,
-                                  orderId: widget.id ?? 0,
-                                  isDeliveryScreen: false,
-                                  isReceiveScreen: false,
-                                  ARChangeProduct: ARChangeProduct,
-                                );
-                              })
-                          : Container(),
-                      myGetxController.particularOrderData.isNotEmpty
-                          ? OrderQuotationAmountCard(
-                              list: myGetxController.particularOrderData)
-                          : Container(),
-                      SizedBox(
-                        height: 15,
-                      )
-                    ],
-                  ),
-                )),
-          ),
-        ],
-      )),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              allScreenInitialSizedBox(context),
+              CommonPushMethodAppBar(
+                  title: "Confirm Order Detail",
+                  isFormAnotherScreen: widget.idFromAnotherScreen),
+              SizedBox(
+                height: 10,
+              ),
+              Obx(
+                () => myGetxController.particularOrderData.isNotEmpty
+                    ? OrderQuatationCommanCard(
+                        list: myGetxController.particularOrderData,
+                        isOrderScreen: true,
+                        backGroundColor: Colors.grey.withOpacity(0.1),
+                        index: 0,
+                        isDeliveryScreen: false)
+                    : Container(),
+              ),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  "Product Details : ",
+                  style: pageTitleTextStyle,
+                ),
+              ),
+              Expanded(
+                child: Obx(() => SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        children: [
+                          myGetxController.orderLineList.isNotEmpty
+                              ? ListView.builder(
+                                  physics: BouncingScrollPhysics(),
+                                  scrollDirection: Axis.vertical,
+                                  padding: EdgeInsets.zero,
+                                  itemCount:
+                                      myGetxController.orderLineList.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return OrderQuotationDetailCard(
+                                      orderDetailsList:
+                                          myGetxController.orderLineList,
+                                      index: index,
+                                      productDetail:
+                                          myGetxController.orderLineProductList,
+                                      isOrderScreen: true,
+                                      orderId: widget.id ?? 0,
+                                      isDeliveryScreen: false,
+                                      isReceiveScreen: false,
+                                      ARChangeProduct: ARChangeProduct,
+                                    );
+                                  })
+                              : Container(),
+                          myGetxController.particularOrderData.isNotEmpty
+                              ? OrderQuotationAmountCard(
+                                  list: myGetxController.particularOrderData)
+                              : Container(),
+                          SizedBox(
+                            height: 15,
+                          )
+                        ],
+                      ),
+                    )),
+              ),
+            ],
+          )),
     );
   }
 

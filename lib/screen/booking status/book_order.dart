@@ -56,9 +56,6 @@ class _BookOrderState extends State<BookOrder> {
     deliveryNotFormatedDate = new DateFormat("dd/MM/yyyy").parse(deliveryDate);
     returnNotFormatedDate = DateFormat("dd/MM/yyyy").parse(returnDate);
     rentController.text = widget.rent.toString();
-    nameController.text = "Rajnik";
-    addressController.text = "Katargam";
-    numberController.text = "9945783074";
   }
 
   @override
@@ -87,10 +84,7 @@ class _BookOrderState extends State<BookOrder> {
                     child: Text(
                       widget.productName.toString(),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 17,
-                          color: primaryColor),
+                      style: allCardSubText,
                     ),
                   ),
                   SizedBox(
@@ -394,7 +388,8 @@ class _BookOrderState extends State<BookOrder> {
 
   Future<void> bookOrder(apiUrl, token) async {
     MyGetxController myGetxController = Get.find();
-    progressDialog = CustomProgressDialog(context, blur: 10,dismissable: false);
+    progressDialog =
+        CustomProgressDialog(context, blur: 10, dismissable: false);
     progressDialog?.setLoadingWidget(CenterCircularProgressIndicator());
     progressDialog?.show();
     String url = "";
@@ -404,11 +399,8 @@ class _BookOrderState extends State<BookOrder> {
     String number2 = number2Controller.text;
     String address = addressController.text;
     String rent = rentController.text;
-    String dDate = DateFormat('MM/dd/yyyy').format(deliveryNotFormatedDate);
-    String rDate = DateFormat('MM/dd/yyyy').format(returnNotFormatedDate);
-
     url =
-        "http://$apiUrl/api/product.product/$productId/booked_order_api?product_id=$productId&delivery_date=$dDate&return_date=$rDate&customer_name=$name&mobile1=$number&mobile2=$number2&delivery_address=$address&rent=$rent";
+        "http://$apiUrl/api/product.product/$productId/booked_order_api?product_id=$productId&delivery_date=$deliveryDate&return_date=$returnDate&customer_name=$name&mobile1=$number&mobile2=$number2&delivery_address=$address&rent=$rent";
 
     final response = await http.put(Uri.parse(url), headers: {
       'Access-Token': token,

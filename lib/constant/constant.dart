@@ -159,6 +159,15 @@ Future<DateTime?> pickedDate(BuildContext context) async {
   return picked;
 }
 
+Future<DateTime?> pickedPastDate(BuildContext context) async {
+  final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2001),
+      lastDate: DateTime.now());
+  return picked;
+}
+
 Future<DateTime?> picked7DateAbove(BuildContext context) async {
   final DateTime? picked = await showDatePicker(
       context: context,
@@ -168,17 +177,7 @@ Future<DateTime?> picked7DateAbove(BuildContext context) async {
   return picked;
 }
 
-void showInSnackBar(String value, BuildContext context) {
-  Get.snackbar(
-    'Error',
-    value,
-    colorText: Colors.white,
-    duration: Duration(seconds: 3),
-    backgroundColor: Colors.red.shade300,
-    animationDuration: Duration(milliseconds: 800),
-    snackPosition: SnackPosition.TOP,
-  );
-}
+
 
 textFieldWidget(
     String hint,
@@ -598,7 +597,7 @@ remarkContainer(
           style: primaryStyle,
         ),
         Container(
-          width: getWidth(size, context),
+            width: getWidth(size, context),
           child: textFieldWidget(
               "Remark",
               textEditingController,
@@ -617,7 +616,7 @@ remarkContainer(
 
 //orderScreen
 
-Future<void> getOrderScreenProductDetailData(
+Future<void> getOrderScreenOrderDetailData(
     String apiUrl, String token, int? id) async {
   MyGetxController myGetxController = Get.find();
 
@@ -635,7 +634,6 @@ Future<void> getOrderScreenProductDetailData(
 
 void checkForOrderScreenProductDetail() {
   MyGetxController myGetxController = Get.find();
-
   myGetxController.orderLineProductList.clear();
   myGetxController.orderLineList.forEach((element) {
     if (element['product_details_ids'] != []) {
@@ -649,7 +647,7 @@ void checkForOrderScreenProductDetail() {
   });
 }
 
-Future<void> checkWlanForDataOrderDetailScreen(
+Future<void> checkWlanForOrderDetailScreen(
     BuildContext context, int id) async {
   getStringPreference('apiUrl').then((apiUrl) async {
     try {
@@ -657,14 +655,14 @@ Future<void> checkWlanForDataOrderDetailScreen(
         if (apiUrl.toString().startsWith("192")) {
           showConnectivity().then((result) async {
             if (result == ConnectivityResult.wifi) {
-              getOrderScreenProductDetailData(apiUrl, token, id);
+              getOrderScreenOrderDetailData(apiUrl, token, id);
             } else {
               dialog(
                   context, "Connect to Showroom Network", Colors.red.shade300);
             }
           });
         } else {
-          getOrderScreenProductDetailData(apiUrl, token, id);
+          getOrderScreenOrderDetailData(apiUrl, token, id);
         }
       });
     } on SocketException catch (err) {
@@ -779,7 +777,7 @@ confirmOrderThumb(
             ? setDataOfUpdatedIdInGroupByListOrderLineScreen(
                 productDetailId, index, groupByMainListIndex)
             : setDataOfUpdatedIdInOrderLineScreen(productDetailId, index)
-        : checkWlanForDataOrderDetailScreen(context, orderId);
+        : checkWlanForOrderDetailScreen(context, orderId);
   } else {
     dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }
@@ -932,13 +930,12 @@ submitReasonForWaiting(
         'Access-Token': token,
       });
   if (response.statusCode == 200) {
-
     isOrderLineScreen == true
         ? isShowFromGroupBy == true
             ? setDataOfUpdatedIdInGroupByListOrderLineScreen(
                 productDetailId, index, groupByMainListIndex)
             : setDataOfUpdatedIdInOrderLineScreen(productDetailId, index)
-        : checkWlanForDataOrderDetailScreen(context, orderId);
+        : checkWlanForOrderDetailScreen(context, orderId);
     Navigator.pop(context);
   } else {
     FocusScope.of(context).unfocus();

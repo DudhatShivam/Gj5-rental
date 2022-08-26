@@ -222,7 +222,8 @@ class _AddAccountState extends State<AddAccount> {
                         data['is_receiver'],
                         data['is_deliver'],
                         data['change_product'],
-                        data['is_manager'])
+                        data['is_manager'],
+                        data['daily_cashbook'])
                     .whenComplete(() {
                   pushRemoveUntilMethod(
                       context, HomeScreen(userId: data['partner_id']));

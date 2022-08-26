@@ -216,7 +216,6 @@ class _QuatationScreenState extends State<QuatationScreen> {
                               itemBuilder: (context, index) {
                                 return InkWell(
                                   onTap: () async {
-                                    editQuotationCount = 0;
                                     pushMethod(
                                         context,
                                         QuatationDetailScreen(
@@ -247,7 +246,6 @@ class _QuatationScreenState extends State<QuatationScreen> {
                               itemBuilder: (context, indexs) {
                                 return InkWell(
                                   onTap: () {
-                                    editQuotationCount = 0;
                                     pushMethod(
                                         context,
                                         QuatationDetailScreen(

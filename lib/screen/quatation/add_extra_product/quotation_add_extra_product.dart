@@ -181,6 +181,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                   myGetxController.quotationMainProductList
                                       .clear();
                                   setState(() {
+                                    productSearchController.clear();
                                     selectedValue = value as String;
                                     checkWlanForGetProductData(false);
                                   });
@@ -200,12 +201,14 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                               height: 15,
                             ),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   "Product :  ",
                                   style: primaryStyle,
                                 ),
-                                Expanded(
+                                Container(
+                                  width: getWidth(0.68, context),
                                   child: SearchField(
                                     controller: productSearchController,
                                     maxSuggestionsInViewPort: 8,
@@ -237,7 +240,9 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                             : null,
                                         hintText: "Search Product",
                                         hintStyle: TextStyle(
-                                            color: Colors.grey.shade400),
+                                            color: Colors.grey.shade400,
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 16),
                                         filled: true,
                                         fillColor: Colors.grey.withOpacity(0.1),
                                         border: OutlineInputBorder(
@@ -318,18 +323,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                             },
                             child: Text("ADD"),
                           ))
-                      : SizedBox(
-                          width: double.infinity,
-                          height: 43,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    primary2Color.withOpacity(0.3)),
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                            },
-                            child: Text("ADD"),
-                          )),
+                      : Container(),
                 ],
               ),
             ),
@@ -384,16 +378,14 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
       var data = jsonDecode(response.body);
       if (data['count'] != 0) {
         myGetxController.quotationMainProductList.addAll(data['results']);
-      } else {
-
-      }
+      } else {}
     }
   }
 
   addExtraProduct(String apiUrl, String accessToken) async {
-    String deliveryDate = DateFormat("MM/dd/yyyy").format(
+    String deliveryDate = DateFormat("dd/MM/yyyy").format(
         DateTime.parse(myGetxController.quotationOrder[0]['delivery_date']));
-    String returnDate = DateFormat("MM/dd/yyyy").format(
+    String returnDate = DateFormat("dd/MM/yyyy").format(
         DateTime.parse(myGetxController.quotationOrder[0]['return_date']));
     int originalProductId = 0;
     int rentalId = myGetxController.quotationOrder[0]['id'];

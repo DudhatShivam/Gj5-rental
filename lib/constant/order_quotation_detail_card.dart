@@ -303,6 +303,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                 ),
                 Flexible(
                   child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     child: Text(
                       orderDetailsList[index]['product_id']['name'],
@@ -395,7 +396,6 @@ class OrderQuotationDetailCard extends StatelessWidget {
                                 e['remarks']);
                           },
                           child: Container(
-                            height: 43,
                             margin: EdgeInsets.only(right: 5, bottom: 5),
                             alignment: Alignment.center,
                             padding: EdgeInsets.all(10),
@@ -405,30 +405,32 @@ class OrderQuotationDetailCard extends StatelessWidget {
                                   .withOpacity(0.1),
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  e['product_id']['default_code'],
-                                  style: TextStyle(
-                                      color: ([...Colors.primaries]..shuffle())
-                                          .first,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15),
-                                ),
-                                isReceiveScreen == true
-                                    ? Obx(() => myGetxController
-                                                    .receiveSelectedSubProductList
-                                                    .contains(e['id']) ==
-                                                true ||
-                                            e['is_receive'] == true
-                                        ? Container(
-                                            height: 3,
-                                            width: 45,
-                                            color: Colors.blue,
-                                          )
-                                        : Container())
-                                    : Container()
-                              ],
+                            child: IntrinsicWidth(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    e['product_id']['default_code'],
+                                    style: TextStyle(
+                                        color: ([...Colors.primaries]
+                                              ..shuffle())
+                                            .first,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15),
+                                  ),
+                                  isReceiveScreen == true
+                                      ? Obx(() => myGetxController
+                                                      .receiveSelectedSubProductList
+                                                      .contains(e['id']) ==
+                                                  true ||
+                                              e['is_receive'] == true
+                                          ? Container(
+                                              height: 3,
+                                              color: Colors.blue,
+                                            )
+                                          : Container())
+                                      : Container()
+                                ],
+                              ),
                             ),
                           ),
                         )
@@ -437,7 +439,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
               ),
             ),
             isOrderScreen == true &&
-                    orderDetailsList[index]['state']  == "waiting"
+                    orderDetailsList[index]['state'] == "waiting"
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

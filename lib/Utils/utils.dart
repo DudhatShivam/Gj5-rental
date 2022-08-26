@@ -22,7 +22,6 @@ getWidth(double width, BuildContext context) {
 }
 
 bool isFromAnotherScreen = false;
-int editQuotationCount = 0;
 
 Color primaryColor = Color(0xff0F052D);
 Color primary2Color = Color(0xffAd2A30);
@@ -124,7 +123,7 @@ TextStyle returnDateStyle =
     TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.red);
 
 TextStyle pageTitleTextStyle =
-    TextStyle(fontWeight: FontWeight.w500, fontSize: 23, color: primary2Color);
+    TextStyle(fontWeight: FontWeight.w500, fontSize: 22, color: primary2Color);
 
 Icon searchIcon = Icon(
   Icons.search,
@@ -476,7 +475,8 @@ Future<void> setLogInData(
     bool ARReceive,
     bool ARDeliver,
     bool ARChangeProduct,
-    bool ARManager) async {
+    bool ARManager,
+    bool ARCashbook) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.setString('apiUrl', apiUrl);
   preferences.setString('branchName', branchName);
@@ -493,6 +493,7 @@ Future<void> setLogInData(
   preferences.setBool('ARDeliver', ARDeliver);
   preferences.setBool('ARChangeProduct', ARChangeProduct);
   preferences.setBool('ARManager', ARManager);
+  preferences.setBool("ARCashbook", ARCashbook);
 }
 
 Future<void> removePreference() async {
@@ -515,6 +516,7 @@ Future<void> removePreference() async {
   preferences.remove('ARDeliver');
   preferences.remove('ARChangeProduct');
   preferences.remove('ARManager');
+  preferences.remove('ARCashbook');
 }
 
 Future getStringPreference(String pref) async {
@@ -530,9 +532,4 @@ Future getBoolPreference(String pref) async {
 Future setLogIn(bool isLogIN) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.setBool('LogIN', isLogIN);
-}
-
-Future getLogIn() async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  return preferences.getBool('LogIN');
 }

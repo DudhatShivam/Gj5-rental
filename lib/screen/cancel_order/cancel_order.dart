@@ -342,7 +342,6 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
       } else {
         if (cancelOrderOffset <= 0) {
           myGetxController.noDataInCancelOrderScreen.value = true;
-          dialog(context, "No Data Found !", Colors.red.shade300);
         }
       }
     } else {

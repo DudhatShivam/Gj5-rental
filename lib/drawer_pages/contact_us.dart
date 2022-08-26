@@ -233,7 +233,6 @@ launchApp(BuildContext context, String url) async {
       dialog(context, "Failed To Open", Colors.red.shade300);
     }
   } catch (e) {
-    print(e);
     dialog(context, e.toString(), Colors.red.shade300);
   }
 }

@@ -75,11 +75,6 @@ class _LogInPageState extends State<LogInPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // SizedBox(
-              //   height: MediaQuery.of(context).padding.top +
-              //       getHeight(0.11, context),
-              //   //318172
-              // ),
               Container(
                 height: MediaQuery.of(context).padding.top +
                     getHeight(0.25, context),
@@ -369,7 +364,8 @@ class _LogInPageState extends State<LogInPage> {
                     data['is_receiver'] ?? true,
                     data['is_deliver'] ?? true,
                     data['change_product'] ?? true,
-                    data['is_manager'] ?? true)
+                    data['is_manager'] ?? true,
+            data['daily_cashbook'])
                 .whenComplete(() {
               setLogIn(true);
               myGetxController.isLoggedIn.value = false;

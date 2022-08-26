@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:gj5_rental/screen/quatation/quotation_detail.dart';
@@ -46,8 +47,6 @@ class _EditOrderLineState extends State<EditOrderLine> {
   TextEditingController rentController = TextEditingController();
   String returnDate = "";
   String deliveryDate = "";
-  DateTime? returnNotFormatedDate;
-  DateTime? deliveryNotFormatedDate;
   List wholeSubProductList = [];
   List<List<dynamic>> subProductList = [];
   List<TextEditingController> productControllers = [];
@@ -63,8 +62,6 @@ class _EditOrderLineState extends State<EditOrderLine> {
         .format(DateTime.parse(widget.deliveryDate ?? ""));
     returnDate = DateFormat('dd/MM/yyyy')
         .format(DateTime.parse(widget.returnDate ?? ""));
-    deliveryNotFormatedDate = new DateFormat("dd/MM/yyy").parse(deliveryDate);
-    returnNotFormatedDate = DateFormat("dd/MM/yyy").parse(returnDate);
     remarkController.text = widget.remark ?? "";
     rentController.text = widget.rent.toString();
     wholeSubProductList.addAll(widget.wholeSubProductList ?? []);
@@ -158,11 +155,9 @@ class _EditOrderLineState extends State<EditOrderLine> {
                       onTap: () async {
                         pickedDate(context).then((value) {
                           if (value != null) {
-                            deliveryNotFormatedDate = value;
                             setState(() {
-                              deliveryDate = "";
-                              deliveryDate = DateFormat('dd-MM-yyyy')
-                                  .format(deliveryNotFormatedDate!);
+                              deliveryDate =
+                                  DateFormat('dd/MM/yyyy').format(value);
                             });
                           }
                         });
@@ -186,11 +181,9 @@ class _EditOrderLineState extends State<EditOrderLine> {
                       onTap: () async {
                         pickedDate(context).then((value) {
                           if (value != null) {
-                            returnNotFormatedDate = value;
                             setState(() {
-                              returnDate = "";
-                              returnDate = DateFormat('dd-MM-yyyy')
-                                  .format(returnNotFormatedDate!);
+                              returnDate =
+                                  DateFormat('dd-MM-yyyy').format(value);
                             });
                           }
                         });
@@ -250,14 +243,14 @@ class _EditOrderLineState extends State<EditOrderLine> {
               ),
               subProductList.length == wholeSubProductList.length
                   ? ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: getWidth(0.04, context)),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: getWidth(0.04, context)),
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: wholeSubProductList.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding:
-                              EdgeInsets.symmetric( vertical: 5),
+                          padding: EdgeInsets.symmetric(vertical: 5),
                           child: Container(
                             child: Column(
                               children: [
@@ -265,19 +258,18 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    FittedBox(
-                                      child: Container(
-                                        width: getWidth(0.15, context),
-                                        child: Text(
-                                          wholeSubProductList[index]
-                                              ['product_type'],
-                                          style: primaryStyle,
-                                        ),
+                                    Container(
+                                      width: getWidth(0.15, context),
+                                      child: AutoSizeText(
+                                        wholeSubProductList[index]
+                                            ['product_type'],
+                                        style: primaryStyle,
+                                        maxLines: 1,
                                       ),
                                     ),
                                     Container(
                                       width: getWidth(0.65, context),
-                                      margin: EdgeInsets.only(left: 10),
+                                      margin: EdgeInsets.only(left: 5),
                                       child: SearchField(
                                         controller: productControllers[index],
                                         suggestionsDecoration: BoxDecoration(
@@ -301,11 +293,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                                               .unfocus();
                                                         },
                                                         child: Container(
-                                                          child: Icon(
-                                                            Icons.cancel,
-                                                            color: primaryColor,
-                                                            size: 30,
-                                                          ),
+                                                          child: cancelIcon,
                                                         ),
                                                       )
                                                     : null,
@@ -371,7 +359,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                                             remarkContainer(
                                                 context,
                                                 remarkControllerList[index],
-                                                0.31,
+                                                0.65,
                                                 0,
                                                 MainAxisAlignment.start)
                                           ],
@@ -416,17 +404,13 @@ class _EditOrderLineState extends State<EditOrderLine> {
     String token,
     int? mainId,
   ) async {
-    String formatDeliveryDate = DateFormat('MM/dd/yyyy')
-        .format(deliveryNotFormatedDate ?? DateTime.now());
-    String formatReturnDate = DateFormat('MM/dd/yyyy')
-        .format(returnNotFormatedDate ?? DateTime.now());
     String remark = remarkController.text;
     String rent = rentController.text;
     var body = {
       'rent': '$rent',
       'remarks': '$remark',
-      'delivery_date': '$formatDeliveryDate',
-      'return_date': '$formatReturnDate',
+      'delivery_date': '$deliveryDate',
+      'return_date': '$returnDate',
       'product_details_ids': updatedDictionary
     };
     final response = await http.put(
@@ -436,7 +420,6 @@ class _EditOrderLineState extends State<EditOrderLine> {
           'Access-Token': token,
         });
     if (response.statusCode == 200) {
-      editQuotationCount = editQuotationCount + 1;
       pushMethod(
           context,
           QuatationDetailScreen(
@@ -459,7 +442,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
                 isUpdateData == false
-                    ? getOrderLine().whenComplete(() {
+                    ? getOrderLine(value, token).whenComplete(() {
                         setPreFillDataInTextField();
                       })
                     : getTextFieldData().whenComplete(() {
@@ -473,7 +456,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
             });
           } else {
             isUpdateData == false
-                ? getOrderLine().whenComplete(() {
+                ? getOrderLine(value, token).whenComplete(() {
                     setPreFillDataInTextField();
                   })
                 : getTextFieldData().whenComplete(() {
@@ -488,9 +471,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
     });
   }
 
-  Future<void> getOrderLine() async {
-    String apiUrl = await getStringPreference('apiUrl');
-    String accessToken = await getStringPreference('accessToken');
+  Future<void> getOrderLine(String apiUrl, String accessToken) async {
     for (int i = 0; i <= wholeSubProductList.length - 1; i++) {
       String product = wholeSubProductList[i]['product_type'];
       String domain =
@@ -561,6 +542,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
         productControllers[i].text = search;
       }
     }
+    setState(() {});
   }
 
   confirmationDialogForEditOrderLine(

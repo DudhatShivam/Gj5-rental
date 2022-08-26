@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -9,7 +10,6 @@ import 'package:gj5_rental/notification/notification_database.dart';
 import 'package:gj5_rental/splash.dart';
 import 'package:intl/intl.dart';
 
-import 'demo.dart';
 import 'drawer_pages/change_theme_screen.dart';
 import 'notification/notification_model.dart';
 
@@ -50,8 +50,9 @@ void main() async {
     debugShowCheckedModeBanner: false,
     home: SplashScreen(),
   ));
-  SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark));
 }
 
 setNotification(RemoteMessage message) {

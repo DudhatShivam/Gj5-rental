@@ -7,6 +7,7 @@ import 'package:fancy_drawer/fancy_drawer.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -14,7 +15,6 @@ import 'package:gj5_rental/Utils/utils.dart';
 import 'package:gj5_rental/constant/constant.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/login/login_page.dart';
-import 'package:gj5_rental/screen/change_product/change_product.dart';
 import 'package:gj5_rental/screen/delivery/delivery.dart';
 import 'package:gj5_rental/screen/extra_product/extra_product.dart';
 import 'package:gj5_rental/screen/main_product/main_product.dart';
@@ -39,6 +39,7 @@ import '../drawer_pages/notification.dart';
 import '../screen/Order_line/order_line.dart';
 import '../screen/booking status/booking_status.dart';
 import '../screen/cancel_order/cancel_order.dart';
+import '../screen/cash_book/cash_book.dart';
 import '../screen/receive/receive.dart';
 import 'home_model.dart';
 
@@ -106,18 +107,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         menuName: "Service Status",
         menuIcon: "assets/images/home_icon/searching.png"),
   ];
-
-  // List<String> serviceName = [
-  //   'Booking Status',
-  //   'Quotation',
-  //   'Order',
-  //   'Order Line',
-  //   'Product Detail',
-  //   'Extra Product',
-  //   'Service Status',
-  //   'Product',
-  //   'Cancel Order',
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -430,7 +419,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                               : Padding(
                                                                   padding: const EdgeInsets
                                                                           .only(
-                                                                      top: 5),
+                                                                      top: 5.1),
                                                                   child:
                                                                       FittedBox(
                                                                     child: Image
@@ -610,35 +599,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     bool ARReceive = await getBoolPreference('ARReceive');
     bool ARDeliver = await getBoolPreference('ARDeliver');
     bool ARManager = await getBoolPreference('ARManager');
+    bool ARCashbook = await getBoolPreference('ARCashbook');
     if (ARManager == true) {
       addServiceInMenuList();
-      menuList.add(
-        HomeModel(
-            menuName: "Receive",
-            menuIcon: "assets/images/home_icon/receive.png"),
-      );
-      menuList.add(
-        HomeModel(
-            menuName: "Delivery",
-            menuIcon: "assets/images/home_icon/delivery.png"),
-      );
+      addItemInMenuList("Receive", "receive.png");
+      addItemInMenuList("Delivery", "delivery.png");
+      addItemInMenuList("Cash Book", "cash_book.png");
     } else {
       if (ARService == true) {
         addServiceInMenuList();
       }
       if (ARDeliver == true) {
-        menuList.add(
-          HomeModel(
-              menuName: "Delivery",
-              menuIcon: "assets/images/home_icon/delivery.png"),
-        );
+        addItemInMenuList("Delivery", "delivery.png");
       }
       if (ARReceive == true) {
-        menuList.add(
-          HomeModel(
-              menuName: "Receive",
-              menuIcon: "assets/images/home_icon/receive.png"),
-        );
+        addItemInMenuList("Receive", "receive.png");
+      }
+      if (ARCashbook == true) {
+        addItemInMenuList("Cash Book", "cash_book.png");
       }
     }
   }
@@ -654,8 +632,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       pushMethod(context, DeliveryScreen());
     } else if (screen == "Receive") {
       pushMethod(context, ReceiveScreen());
-    } else if (screen == "Change Product") {
-      pushMethod(context, ChangeProduct());
+    } else if (screen == "Cash Book") {
+      pushMethod(context, CashBookScreen());
     }
   }
 
@@ -695,15 +673,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void addServiceInMenuList() {
-    menuList.add(
-      HomeModel(
-          menuName: "Service", menuIcon: "assets/images/home_icon/service.png"),
-    );
-    menuList.add(
-      HomeModel(
-          menuName: "Service Line",
-          menuIcon: "assets/images/home_icon/service_line.png"),
-    );
+    addItemInMenuList("Service", "service.png");
+    addItemInMenuList("Service Line", "service_line.png");
   }
 
   void onCardTap(int index, HomeModel homeModel) {
@@ -729,15 +700,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       pushMethod(context, ExtraProduct());
     } else if (index == 8) {
       pushMethod(context, ServiceStatusScreen());
-    } else if (index == 9) {
-      NavigateToScreen(homeModel.menuName);
-    } else if (index == 10) {
-      NavigateToScreen(homeModel.menuName);
-    } else if (index == 11) {
-      NavigateToScreen(homeModel.menuName);
-    } else if (index == 12) {
-      NavigateToScreen(homeModel.menuName);
-    } else if (index == 13) {
+    } else {
       NavigateToScreen(homeModel.menuName);
     }
   }
@@ -745,7 +708,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Future<void> getSavedTheme() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String? theme = sharedPreferences.getString("theme");
-    print(theme);
     if (theme == "background_theme") {
       themeName = theme;
     } else if (theme == "animated_theme") {
@@ -803,5 +765,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Container(
         width: MediaQuery.of(context).size.width * 0.55,
         child: Text(text, style: drawerTextStyle));
+  }
+
+  void addItemInMenuList(String menuName, String menuImage) {
+    menuList.add(
+      HomeModel(
+          menuName: "$menuName",
+          menuIcon: "assets/images/home_icon/${menuImage}"),
+    );
   }
 }

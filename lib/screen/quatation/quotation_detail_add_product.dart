@@ -14,14 +14,20 @@ import 'package:searchfield/searchfield.dart';
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../../getx/getx_controller.dart';
+import '../order/add_sub_product/confirm_order_add_subproduct.dart';
 
 class QuotationDetailAddProduct extends StatefulWidget {
   const QuotationDetailAddProduct(
-      {Key? key, this.deliveryDate, this.returnDate, this.orderId})
+      {Key? key,
+      this.deliveryDate,
+      this.returnDate,
+      this.orderId,
+      required this.confirmOrderScreen})
       : super(key: key);
   final String? deliveryDate;
   final String? returnDate;
   final int? orderId;
+  final bool confirmOrderScreen;
 
   @override
   State<QuotationDetailAddProduct> createState() =>
@@ -35,8 +41,6 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   MyGetxController myGetxController = Get.find();
   String returnDate = "";
   String deliveryDate = "";
-  DateTime? returnNotFormatedDate;
-  DateTime? deliveryNotFormatedDate;
   List<dynamic> responseOfApi = [];
   bool isDisplayResponseApiList = false;
   int? productId;
@@ -49,8 +53,6 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
     getPreferenceProductList();
     deliveryDate = widget.deliveryDate ?? "";
     returnDate = widget.returnDate ?? "";
-    deliveryNotFormatedDate = new DateFormat("dd/MM/yyyy").parse(deliveryDate);
-    returnNotFormatedDate = DateFormat("dd/MM/yyyy").parse(returnDate);
   }
 
   @override
@@ -94,10 +96,9 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                     onTap: () async {
                       pickedDate(context).then((value) {
                         if (value != null) {
-                          deliveryNotFormatedDate = value;
                           setState(() {
                             deliveryDate =
-                                DateFormat('dd-MM-yyyy').format(value);
+                                DateFormat('dd/MM/yyyy').format(value);
                           });
                         }
                       });
@@ -121,9 +122,8 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                     onTap: () async {
                       pickedDate(context).then((value) {
                         if (value != null) {
-                          returnNotFormatedDate = value;
                           setState(() {
-                            returnDate = DateFormat('dd-MM-yyyy').format(value);
+                            returnDate = DateFormat('dd/MM/yyyy').format(value);
                           });
                         }
                       });
@@ -199,7 +199,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                             FocusScope.of(context).unfocus();
                             getResponseProductApiList();
                           },
-                          itemHeight: 55,
+                          itemHeight: 50,
                           suggestions: myGetxController
                               .isMainProductFalseProductList
                               .map((e) {
@@ -371,7 +371,9 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
           if (value.toString().startsWith("192")) {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
-                addProduct(value, token);
+                widget.confirmOrderScreen == true
+                    ? chekSubProductIsAvailable(value, token)
+                    : addProduct(value, token, true);
               } else {
                 responseOfApi.clear();
                 dialog(context, "Connect to Showroom Network",
@@ -379,7 +381,9 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
               }
             });
           } else {
-            addProduct(value, token);
+            widget.confirmOrderScreen == true
+                ? chekSubProductIsAvailable(value, token)
+                : addProduct(value, token, true);
           }
         });
       } on SocketException catch (err) {
@@ -388,27 +392,32 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
     });
   }
 
-  void addProduct(String apiUrl, String token) async {
-    String dDate = DateFormat('MM/dd/yyyy')
-        .format(deliveryNotFormatedDate ?? DateTime.now());
-    String rDate = DateFormat('MM/dd/yyyy')
-        .format(returnNotFormatedDate ?? DateTime.now());
+  Future<int> addProduct(String apiUrl, String token, bool navigatePop) async {
     String rent = rentController.text;
     String remark = remarkController.text;
     final response = await http.put(
         Uri.parse(
-            "http://$apiUrl/api/rental.rental/$orderId/add_product_from_api?product_id=$productId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark"),
+            "http://$apiUrl/api/rental.rental/$orderId/add_product_from_api?product_id=$productId&delivery_date=$deliveryDate&return_date=$returnDate&rent=$rent&remarks=$remark"),
         headers: {
           'Access-Token': token,
         });
     final data = jsonDecode(response.body);
     if (data['status'] == 1) {
-      checkQuotationAndOrderDetailData(context, orderId ?? 0, false);
-      Navigator.pop(context);
+      if (widget.confirmOrderScreen == false) {
+        checkQuotationAndOrderDetailData(context, orderId ?? 0, false);
+        Navigator.pop(context);
+      } else {
+        checkWlanForOrderDetailScreen(context, orderId ?? 0);
+        if (navigatePop == true) {
+          Navigator.pop(context);
+        }
+        return data['id'];
+      }
     } else {
       dialog(
           context, data['msg'] ?? "Some thing went wrong", Colors.red.shade300);
     }
+    return 0;
   }
 
   void getPreferenceProductList() {
@@ -422,6 +431,39 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
           }
         });
       });
+    }
+  }
+
+  Future<void> chekSubProductIsAvailable(String apiUrl, String token) async {
+    final response = await http.put(
+        Uri.parse(
+            "http://$apiUrl/api/product.product/$productId/check_sub_product"),
+        headers: {
+          'Access-Token': token,
+        });
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      if (data['success'] == 1) {
+        int lineId = await addProduct(apiUrl, token, false);
+        addWholeSubProductInList(lineId).then((value) {
+          pushMethod(
+              context,
+              ConfirmOrderAddSubProduct(
+                orderLineId: lineId,
+                productName: productSearchController.text,
+                orderId: orderId ?? 0,
+                subProductList: value,
+                rent: rentController.text,
+                remark: remarkController.text,
+                returnDate: returnDate,
+                deliveryDate: deliveryDate,
+              ));
+        });
+      } else {
+        addProduct(apiUrl, token, true);
+      }
+    } else {
+      dialog(context, "Something Went Wrong", Colors.red.shade300);
     }
   }
 }

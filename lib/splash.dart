@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
     flutterLocalNotificationsPlugin.initialize(init,
         onSelectNotification: notificationClick);
     Timer(Duration(seconds: 2), () {
-      getLogIn().then((value) {
+      getBoolPreference('LogIN').then((value) {
         if (value == true) {
           pushFunction();
         } else {

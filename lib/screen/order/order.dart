@@ -55,20 +55,20 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     myGetxController.filteredOrderList.clear();
     myGetxController.orderData.clear();
     orderScreenOffset = 0;
-    getData(false, null, null,false);
+    getData(false, null, null, false);
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
         orderScreenOffset = orderScreenOffset + 5;
-        getData(false, null, null,false);
+        getData(false, null, null, false);
       }
     });
     filterScrollController.addListener(() {
       if (filterScrollController.position.pixels ==
           filterScrollController.position.maxScrollExtent) {
         filterOrderScreenOffset = filterOrderScreenOffset + 5;
-        getData(true, isToday, isBook,true);
+        getData(true, isToday, isBook, true);
       }
     });
   }
@@ -114,7 +114,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         orderScreenOffset = 0;
                         myGetxController.orderData.clear();
                         myGetxController.filteredOrderList.clear();
-                        getData(false, isToday, isBook,false);
+                        getData(false, isToday, isBook, false);
                       },
                       child: FadeInRight(
                           child: Padding(
@@ -242,7 +242,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                                 backgroundColor: Colors.white),
                             onPressed: () {
                               clearController();
-                              getData(true, isToday = true, isBook,false);
+                              getData(true, isToday = true, isBook, false);
                             },
                             child: Text(
                               "Today Book",
@@ -258,7 +258,8 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                                 backgroundColor: Colors.white),
                             onPressed: () {
                               clearController();
-                              getData(true, isToday = true, isBook = true,false);
+                              getData(
+                                  true, isToday = true, isBook = true, false);
                             },
                             child: Text("Today deliver",
                                 style: TextStyle(color: primary2Color))),
@@ -270,7 +271,8 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                                 backgroundColor: Colors.white),
                             onPressed: () {
                               clearController();
-                              getData(true, isToday = false, isBook = true,false);
+                              getData(
+                                  true, isToday = false, isBook = true, false);
                             },
                             child: Text("Tomorrow deliver",
                                 style: TextStyle(color: primary2Color))),
@@ -288,7 +290,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                                   isSearchLoadData = true;
                                   isExpandSearch = false;
                                 });
-                                getData(true, isToday, isBook,false);
+                                getData(true, isToday, isBook, false);
                               },
                               child: Text(
                                 "Search",
@@ -323,11 +325,13 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                           index: index,
                           isDeliveryScreen: false,
                           isOrderScreen: true,
-                          onTap: () => pushMethod(
-                              context,
-                              OrderDetail(
-                                  idFromAnotherScreen: false,
-                                  id: myGetxController.orderData[index]['id'])),
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  settings: RouteSettings(name: "/OrderScreen"),
+                                  builder: (context) => OrderDetail(
+                                      idFromAnotherScreen: false,
+                                      id: myGetxController.orderData[index]
+                                          ['id']))),
                         );
                       })
                   : ListView.builder(
@@ -345,12 +349,13 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                           index: index,
                           isDeliveryScreen: false,
                           isOrderScreen: true,
-                          onTap: () => pushMethod(
-                              context,
-                              OrderDetail(
-                                  idFromAnotherScreen: false,
-                                  id: myGetxController.filteredOrderList[index]
-                                      ['id'])),
+                          onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  settings: RouteSettings(name: "/OrderScreen"),
+                                  builder: (context) => OrderDetail(
+                                      idFromAnotherScreen: false,
+                                      id: myGetxController
+                                          .filteredOrderList[index]['id']))),
                         );
                       })
               : CenterCircularProgressIndicator()),
@@ -359,7 +364,8 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     ));
   }
 
-  getData(bool isSearchData, bool? today, bool? deliver,bool isFromFilterScrollController) async {
+  getData(bool isSearchData, bool? today, bool? deliver,
+      bool isFromFilterScrollController) async {
     getStringPreference('apiUrl').then((apiUrl) async {
       try {
         getStringPreference('accessToken').then((token) async {
@@ -367,7 +373,8 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
             showConnectivity().then((result) async {
               if (result == ConnectivityResult.wifi) {
                 isSearchData == true
-                    ? getSearchData(apiUrl, token, today, deliver,isFromFilterScrollController)
+                    ? getSearchData(apiUrl, token, today, deliver,
+                        isFromFilterScrollController)
                     : getOrderData(apiUrl, token);
               } else {
                 dialog(context, "Connect to Showroom Network",
@@ -376,7 +383,8 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
             });
           } else {
             isSearchData == true
-                ? getSearchData(apiUrl, token, today, deliver,isFromFilterScrollController)
+                ? getSearchData(
+                    apiUrl, token, today, deliver, isFromFilterScrollController)
                 : getOrderData(apiUrl, token);
           }
         });
@@ -409,7 +417,6 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
           'Access-Token': accessToken,
           'Content-Type': 'application/http',
         });
-        print(response.statusCode);
         Map<String, dynamic> data = await jsonDecode(response.body);
         if (data['count'] != 0) {
           myGetxController.orderData.addAll(data['results']);
@@ -422,7 +429,8 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     });
   }
 
-  getSearchData(String apiUrl, String token, bool? today, bool? deliver,bool isFromFilterScrollController) async {
+  getSearchData(String apiUrl, String token, bool? today, bool? deliver,
+      bool isFromFilterScrollController) async {
     String? domain;
     List datas = [];
 
@@ -475,7 +483,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
-        if(isFromFilterScrollController == false){
+        if (isFromFilterScrollController == false) {
           myGetxController.filteredOrderList.clear();
         }
         setState(() {
@@ -506,7 +514,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
     numberController.clear();
     orderNumberController.clear();
     nameController.clear();
-    filterOrderScreenOffset=0;
+    filterOrderScreenOffset = 0;
     setState(() {});
   }
 }

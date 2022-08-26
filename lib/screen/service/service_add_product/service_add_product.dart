@@ -34,7 +34,6 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
   int? productId;
   double? washingCharge;
   double? stitchingCharge;
-  DateTime deliveryNotFormatedDate = DateTime.now();
   String deliveryDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
   @override
@@ -163,11 +162,10 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
                                     FocusScope.of(context).unfocus();
                                     picked7DateAbove(context).then((value) {
                                       if (value != null) {
-                                        deliveryNotFormatedDate = value;
                                         setState(() {
                                           deliveryDate =
-                                              DateFormat('MM/dd/yyyy').format(
-                                                  deliveryNotFormatedDate);
+                                              DateFormat('dd/MM/yyyy')
+                                                  .format(value);
                                         });
                                       }
                                     });
@@ -262,10 +260,9 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
   }
 
   Future<void> addProduct(String apiUrl, String token) async {
-    String dDate = DateFormat('MM/dd/yyyy').format(deliveryNotFormatedDate);
     final response = await http.post(
         Uri.parse(
-            "http://$apiUrl/api/product.service.line?product_id=$productId&charge=${chargeController.text}&service_id=${widget.serviceId}&remark=${remarkController.text}&in_date=$dDate"),
+            "http://$apiUrl/api/product.service.line?product_id=$productId&charge=${chargeController.text}&service_id=${widget.serviceId}&remark=${remarkController.text}&in_date=$deliveryDate"),
         headers: {
           'Access-Token': token,
         });

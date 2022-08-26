@@ -33,8 +33,6 @@ class _EditOrderState extends State<EditOrder> {
   TextEditingController remarkController = TextEditingController();
   String deliveryDate = "";
   String returnDate = "";
-  DateTime notFormatedDDate = DateTime.now();
-  DateTime? notFormatedRDate = DateTime.now();
   MyGetxController myGetxController = Get.find();
   List<dynamic> lists = [];
   int indexs = 0;
@@ -153,7 +151,6 @@ class _EditOrderState extends State<EditOrder> {
                         FocusScope.of(context).unfocus();
                         pickedDate(context).then((value) {
                           if (value != null) {
-                            notFormatedDDate = value;
                             setState(() {
                               deliveryDate =
                                   DateFormat('dd/MM/yyyy').format(value);
@@ -198,7 +195,6 @@ class _EditOrderState extends State<EditOrder> {
                       onTap: () async {
                         FocusScope.of(context).unfocus();
                         pickedDate(context).then((value) {
-                          notFormatedRDate = value;
                           if (value != null) {
                             setState(() {
                               returnDate =
@@ -425,15 +421,12 @@ class _EditOrderState extends State<EditOrder> {
     String name = nameController.text;
     String number = numberController.text;
     String remark = remarkController.text;
-    String dDate = DateFormat('MM/dd/yyyy').format(notFormatedDDate);
-    String rDate =
-        DateFormat('MM/dd/yyyy').format(notFormatedRDate ?? DateTime.now());
     body = {
       'customer_name': name,
       'mobile1': number,
       'remarks': remark,
-      'delivery_date': dDate,
-      'return_date': rDate
+      'delivery_date': deliveryDate,
+      'return_date': returnDate
     };
     if (image1 != null) {
       tempBody = {'document_1': binaryImage1};
@@ -486,8 +479,6 @@ class _EditOrderState extends State<EditOrder> {
         .format(DateTime.parse(lists[indexs]['delivery_date']));
     returnDate = DateFormat("dd/MM/yyyy")
         .format(DateTime.parse(lists[indexs]['return_date']));
-    notFormatedDDate = DateFormat("dd/MM/yyyy").parse(deliveryDate);
-    notFormatedRDate = DateFormat("dd/MM/yyyy").parse(returnDate);
   }
 
   setImage() async {

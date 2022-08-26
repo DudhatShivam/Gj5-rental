@@ -83,7 +83,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
       if (filterScrollController.position.pixels ==
           filterScrollController.position.maxScrollExtent) {
         filterOffset = filterOffset + 5;
-        checkWlanForDrawerFilterData(startDay!, endDay!, "");
+        checkWlanForDrawerFilterData(startDay, endDay, "");
       }
     });
   }
@@ -779,7 +779,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
         ));
   }
 
-  checkWlanForDrawerFilterData(int startDay, int endDay, String whenDeliver) {
+  checkWlanForDrawerFilterData(int? startDay, int? endDay, String whenDeliver) {
     myGetxController.orderLineFilteredTag.add(whenDeliver);
     getStringPreference('apiUrl').then((apiUrl) async {
       try {
@@ -843,8 +843,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     myGetxController.filteredListOrderLine.clear();
     String? domain;
     List datas = [];
-    String dDate = DateFormat('yyyy/MM/dd').format(notFormatedDDate);
-    String toDDate = DateFormat('yyyy/MM/dd').format(notFormatedToDDate);
+    String dDate = DateFormat('dd/MM/yyyy').format(notFormatedDDate);
+    String toDDate = DateFormat('dd/MM/yyyy').format(notFormatedToDDate);
     if (orderNumberController.text != "") {
       myGetxController.orderLineFilteredTag
           .add("Order : ${orderNumberController.text}");
@@ -964,14 +964,14 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     _key.currentState?.closeDrawer();
   }
 
-  setFilteredData(int startDay, int endDay, String apiUrl, String token) async {
+  setFilteredData(int? startDay, int? endDay, String apiUrl, String token) async {
     String deliveryDate1 = "";
     String domain = "";
     if (endDay == 0) {
       if (startDay == 0) {
         deliveryDate1 = DateFormat('yyyy-MM-dd').format(DateTime.now());
       } else {
-        DateTime dateTime = DateTime.now().add(Duration(days: startDay));
+        DateTime dateTime = DateTime.now().add(Duration(days: startDay ?? 0));
         deliveryDate1 = DateFormat('yyyy-MM-dd').format(dateTime);
       }
       domain =

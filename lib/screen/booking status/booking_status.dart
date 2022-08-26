@@ -39,10 +39,8 @@ class _BookingStatusState extends State<BookingStatus> {
   bool? noData;
   bool? loading;
   bool isBtnLoading = false;
-  String returnDate = "";
-  String deliveryDate = "";
-  DateTime? returnNotFormatedDate;
-  DateTime? deliveryNotFormatedDate;
+  String? returnDate;
+  String? deliveryDate;
   double? productRent = 0;
 
   @override
@@ -164,7 +162,6 @@ class _BookingStatusState extends State<BookingStatus> {
                               onTap: () async {
                                 pickedDate(context).then((value) {
                                   if (value != null) {
-                                    deliveryNotFormatedDate = value;
                                     setState(() {
                                       deliveryDate = DateFormat('dd/MM/yyyy')
                                           .format(value);
@@ -180,7 +177,7 @@ class _BookingStatusState extends State<BookingStatus> {
                                     color: Colors.grey.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(15)),
                                 child: Text(
-                                  deliveryDate,
+                                  deliveryDate ?? "",
                                   style: primaryStyle,
                                 ),
                               ),
@@ -191,7 +188,6 @@ class _BookingStatusState extends State<BookingStatus> {
                               onTap: () async {
                                 pickedDate(context).then((value) {
                                   if (value != null) {
-                                    returnNotFormatedDate = value;
                                     setState(() {
                                       returnDate = DateFormat('dd/MM/yyyy')
                                           .format(value);
@@ -207,7 +203,7 @@ class _BookingStatusState extends State<BookingStatus> {
                                     color: Colors.grey.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(15)),
                                 child: Text(
-                                  returnDate,
+                                  returnDate ?? "",
                                   style: primaryStyle,
                                 ),
                               ),
@@ -357,13 +353,10 @@ class _BookingStatusState extends State<BookingStatus> {
 
   Future<void> checkingStatus(apiUrl, token) async {
     int? id = getIdFromTextFieldData(productSearchController.text);
-    if (deliveryNotFormatedDate != null && returnNotFormatedDate != null) {
-      String dDate = DateFormat('MM/dd/yyyy').format(deliveryNotFormatedDate!);
-      String rDate = DateFormat('MM/dd/yyyy').format(returnNotFormatedDate!);
-
+    if (deliveryDate != null && returnDate != null) {
       final response = await http.put(
           Uri.parse(
-              "http://$apiUrl/api/product.product/$id/checking_product_api?product_id=$id&delivery_date=$dDate&return_date=$rDate"),
+              "http://$apiUrl/api/product.product/$id/checking_product_api?product_id=$id&delivery_date=$deliveryDate&return_date=$returnDate"),
           headers: {
             'Access-Token': token,
           });

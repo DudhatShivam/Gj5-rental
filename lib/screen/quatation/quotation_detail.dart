@@ -210,6 +210,7 @@ class CustomFABWidget extends StatelessWidget {
   final bool? isAddService;
   final bool? isAddProductInService;
   final bool? isQuotationDetailAddExtraProduct;
+  final bool? isAddProductInConfirmOrder;
 
   CustomFABWidget({
     Key? key,
@@ -219,6 +220,7 @@ class CustomFABWidget extends StatelessWidget {
     this.isAddService,
     this.isAddProductInService,
     this.isQuotationDetailAddExtraProduct,
+    this.isAddProductInConfirmOrder,
   }) : super(key: key);
   MyGetxController myGetxController = Get.find();
   ServiceController serviceController = Get.put(ServiceController());
@@ -237,6 +239,7 @@ class CustomFABWidget extends StatelessWidget {
                     returnDate: DateFormat("dd/MM/yyyy").format(DateTime.parse(
                         myGetxController.quotationOrder[0]['return_date'])),
                     orderId: myGetxController.quotationOrder[0]['id'],
+                    confirmOrderScreen: false,
                   )
                 : isAddService == true
                     ? AddServiceScreen()
@@ -246,7 +249,21 @@ class CustomFABWidget extends StatelessWidget {
                                 .particularServiceList[0]['id'],
                             serviceType: serviceController
                                 .particularServiceList[0]['service_type'])
-                        : QuotationAddExtraProduct(),
+                        : isAddProductInConfirmOrder == true
+                            ? QuotationDetailAddProduct(
+                                deliveryDate: DateFormat("dd/MM/yyyy").format(
+                                    DateTime.parse(
+                                        myGetxController.particularOrderData[0]
+                                            ['delivery_date'])),
+                                returnDate: DateFormat("dd/MM/yyyy").format(
+                                    DateTime.parse(
+                                        myGetxController.particularOrderData[0]
+                                            ['return_date'])),
+                                orderId: myGetxController.particularOrderData[0]
+                                    ['id'],
+                                confirmOrderScreen: true,
+                              )
+                            : QuotationAddExtraProduct(),
         closedShape: CircleBorder(),
         closedColor: primary2Color,
         closedBuilder: (context, openContainer) => Container(

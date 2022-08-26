@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MyGetxController extends GetxController {
@@ -43,10 +44,15 @@ class MyGetxController extends GetxController {
   RxList<dynamic> quotationMainProductList = [].obs;
   RxList<dynamic> orginalProductList = [].obs;
 
+  //editQuotationOrder
+  RxList<dynamic> wholeSubProductList = [].obs;
+  RxList<dynamic> subProductList = [].obs;
+  RxList productControllers = [].obs;
+  RxList remarkControllerList = [].obs;
+
   //ProductScreen
   RxList<dynamic> mainProductList = [].obs;
   RxList<dynamic> mainProductDetailList = [].obs;
-
 
   //delivery screen
   RxList<dynamic> deliveryScreenOrderList = [].obs;
@@ -59,7 +65,6 @@ class MyGetxController extends GetxController {
   RxList<dynamic> selectedOrderLineSubProductList = [].obs;
   RxList<dynamic> deliverySelectedExtraProductList = [].obs;
   RxBool noDataInDeliveryScreen = false.obs;
-
 
   //OrderLine Screen
   RxList<dynamic> orderLineScreenList = [].obs;
@@ -107,5 +112,9 @@ class MyGetxController extends GetxController {
   //extra Product Screen
   RxList<dynamic> extraProductList = [].obs;
   RxList<dynamic> extraProductFilteredList = [].obs;
-  RxBool noDataInExtraProductScreen=false.obs;
+  RxBool noDataInExtraProductScreen = false.obs;
+
+  //cash book screen
+  RxList<dynamic> cashBookList = [].obs;
+  RxList<dynamic> detailCashBookList = [].obs;
 }

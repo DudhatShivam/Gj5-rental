@@ -37,8 +37,6 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
   TextEditingController remarkController = TextEditingController();
   String deliveryDate = "";
   String returnDate = "";
-  DateTime notFormatedDDate = DateTime.now();
-  DateTime? notFormatedRDate = DateTime.now();
 
   @override
   void initState() {
@@ -47,11 +45,8 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
     getProductList();
     deliveryDate = DateFormat("dd/MM/yyyy")
         .format(DateTime.parse(orderList[index]['delivery_date']));
-    ;
     returnDate = DateFormat("dd/MM/yyyy")
         .format(DateTime.parse(orderList[index]['return_date']));
-    notFormatedDDate = new DateFormat("dd/MM/yyy").parse(deliveryDate);
-    notFormatedRDate = DateFormat("dd/MM/yyy").parse(returnDate);
   }
 
   @override
@@ -128,7 +123,6 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                     FocusScope.of(context).unfocus();
                     pickedDate(context).then((value) {
                       if (value != null) {
-                        notFormatedDDate = value;
                         setState(() {
                           deliveryDate = DateFormat('dd/MM/yyyy').format(value);
                         });
@@ -172,7 +166,6 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                   onTap: () async {
                     FocusScope.of(context).unfocus();
                     pickedDate(context).then((value) {
-                      notFormatedRDate = value;
                       if (value != null) {
                         setState(() {
                           returnDate = DateFormat('dd/MM/yyyy').format(value);
@@ -297,18 +290,16 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
         rent = element['rent'];
       }
     });
-    String dDate = DateFormat('MM/dd/yyyy').format(notFormatedDDate);
     String remark = remarkController.text;
-    String rDate =
-        DateFormat('MM/dd/yyyy').format(notFormatedRDate ?? DateTime.now());
+
     final response = await http.put(
         Uri.parse(
-            "http://$apiUrl/api/rental.rental/$orderId/change_product_from_api?selected_product_id=${widget.productId}&product_id=$newProductId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark"),
+            "http://$apiUrl/api/rental.rental/$orderId/change_product_from_api?selected_product_id=${widget.productId}&product_id=$newProductId&delivery_date=$deliveryDate&return_date=$returnDate&rent=$rent&remarks=$remark"),
         headers: {
           'Access-Token': token,
         });
     if (response.statusCode == 200) {
-      checkWlanForDataOrderDetailScreen(context, orderId).whenComplete(() {
+      checkWlanForOrderDetailScreen(context, orderId).whenComplete(() {
         Navigator.pop(context);
       });
     } else {

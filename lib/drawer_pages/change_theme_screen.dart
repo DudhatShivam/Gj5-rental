@@ -53,6 +53,7 @@ class _ChangeThemeScreenState extends State<ChangeThemeScreen> {
                         decoration: BoxDecoration(
                             border: Border.all(color: primary2Color)),
                         height: getHeight(0.4, context),
+                        width: getWidth(0.5, context),
                         child: Image.asset(
                           index == 0
                               ? "${imagePath}default_theme.jpeg"
@@ -145,7 +146,7 @@ class _ChangeThemeScreenState extends State<ChangeThemeScreen> {
   Future<void> setThemePref(int index) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     if (index == 0) {
-        sharedPreferences.setString("theme", "default_theme");
+      sharedPreferences.setString("theme", "default_theme");
     } else if (index == 1) {
       sharedPreferences.setString("theme", "background_theme");
     } else if (index == 2) {
