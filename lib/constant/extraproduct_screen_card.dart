@@ -15,17 +15,15 @@ class ExtraProductScreenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String deliveryDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(extraProductList[index]['delivery_date'] ?? "0000-00-00"));
-    String returnDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(extraProductList[index]['return_date'] ?? "0000-00-00"));
+    String deliveryDate = changeDateFormat(extraProductList[index]['delivery_date'] ?? "0000-00-00");
+    String returnDate = changeDateFormat(extraProductList[index]['return_date'] ?? "0000-00-00");
     return Container(
       padding: EdgeInsets.all(15),
       margin: EdgeInsets.symmetric(
           horizontal: 15, vertical: 5),
       width: double.infinity,
       decoration: BoxDecoration(
-          color: statusBackGroundColor(extraProductList, index),
+          color: statusshadowColor(extraProductList, index),
           border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
           borderRadius: BorderRadius.all(Radius.circular(5))),
       child: Column(
@@ -51,7 +49,7 @@ class ExtraProductScreenCard extends StatelessWidget {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: statusBackGroundColor(extraProductList, index),
+                  color: statusshadowColor(extraProductList, index),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(extraProductList[index]['state'] ?? "",

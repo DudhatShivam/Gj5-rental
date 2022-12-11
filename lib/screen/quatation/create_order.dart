@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import '../../Utils/textfield_utils.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,7 @@ class _CreateOrderState extends State<CreateOrder> {
   String deliveryDate = "";
   String DformatedDate = "";
   String RformatedDate = "";
-  DateTime? returnNotFormatedDate;
+  DateTime returnNotFormatedDate=DateTime.now();
   DateTime deliveryNotFormatedDate = DateTime.now();
   bool initialValidDDate = true;
   bool initialValidRDate = true;
@@ -180,9 +181,9 @@ class _CreateOrderState extends State<CreateOrder> {
                               setState(() {
                                 isValidDDate = true;
                                 initialValidDDate = true;
-                                deliveryDate = DateFormat('dd/MM/yyyy')
+                                deliveryDate = DateFormat(passApiGlobalDateFormat)
                                     .format(deliveryNotFormatedDate);
-                                DformatedDate = DateFormat('dd/MM/yyyy')
+                                DformatedDate = DateFormat(showGlobalDateFormat)
                                     .format(deliveryNotFormatedDate);
                               });
                             }
@@ -234,10 +235,10 @@ class _CreateOrderState extends State<CreateOrder> {
                               setState(() {
                                 isValidRDate = true;
                                 initialValidRDate = true;
-                                returnDate = DateFormat('dd/MM/yyyy')
-                                    .format(returnNotFormatedDate!);
-                                RformatedDate = DateFormat('dd/MM/yyyy')
-                                    .format(returnNotFormatedDate!);
+                                returnDate = DateFormat(passApiGlobalDateFormat)
+                                    .format(returnNotFormatedDate);
+                                RformatedDate = DateFormat(showGlobalDateFormat)
+                                    .format(returnNotFormatedDate);
                               });
                             }
                           });
@@ -371,7 +372,7 @@ class _CreateOrderState extends State<CreateOrder> {
               margin: const EdgeInsets.all(15),
               child: ElevatedButton(
                   style:
-                      ElevatedButton.styleFrom(backgroundColor: primary2Color),
+                      ElevatedButton.styleFrom(primary: primary2Color),
                   onPressed: () {
                     if (_formKey.currentState?.validate() == true &&
                         nameController.text.isNotEmpty &&
@@ -401,7 +402,7 @@ class _CreateOrderState extends State<CreateOrder> {
       });
     } else {
       if (deliveryNotFormatedDate
-              .isBefore(returnNotFormatedDate ?? DateTime.now()) ==
+              .isBefore(returnNotFormatedDate) ==
           true) {
         checkWifiForCreateOrder();
       } else {
@@ -439,6 +440,8 @@ class _CreateOrderState extends State<CreateOrder> {
   Future<void> createOrder(String apiUrl, String token) async {
     CustomProgressDialog progressDialog =
         CustomProgressDialog(context, blur: 10, dismissable: false);
+    print(returnDate);
+    print(deliveryDate);
     progressDialog.setLoadingWidget(CenterCircularProgressIndicator());
     progressDialog.show();
     MyGetxController myGetxController = Get.find();
@@ -477,6 +480,7 @@ class _CreateOrderState extends State<CreateOrder> {
             },
             body: jsonEncode(body));
     Map datas = jsonDecode(response.body);
+    print(response.body);
 
     if (response.statusCode == 200) {
       myGetxController.quotationData.clear();

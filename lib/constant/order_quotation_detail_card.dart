@@ -44,10 +44,6 @@ class OrderQuotationDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String deliveryDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(orderDetailsList[index]['delivery_date']));
-    String returnDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(orderDetailsList[index]['return_date']));
     SwipeActionController controller = SwipeActionController();
     return SwipeActionCell(
       controller: controller,
@@ -226,7 +222,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
         padding: EdgeInsets.all(15),
         width: double.infinity,
         decoration: BoxDecoration(
-            color: statusBackGroundColor(orderDetailsList, index),
+            color: statusshadowColor(orderDetailsList, index),
             border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
             borderRadius: BorderRadius.all(Radius.circular(5))),
         child: Column(
@@ -278,7 +274,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: statusBackGroundColor(orderDetailsList, index),
+                    color: statusshadowColor(orderDetailsList, index),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Text(
@@ -358,7 +354,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                         style: allCardMainText,
                       ),
                       Text(
-                        deliveryDate,
+                        changeDateFormat(orderDetailsList[index]['delivery_date']),
                         style: deliveryDateStyle,
                       )
                     ],
@@ -370,7 +366,7 @@ class OrderQuotationDetailCard extends StatelessWidget {
                         style: allCardMainText,
                       ),
                       Text(
-                        returnDate,
+                        changeDateFormat(orderDetailsList[index]['return_date']),
                         style: returnDateStyle,
                       )
                     ],

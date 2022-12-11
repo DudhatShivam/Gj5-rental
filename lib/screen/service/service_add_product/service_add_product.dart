@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:searchfield/searchfield.dart';
 
+import '../../../Utils/textfield_utils.dart';
 import '../../../Utils/utils.dart';
 import '../../../constant/constant.dart';
 
@@ -34,7 +35,7 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
   int? productId;
   double? washingCharge;
   double? stitchingCharge;
-  String deliveryDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+  String deliveryDate = DateFormat(passApiGlobalDateFormat).format(DateTime.now());
 
   @override
   void initState() {
@@ -164,7 +165,7 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
                                       if (value != null) {
                                         setState(() {
                                           deliveryDate =
-                                              DateFormat('dd/MM/yyyy')
+                                              DateFormat(passApiGlobalDateFormat)
                                                   .format(value);
                                         });
                                       }
@@ -203,7 +204,7 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
                               height: 45,
                               child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: primary2Color),
+                                      primary: primary2Color),
                                   onPressed: () {
                                     FocusScope.of(context).unfocus();
                                     checkWlanForAddProduct();
@@ -278,7 +279,7 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
 
   void setCharge() {
     String value =
-        productSearchController.text.split(' ').first.removeAllWhitespace;
+        productSearchController.text.split('--').first.removeAllWhitespace;
     serviceController.serviceLineAddProductList.forEach((element) {
       if (element['default_code'] == value) {
         productId = element['id'];

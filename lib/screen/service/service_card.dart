@@ -4,18 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:gj5_rental/Utils/utils.dart';
 import 'package:intl/intl.dart';
 
+import '../../constant/constant.dart';
+
 class ServiceCard extends StatelessWidget {
   final List<dynamic> list;
   final VoidCallback? onTap;
   final int index;
-  final Color backGroundColor;
+  final Color shadowColor;
 
   const ServiceCard(
       {Key? key,
       required this.list,
       this.onTap,
       required this.index,
-      required this.backGroundColor})
+      required this.shadowColor})
       : super(key: key);
 
   @override
@@ -27,7 +29,7 @@ class ServiceCard extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         width: double.infinity,
         decoration: BoxDecoration(
-            color: backGroundColor,
+            color: shadowColor,
             border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
             borderRadius: BorderRadius.all(Radius.circular(5))),
         child: Column(
@@ -139,9 +141,7 @@ class ServiceCard extends StatelessWidget {
                             style: allCardMainText,
                           ),
                           Text(
-                            DateFormat("dd/MM/yyyy").format(
-                                    DateTime.parse(list[index]['in_date'])) ??
-                                "",
+                            changeDateFormat(list[index]['in_date']),
                             style: deliveryDateStyle,
                           )
                         ],
@@ -155,8 +155,7 @@ class ServiceCard extends StatelessWidget {
                             style: allCardMainText,
                           ),
                           Text(
-                            DateFormat("dd/MM/yyyy").format(
-                                DateTime.parse(list[index]['out_date'])),
+                            changeDateFormat(list[index]['out_date']),
                             style: returnDateStyle,
                           )
                         ],
@@ -182,9 +181,7 @@ class ServiceCard extends StatelessWidget {
                                 maxLines: 1,
                               ),
                               Text(
-                                DateFormat("dd/MM/yyyy").format(
-                                    DateTime.parse(
-                                        list[index]['delivery_date'])),
+                                changeDateFormat(list[index]['delivery_date']),
                                 style: deliveryDateStyle,
                                 maxLines: 1,
                               )
@@ -205,9 +202,7 @@ class ServiceCard extends StatelessWidget {
                                 maxLines: 1,
                               ),
                               Text(
-                                DateFormat("dd/MM/yyyy").format(
-                                    DateTime.parse(
-                                        list[index]['return_date'])),
+                                changeDateFormat(list[index]['return_date']),
                                 style: returnDateStyle,
                                 maxLines: 1,
                               )

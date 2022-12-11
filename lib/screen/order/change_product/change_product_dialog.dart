@@ -10,8 +10,10 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:searchfield/searchfield.dart';
 
+import '../../../Utils/textfield_utils.dart';
 import '../../../Utils/utils.dart';
 import '../../../constant/constant.dart';
+
 
 class ChangeProductDialog extends StatefulWidget {
   final List orderDetailList;
@@ -43,9 +45,9 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
     orderList = widget.orderDetailList;
     index = widget.index;
     getProductList();
-    deliveryDate = DateFormat("dd/MM/yyyy")
+    deliveryDate = DateFormat(showGlobalDateFormat)
         .format(DateTime.parse(orderList[index]['delivery_date']));
-    returnDate = DateFormat("dd/MM/yyyy")
+    returnDate = DateFormat(showGlobalDateFormat)
         .format(DateTime.parse(orderList[index]['return_date']));
   }
 
@@ -124,7 +126,8 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                     pickedDate(context).then((value) {
                       if (value != null) {
                         setState(() {
-                          deliveryDate = DateFormat('dd/MM/yyyy').format(value);
+                          deliveryDate =
+                              DateFormat(showGlobalDateFormat).format(value);
                         });
                       }
                     });
@@ -168,7 +171,8 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                     pickedDate(context).then((value) {
                       if (value != null) {
                         setState(() {
-                          returnDate = DateFormat('dd/MM/yyyy').format(value);
+                          returnDate =
+                              DateFormat(showGlobalDateFormat).format(value);
                         });
                       }
                     });
@@ -227,8 +231,7 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                     height: 45,
                     margin: const EdgeInsets.all(15),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: primary2Color),
+                        style: ElevatedButton.styleFrom(primary: primary2Color),
                         onPressed: () {
                           checkWlanForChangeProduct();
                         },
@@ -279,6 +282,7 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
   }
 
   Future<void> changeProduct(apiUrl, token) async {
+    print("cal");
     int? newProductId;
     double? rent;
     String value =
@@ -291,10 +295,12 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
       }
     });
     String remark = remarkController.text;
+    String dDate = changeDateFormatTopPassApiDate(deliveryDate);
+    String rDate = changeDateFormatTopPassApiDate(returnDate);
 
     final response = await http.put(
         Uri.parse(
-            "http://$apiUrl/api/rental.rental/$orderId/change_product_from_api?selected_product_id=${widget.productId}&product_id=$newProductId&delivery_date=$deliveryDate&return_date=$returnDate&rent=$rent&remarks=$remark"),
+            "http://$apiUrl/api/rental.rental/$orderId/change_product_from_api?selected_product_id=${widget.productId}&product_id=$newProductId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark"),
         headers: {
           'Access-Token': token,
         });
@@ -303,8 +309,8 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
         Navigator.pop(context);
       });
     } else {
-      dialog(context, "Error in Changing Product", Colors.red.shade300);
       Navigator.pop(context);
+      dialog(context, "Error in Changing Product", Colors.red.shade300);
     }
   }
 }

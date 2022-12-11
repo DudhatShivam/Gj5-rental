@@ -13,6 +13,7 @@ import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/order/order_detail.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import '../../Utils/textfield_utils.dart';
 
 import '../../Utils/utils.dart';
 import '../../home/home.dart';
@@ -25,17 +26,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
-  List status = [
-    'New',
-    'Confirmed',
-    'Waiting',
-    'Ready to Delivery',
-    'Partially Deliver',
-    'Delivered',
-    'Partially Received',
-    'Done',
-    'Cancelled'
-  ];
+
 
   List<dynamic> orderData = [];
   MyGetxController myGetxController = Get.put(MyGetxController());
@@ -239,7 +230,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                       children: [
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                                primary: Colors.white),
                             onPressed: () {
                               clearController();
                               getData(true, isToday = true, isBook, false);
@@ -255,7 +246,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         ),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                                primary: Colors.white),
                             onPressed: () {
                               clearController();
                               getData(
@@ -268,7 +259,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         ),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white),
+                                primary: Colors.white),
                             onPressed: () {
                               clearController();
                               getData(
@@ -284,7 +275,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                           width: 100,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: primary2Color),
+                                  primary: primary2Color),
                               onPressed: () {
                                 setState(() {
                                   isSearchLoadData = true;
@@ -321,7 +312,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list: myGetxController.orderData,
-                          backGroundColor: Colors.white,
+                          shadowColor: Colors.white,
                           index: index,
                           isDeliveryScreen: false,
                           isOrderScreen: true,
@@ -345,7 +336,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list: myGetxController.filteredOrderList,
-                          backGroundColor: Colors.white,
+                          shadowColor: Colors.white,
                           index: index,
                           isDeliveryScreen: false,
                           isOrderScreen: true,
@@ -401,8 +392,10 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
             DateTime.now().subtract(Duration(days: int.parse(past)));
         DateTime dateTime2 =
             DateTime.now().add(Duration(days: int.parse(next)));
-        String bookingDate = DateFormat('dd/MM/yyyy').format(dateTime1);
-        String deliveryDate = DateFormat('dd/MM/yyyy').format(dateTime2);
+        String bookingDate = DateFormat('MM/dd/yyyy').format(dateTime1);
+        String deliveryDate = DateFormat('MM/dd/yyyy').format(dateTime2);
+        print(bookingDate);
+        print(deliveryDate);
         String domain =
             "[('state' , 'not in' , ('draft','cancel','done')),  ('date' , '>=' , '$bookingDate'), ('delivery_date' , '<=' , '$deliveryDate')]";
         var params = {
@@ -436,31 +429,31 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
 
     if (nameController.text != "") {
       datas.add(
-          "('customer_name', 'ilike', '${nameController.text}'),('state' , 'not in' , ('cancel','done'))");
+          "('customer_name', 'ilike', '${nameController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (numberController.text != "") {
       datas.add(
-          "('mobile1', 'ilike', '${numberController.text}'),('state' , 'not in' , ('cancel','done'))");
+          "('mobile1', 'ilike', '${numberController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (orderNumberController.text != "") {
       datas.add(
-          "('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done'))");
+          "('name', 'ilike', '${orderNumberController.text}'),('state' , 'not in' , ('cancel','done','draft'))");
     }
     if (deliver == true) {
       if (today == true) {
-        String date = DateFormat('dd/MM/yyyy').format(DateTime.now());
+        String date = DateFormat(passApiGlobalDateFormat).format(DateTime.now());
         domain =
-            "[('delivery_date', '=', '$date'),('state' , 'not in' , ('cancel','done'))]";
+            "[('delivery_date', '=', '$date'),('state' , 'not in' , ('cancel','done','draft'))]";
       } else if (today == false) {
-        String date = DateFormat('dd/MM/yyyy')
+        String date = DateFormat(passApiGlobalDateFormat)
             .format(DateTime.now().add(Duration(days: 1)));
         domain =
-            "[('delivery_date', '=', '$date'),('state' , 'not in' , ('cancel','done'))]";
+            "[('delivery_date', '=', '$date'),('state' , 'not in' , ('cancel','done','draft'))]";
       }
     } else if (today == true) {
-      String date = DateFormat('dd/MM/yyyy').format(DateTime.now());
+      String date = DateFormat(passApiGlobalDateFormat).format(DateTime.now());
       domain =
-          "[('date', '=', '$date'),('state' , 'not in' , ('cancel','done'))]";
+          "[('date', '=', '$date'),('state' , 'not in' , ('cancel','done','draft'))]";
     }
 
     if (datas.length == 1) {

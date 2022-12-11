@@ -14,6 +14,7 @@ import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../Utils/textfield_utils.dart';
 import '../screen/Order_line/orderline_constant/order_line_card.dart';
 
 ExitDialog(BuildContext context) {
@@ -177,58 +178,6 @@ Future<DateTime?> picked7DateAbove(BuildContext context) async {
   return picked;
 }
 
-
-
-textFieldWidget(
-    String hint,
-    TextEditingController controller,
-    bool isObscureText,
-    bool isDense,
-    Color color,
-    TextInputType textInputType,
-    double horizontalPadding,
-    Color focusedBorderColor,
-    int maxLine) {
-  return Padding(
-    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-    child: TextFormField(
-      obscureText: isObscureText,
-      maxLines: maxLine,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "Enter Value";
-        }
-      },
-      keyboardType: textInputType,
-      controller: controller,
-      decoration: InputDecoration(
-          suffixIcon: InkWell(
-              onTap: () {
-                controller.clear();
-              },
-              child: Icon(
-                Icons.cancel,
-                size: 25,
-                color: Colors.grey.shade400,
-              )),
-          isDense: true,
-          hintText: hint,
-          hintStyle: TextStyle(color: Colors.grey.shade400),
-          filled: true,
-          fillColor: color,
-          border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(10)),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.transparent),
-              borderRadius: BorderRadius.circular(10)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: focusedBorderColor),
-              borderRadius: BorderRadius.circular(10))),
-    ),
-  );
-}
-
 numberValidatorTextfield(
     TextEditingController textEditingController, String hint) {
   return TextFormField(
@@ -355,14 +304,14 @@ deleteProductInQuotationAndOrder(lineId, int index, List orderDetails,
   }
 }
 
-Widget cartCard(List<dynamic> list, int index, String cartOwnerName,
-    Color backgroundColor) {
+Widget cartCard(
+    List<dynamic> list, int index, String cartOwnerName, Color shadowColor) {
   return Container(
     padding: EdgeInsets.all(15),
     margin: EdgeInsets.only(bottom: 10),
     width: double.infinity,
     decoration: BoxDecoration(
-        color: backgroundColor,
+        color: shadowColor,
         border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
         borderRadius: BorderRadius.all(Radius.circular(5))),
     child: Column(
@@ -597,7 +546,7 @@ remarkContainer(
           style: primaryStyle,
         ),
         Container(
-            width: getWidth(size, context),
+          width: getWidth(size, context),
           child: textFieldWidget(
               "Remark",
               textEditingController,
@@ -647,8 +596,7 @@ void checkForOrderScreenProductDetail() {
   });
 }
 
-Future<void> checkWlanForOrderDetailScreen(
-    BuildContext context, int id) async {
+Future<void> checkWlanForOrderDetailScreen(BuildContext context, int id) async {
   getStringPreference('apiUrl').then((apiUrl) async {
     try {
       getStringPreference('accessToken').then((token) async {
@@ -885,7 +833,7 @@ popUpForWaitingThumbInOrderScreen(
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade300),
+                              primary: Colors.green.shade300),
                           onPressed: () {
                             checkWlanForConfirmOrderThumbAndWaiting(
                                 orderId,
@@ -945,12 +893,12 @@ submitReasonForWaiting(
 
 get5daysBeforeDate() {
   DateTime dateTime = DateTime.now().subtract(Duration(days: 5));
-  return DateFormat('dd/MM/yyyy').format(dateTime);
+  return DateFormat(passApiGlobalDateFormat).format(dateTime);
 }
 
 get7DaysAfterDate() {
   DateTime dateTime2 = DateTime.now().add(Duration(days: 7));
-  return DateFormat('dd/MM/yyyy').format(dateTime2);
+  return DateFormat(passApiGlobalDateFormat).format(dateTime2);
 }
 
 orderDetailContainer() {
@@ -985,7 +933,7 @@ allScreenInitialSizedBox(BuildContext context) {
   );
 }
 
-Color statusBackGroundColor(List list, int index) {
+Color statusshadowColor(List list, int index) {
   Color color;
   list[index]['state'] == 'done' || list[index]['state'] == 'cancel'
       ? color = mutedColor.withOpacity(0.08)
@@ -1013,4 +961,23 @@ Color statusColor(List list, int index) {
                   ? color = successColor
                   : color = defaultColor;
   return color;
+}
+
+String passApiGlobalDateFormat = "MM/dd/yyyy";
+String showGlobalDateFormat = "dd/MM/yyyy";
+
+String changeDateFormat(String unformatedDate) {
+  return DateFormat(showGlobalDateFormat)
+      .format(DateTime.parse(unformatedDate));
+}
+
+String changeDateFormatTopPassApiDate(String unformatedDate) {
+  DateTime tempDate = new DateFormat(showGlobalDateFormat).parse(unformatedDate);
+  return DateFormat(passApiGlobalDateFormat).format(tempDate);
+}
+
+setDateFormat() {
+  getStringPreference('dateFormat').then((value) {
+    passApiGlobalDateFormat = value;
+  });
 }

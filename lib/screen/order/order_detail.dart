@@ -61,7 +61,7 @@ class _OrderDetailState extends State<OrderDetail> {
                     ? OrderQuatationCommanCard(
                         list: myGetxController.particularOrderData,
                         isOrderScreen: true,
-                        backGroundColor: Colors.grey.withOpacity(0.1),
+                        shadowColor: Colors.grey.withOpacity(0.1),
                         index: 0,
                         isDeliveryScreen: false)
                     : Container(),

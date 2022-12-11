@@ -134,7 +134,7 @@ class _AddAccountState extends State<AddAccount> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade300),
+                              shadowColor: Colors.green.shade300),
                           onPressed: () {
                             deleteAccount(index, id);
                             Navigator.pop(context);
@@ -145,7 +145,7 @@ class _AddAccountState extends State<AddAccount> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.shade300),
+                              shadowColor: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -200,7 +200,6 @@ class _AddAccountState extends State<AddAccount> {
                   'username': username.trim(),
                   'password': password.trim()
                 }));
-
         if (response.statusCode == 200) {
           removePreference().whenComplete(() {
             final data = jsonDecode(response.body);
@@ -209,12 +208,16 @@ class _AddAccountState extends State<AddAccount> {
                 setLogIn(true);
                 setLogInData(
                         serverUrl,
+                        username,
+                        password,
+                        dbListResponse.body,
                         data['access_token'],
                         data['uid'].toString(),
                         data['partner_id'].toString(),
                         data['name'].toString(),
                         data['image'].toString(),
                         data['branch_name'],
+                        data['date_format'],
                         data['past_day_order'].toString(),
                         data['next_day_order'].toString(),
                         data['is_user'],

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import '../../Utils/textfield_utils.dart';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
@@ -272,7 +273,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         alignment: Alignment.centerRight,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: primary2Color),
+                                primary: primary2Color),
                             onPressed: () {
                               setState(() {
                                 isExpandSearch = false;
@@ -308,7 +309,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               return ServiceCard(
                                 list: serviceController.serviceList,
                                 index: index,
-                                backGroundColor: Colors.white,
+                                shadowColor: Colors.white,
                                 onTap: () => pushMethod(
                                     context,
                                     ServiceDetailScreen(
@@ -333,7 +334,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               return ServiceCard(
                                 list: serviceController.serviceFilteredList,
                                 index: index,
-                                backGroundColor: Colors.white,
+                                shadowColor: Colors.white,
                                 onTap: () => pushMethod(
                                     context,
                                     ServiceDetailScreen(
@@ -416,7 +417,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
         serviceController.serviceFilteredList.addAll(data['results']);
       } else {
         serviceController.noDataInServiceScreen.value = true;
-        dialog(context, "No Order Found", Colors.red.shade300);
+        dialog(context, "No Service Found", Colors.red.shade300);
       }
     } else {
       dialog(context, "Something Went Wrong !", Colors.red.shade300);

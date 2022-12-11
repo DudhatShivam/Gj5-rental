@@ -44,7 +44,7 @@ class OrderLineCard extends StatelessWidget {
       padding: EdgeInsets.all(15),
       width: double.infinity,
       decoration: BoxDecoration(
-          color: statusBackGroundColor(orderList, index),
+          color: statusshadowColor(orderList, index),
           border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
           borderRadius: BorderRadius.all(Radius.circular(5))),
       child: Column(
@@ -80,7 +80,7 @@ class OrderLineCard extends StatelessWidget {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: statusBackGroundColor(orderList, index),
+                  color: statusshadowColor(orderList, index),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: isProductDetailScreen == false
@@ -153,11 +153,10 @@ class OrderLineCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                                "${orderList[index]['quantity'].toString() ?? ""}/",
+                                "${orderList[index]['quantity'].toString()}/",
                                 style: allCardSubText),
                             Text(
-                              orderList[index]['qty_available'].toString() ??
-                                  "",
+                              orderList[index]['qty_available'].toString(),
                               style: allCardSubText,
                             ),
                           ],
@@ -245,10 +244,7 @@ class OrderLineCard extends StatelessWidget {
                                 style: primaryStyle,
                               ),
                               Text(
-                                DateFormat("dd/MM/yyyy")
-                                    .format(DateTime.parse(
-                                        orderList[index]['delivery_date']))
-                                    .toString(),
+                                changeDateFormat(orderList[index]['delivery_date']),
                                 style: deliveryDateStyle,
                               )
                             ],
@@ -260,10 +256,7 @@ class OrderLineCard extends StatelessWidget {
                                 style: primaryStyle,
                               ),
                               Text(
-                                DateFormat("dd/MM/yyyy")
-                                    .format(DateTime.parse(
-                                        orderList[index]['return_date']))
-                                    .toString(),
+                                changeDateFormat(orderList[index]['return_date']),
                                 style: returnDateStyle,
                               )
                             ],
@@ -561,6 +554,7 @@ Future<void> getDataForOrderLine(
         dialog(context, "No Data Found !", Colors.red.shade300);
       }
     }
+    print(response.body);
   } else {
     dialog(context, "Something Went Wrong !", Colors.red.shade300);
   }

@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 
+import '../../Utils/textfield_utils.dart';
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../../getx/getx_controller.dart';
@@ -162,7 +163,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: primary2Color),
+                              primary: primary2Color),
                           onPressed: () {
                             setState(() {
                               isExpandSearch=false;
@@ -236,7 +237,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                                         myGetxController
                                             .mainProductDetailList[index]
                                                 ['rent']
-                                            .toString() ?? "",
+                                            .toString(),
                                         style: deliveryDateStyle,
                                       ),
                                     )

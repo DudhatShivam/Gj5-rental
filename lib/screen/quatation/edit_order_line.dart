@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import '../../Utils/textfield_utils.dart';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -58,10 +59,8 @@ class _EditOrderLineState extends State<EditOrderLine> {
   @override
   void initState() {
     super.initState();
-    deliveryDate = DateFormat('dd/MM/yyyy')
-        .format(DateTime.parse(widget.deliveryDate ?? ""));
-    returnDate = DateFormat('dd/MM/yyyy')
-        .format(DateTime.parse(widget.returnDate ?? ""));
+    deliveryDate = changeDateFormat(widget.deliveryDate ?? "");
+    returnDate = changeDateFormat(widget.returnDate ?? "");
     remarkController.text = widget.remark ?? "";
     rentController.text = widget.rent.toString();
     wholeSubProductList.addAll(widget.wholeSubProductList ?? []);
@@ -156,8 +155,8 @@ class _EditOrderLineState extends State<EditOrderLine> {
                         pickedDate(context).then((value) {
                           if (value != null) {
                             setState(() {
-                              deliveryDate =
-                                  DateFormat('dd/MM/yyyy').format(value);
+                              deliveryDate = DateFormat(showGlobalDateFormat)
+                                  .format(value);
                             });
                           }
                         });
@@ -182,8 +181,8 @@ class _EditOrderLineState extends State<EditOrderLine> {
                         pickedDate(context).then((value) {
                           if (value != null) {
                             setState(() {
-                              returnDate =
-                                  DateFormat('dd-MM-yyyy').format(value);
+                              returnDate = DateFormat(showGlobalDateFormat)
+                                  .format(value);
                             });
                           }
                         });
@@ -379,8 +378,8 @@ class _EditOrderLineState extends State<EditOrderLine> {
                       margin: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 25),
                       child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primary2Color),
+                          style:
+                              ElevatedButton.styleFrom(primary: primary2Color),
                           onPressed: () {
                             FocusScope.of(context).unfocus();
                             updatedDictionary.clear();
@@ -406,11 +405,13 @@ class _EditOrderLineState extends State<EditOrderLine> {
   ) async {
     String remark = remarkController.text;
     String rent = rentController.text;
+    String dDate = changeDateFormatTopPassApiDate(deliveryDate);
+    String rDate = changeDateFormatTopPassApiDate(returnDate);
     var body = {
       'rent': '$rent',
       'remarks': '$remark',
-      'delivery_date': '$deliveryDate',
-      'return_date': '$returnDate',
+      'delivery_date': '$dDate',
+      'return_date': '$rDate',
       'product_details_ids': updatedDictionary
     };
     final response = await http.put(
@@ -515,7 +516,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
             updatedDictionary.add({
               'id': wholeSubProductList[i]['id'],
               'product_id': e['id'],
-              'remarks': remarkControllerList[i].text.toString() ?? ''
+              'remarks': remarkControllerList[i].text.toString()
             });
           }
         });
@@ -523,7 +524,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
         updatedDictionary.add({
           'id': wholeSubProductList[i]['id'],
           'product_id': 0,
-          'remarks': remarkControllerList[i].text.toString() ?? ''
+          'remarks': remarkControllerList[i].text.toString()
         });
       }
     }
@@ -588,7 +589,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.shade300),
+                              primary: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },

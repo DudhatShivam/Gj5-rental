@@ -30,6 +30,7 @@ class _BookingStatusState extends State<BookingStatus> {
   @override
   void initState() {
     super.initState();
+    print(passApiGlobalDateFormat);
     getProductList();
   }
 
@@ -163,8 +164,9 @@ class _BookingStatusState extends State<BookingStatus> {
                                 pickedDate(context).then((value) {
                                   if (value != null) {
                                     setState(() {
-                                      deliveryDate = DateFormat('dd/MM/yyyy')
-                                          .format(value);
+                                      deliveryDate =
+                                          DateFormat(passApiGlobalDateFormat)
+                                              .format(value);
                                     });
                                   }
                                 });
@@ -189,7 +191,7 @@ class _BookingStatusState extends State<BookingStatus> {
                                 pickedDate(context).then((value) {
                                   if (value != null) {
                                     setState(() {
-                                      returnDate = DateFormat('dd/MM/yyyy')
+                                      returnDate = DateFormat(passApiGlobalDateFormat)
                                           .format(value);
                                     });
                                   }
@@ -229,7 +231,7 @@ class _BookingStatusState extends State<BookingStatus> {
                   )
                 : loading == true
                     ? Expanded(
-                        child: Center(child: CircularProgressIndicator()))
+                        child: CenterCircularProgressIndicator())
                     : noData == true
                         ? Padding(
                             padding: const EdgeInsets.only(top: 15),
@@ -250,8 +252,8 @@ class _BookingStatusState extends State<BookingStatus> {
                         width: double.infinity,
                         height: 45,
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: primary2Color),
+                          style:
+                              ElevatedButton.styleFrom(primary: primary2Color),
                           onPressed: () {
                             setState(() {
                               isBtnLoading = true;
@@ -353,6 +355,9 @@ class _BookingStatusState extends State<BookingStatus> {
 
   Future<void> checkingStatus(apiUrl, token) async {
     int? id = getIdFromTextFieldData(productSearchController.text);
+    print(deliveryDate);
+    print(returnDate);
+    print(id);
     if (deliveryDate != null && returnDate != null) {
       final response = await http.put(
           Uri.parse(
@@ -360,6 +365,8 @@ class _BookingStatusState extends State<BookingStatus> {
           headers: {
             'Access-Token': token,
           });
+      print(response.body);
+      print(response.statusCode);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['status'] == 1) {
@@ -381,6 +388,10 @@ class _BookingStatusState extends State<BookingStatus> {
           });
           dialog(context, data['msg'], Colors.red.shade300);
         }
+      } else {
+        isBtnLoading = false;
+        setState(() {});
+        dialog(context, "Some thing went wrong", Colors.red.shade300);
       }
     } else {
       setState(() {
@@ -410,7 +421,8 @@ void getProductList() {
 int? getIdFromTextFieldData(String productSearchControllerText) {
   MyGetxController myGetxController = Get.find();
   int? id;
-  String value = productSearchControllerText.split(' ').first;
+  String value = productSearchControllerText.split('--').first.trim();
+  print(value);
   myGetxController.isMainProductTrueProductList.forEach((element) {
     if (element['default_code'] == value) {
       id = element['id'];

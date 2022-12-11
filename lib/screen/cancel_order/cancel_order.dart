@@ -9,6 +9,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
 import 'package:http/http.dart' as http;
 
+import '../../Utils/textfield_utils.dart';
 import '../../constant/constant.dart';
 import '../../constant/order_quotation_comman_card.dart';
 import '../../getx/getx_controller.dart';
@@ -201,7 +202,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: primary2Color),
+                              primary: primary2Color),
                           onPressed: () {
                             myGetxController.isShowCancelOrderScreenFilteredList
                                 .value = true;
@@ -234,7 +235,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                           itemBuilder: (context, index) {
                             return OrderQuatationCommanCard(
                               index: index,
-                              backGroundColor: Colors.white,
+                              shadowColor: Colors.white,
                               isDeliveryScreen: true,
                               list: myGetxController.cancelOrderList,
                               isOrderScreen: false,
@@ -263,7 +264,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                           itemBuilder: (context, indexs) {
                             return OrderQuatationCommanCard(
                               index: indexs,
-                              backGroundColor: Colors.white,
+                              shadowColor: Colors.white,
                               isOrderScreen: false,
                               isDeliveryScreen: false,
                               list: myGetxController.filteredCancelOrderList,

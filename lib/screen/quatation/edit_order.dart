@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import '../../Utils/textfield_utils.dart';
+
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -152,8 +154,8 @@ class _EditOrderState extends State<EditOrder> {
                         pickedDate(context).then((value) {
                           if (value != null) {
                             setState(() {
-                              deliveryDate =
-                                  DateFormat('dd/MM/yyyy').format(value);
+                              deliveryDate = DateFormat(showGlobalDateFormat)
+                                  .format(value);
                             });
                           }
                         });
@@ -197,8 +199,8 @@ class _EditOrderState extends State<EditOrder> {
                         pickedDate(context).then((value) {
                           if (value != null) {
                             setState(() {
-                              returnDate =
-                                  DateFormat('dd/MM/yyyy').format(value);
+                              returnDate = DateFormat(showGlobalDateFormat)
+                                  .format(value);
                             });
                           }
                         });
@@ -324,10 +326,8 @@ class _EditOrderState extends State<EditOrder> {
                       height: 45,
                       width: double.infinity,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: primary2Color),
+                        style: ElevatedButton.styleFrom(backgroundColor: primary2Color),
                         onPressed: () {
-                          myGetxController.isUpdateData.value = true;
                           FocusScope.of(context).unfocus();
                           checkWifiForupdateOrder();
                         },
@@ -416,17 +416,21 @@ class _EditOrderState extends State<EditOrder> {
   }
 
   Future<void> updateData(String apiUrl, String token, String orderId) async {
+    myGetxController.isUpdateData.value = true;
+
     Map tempBody;
     Map body;
     String name = nameController.text;
     String number = numberController.text;
     String remark = remarkController.text;
+    String dDate=changeDateFormatTopPassApiDate(deliveryDate);
+    String rDate=changeDateFormatTopPassApiDate(returnDate);
     body = {
       'customer_name': name,
       'mobile1': number,
       'remarks': remark,
-      'delivery_date': deliveryDate,
-      'return_date': returnDate
+      'delivery_date': dDate,
+      'return_date': rDate
     };
     if (image1 != null) {
       tempBody = {'document_1': binaryImage1};
@@ -446,14 +450,14 @@ class _EditOrderState extends State<EditOrder> {
         Uri.parse("http://$apiUrl/api/rental.rental/$orderId"),
         body: jsonEncode(body),
         headers: {'Access-Token': token, 'Content-Type': 'text/plain'});
+    print(response.body);
     var data = jsonDecode(response.body);
     if (response.statusCode == 200) {
       updateQuotationData(apiUrl, token, orderId);
-      myGetxController.isUpdateData.value = false;
     } else {
       dialog(context, data['error_descrip'], Colors.red.shade300);
-      myGetxController.isUpdateData.value = false;
     }
+    myGetxController.isUpdateData.value = false;
   }
 
   Future<void> updateQuotationData(
@@ -475,10 +479,8 @@ class _EditOrderState extends State<EditOrder> {
     nameController.text = lists[indexs]['customer_name'];
     numberController.text = lists[indexs]['mobile1'];
     remarkController.text = lists[indexs]['remarks'] ?? "";
-    deliveryDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(lists[indexs]['delivery_date']));
-    returnDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(lists[indexs]['return_date']));
+    deliveryDate = changeDateFormat(lists[indexs]['delivery_date']);
+    returnDate = changeDateFormat(lists[indexs]['return_date']);
   }
 
   setImage() async {

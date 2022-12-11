@@ -76,7 +76,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                 ? ServiceCard(
                     list: serviceController.particularServiceList,
                     index: 0,
-                    backGroundColor: Colors.grey.withOpacity(0.1),
+                    shadowColor: Colors.grey.withOpacity(0.1),
                   )
                 : Container()),
             SizedBox(

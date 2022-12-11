@@ -144,7 +144,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                     ? Container()
                     : ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade300),
+                        primary: Colors.green.shade300),
                     onPressed: () {
                       setService();
                     },
@@ -154,7 +154,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                 ),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade300),
+                        primary: Colors.red.shade300),
                     onPressed: () {
                       Navigator.pop(context);
                     },

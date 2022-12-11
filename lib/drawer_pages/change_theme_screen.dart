@@ -117,14 +117,14 @@ class _ChangeThemeScreenState extends State<ChangeThemeScreen> {
                       children: [
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red.shade300),
+                               primary : Colors.red.shade300),
                             onPressed: () {},
                             child: Text("Cancel")),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green.shade300),
+                                  primary: Colors.green.shade300),
                               onPressed: () {
                                 setState(() {
                                   curIndex = index;

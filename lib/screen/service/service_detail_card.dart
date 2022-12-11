@@ -7,6 +7,7 @@ import 'package:gj5_rental/screen/service/receive_service/receive_service_line.d
 import 'package:intl/intl.dart';
 
 import '../../Utils/utils.dart';
+import '../../constant/constant.dart';
 
 class ServiceDetailCard extends StatelessWidget {
   final List list;
@@ -202,9 +203,7 @@ class ServiceDetailCard extends StatelessWidget {
                                 style: allCardMainText,
                               ),
                               Text(
-                                DateFormat("dd/MM/yyyy").format(DateTime.parse(
-                                        list[index]['in_date'])) ??
-                                    "",
+                                changeDateFormat(list[index]['in_date']),
                                 style: deliveryDateStyle,
                               )
                             ],
@@ -226,9 +225,7 @@ class ServiceDetailCard extends StatelessWidget {
                                     style: allCardMainText,
                                   ),
                                   Text(
-                                    DateFormat("dd/MM/yyyy").format(
-                                        DateTime.parse(
-                                            list[index]['out_date'])),
+                                    changeDateFormat(list[index]['out_date']),
                                     style: returnDateStyle,
                                   )
                                 ],
@@ -290,7 +287,7 @@ class ServiceDetailCard extends StatelessWidget {
                                 style: allCardMainText,
                               ),
                               Text(
-                                "${DateFormat("dd/MM/yyyy").format(DateTime.parse(list[index]['delivery_date']))} ",
+                                changeDateFormat(list[index]['delivery_date']),
                                 style: deliveryDateStyle,
                               )
                             ],
@@ -309,8 +306,7 @@ class ServiceDetailCard extends StatelessWidget {
                                 style: allCardMainText,
                               ),
                               Text(
-                                DateFormat("dd/MM/yyyy").format(
-                                    DateTime.parse(list[index]['return_date'])),
+                                changeDateFormat(list[index]['return_date']),
                                 style: returnDateStyle,
                               )
                             ],

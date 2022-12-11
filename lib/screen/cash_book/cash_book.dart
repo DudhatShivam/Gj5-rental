@@ -36,8 +36,8 @@ class _CashBookScreenState extends State<CashBookScreen> {
   void initState() {
     super.initState();
     getUid();
-    fromDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    toDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    fromDate = DateFormat(showGlobalDateFormat).format(DateTime.now());
+    toDate = DateFormat(showGlobalDateFormat).format(DateTime.now());
   }
 
   TextStyle creditTextStyle =
@@ -85,8 +85,9 @@ class _CashBookScreenState extends State<CashBookScreen> {
                                     onTap: () {
                                       pickedPastDate(context).then((value) {
                                         if (value != null) {
-                                          fromDate = DateFormat('dd/MM/yyyy')
-                                              .format(value);
+                                          fromDate =
+                                              DateFormat(showGlobalDateFormat)
+                                                  .format(value);
                                           setState(() {});
                                         }
                                       });
@@ -108,8 +109,9 @@ class _CashBookScreenState extends State<CashBookScreen> {
                                     onTap: () {
                                       pickedPastDate(context).then((value) {
                                         if (value != null) {
-                                          toDate = DateFormat('dd/MM/yyyy')
-                                              .format(value);
+                                          toDate =
+                                              DateFormat(showGlobalDateFormat)
+                                                  .format(value);
                                           setState(() {});
                                         }
                                       });
@@ -144,7 +146,7 @@ class _CashBookScreenState extends State<CashBookScreen> {
                                     height: 45,
                                     child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            backgroundColor: primary2Color),
+                                            primary: primary2Color),
                                         onPressed: () {
                                           checkWlanForServiceScreenData();
                                         },
@@ -172,7 +174,6 @@ class _CashBookScreenState extends State<CashBookScreen> {
                                         myGetxController.cashBookList[index];
                                     detailCashBookList = myGetxController
                                         .detailCashBookList[index];
-
                                     return Column(
                                       children: [
                                         InkWell(
@@ -316,17 +317,18 @@ class _CashBookScreenState extends State<CashBookScreen> {
                                 child: Row(
                                   children: [
                                     Text(
-                                      grandTotal[0]['credit'].toString(),
+                                      grandTotal[0]['credit']
+                                          .toStringAsFixed(1),
                                       style: deliveryDateStyle,
                                     ),
                                     Expanded(
                                         child: Text(
-                                      grandTotal[0]['debit'].toString(),
+                                      grandTotal[0]['debit'].toStringAsFixed(1),
                                       style: returnDateStyle,
                                       textAlign: TextAlign.center,
                                     )),
                                     Text(
-                                      "${grandTotal[0]['credit'] - grandTotal[0]['debit']}",
+                                      "${double.parse(grandTotal[0]['credit'].toStringAsFixed(1)) - double.parse(grandTotal[0]['debit'].toStringAsFixed(1))}",
                                       style: TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.w500),
@@ -356,7 +358,7 @@ class _CashBookScreenState extends State<CashBookScreen> {
           color: Colors.grey.withOpacity(0.1),
           borderRadius: BorderRadius.circular(15)),
       child: Text(
-        date ?? "",
+        date,
         style: primaryStyle,
       ),
     );
@@ -393,12 +395,15 @@ class _CashBookScreenState extends State<CashBookScreen> {
   }
 
   Future<void> getDailyCashBookData(apiUrl, token) async {
+    String fDate = changeDateFormatTopPassApiDate(fromDate ?? "");
+    String tDate = changeDateFormatTopPassApiDate(toDate ?? "");
     final response = await http.put(
         Uri.parse(
-            "http://$apiUrl/api/res.users/$uid/get_daily_cashbook?date_from=$fromDate&date_to=$toDate"),
+            "http://$apiUrl/api/res.users/$uid/get_daily_cashbook?date_from=$fDate&date_to=$tDate"),
         headers: {
           'Access-Token': token,
         });
+    print(response.body);
     try {
       if (response.statusCode == 200) {
         List<dynamic> cashBookList = jsonDecode(response.body);

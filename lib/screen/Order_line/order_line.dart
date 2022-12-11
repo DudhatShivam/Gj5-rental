@@ -14,6 +14,8 @@ import 'package:gj5_rental/screen/Order_line/orderline_constant/order_line_card.
 import 'package:gj5_rental/screen/cancel_order/cancel_order.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import '../../Utils/textfield_utils.dart';
+
 
 import '../../constant/constant.dart';
 
@@ -138,6 +140,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                               drawerGroupBySelectedIndex = null;
                             });
                             cheCkWlanForOrderLineData(context, false);
+                            clearController();
                           });
                         },
                         child: Container(
@@ -210,6 +213,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                           drawerSelectedIndex = index;
                           _key.currentState?.closeDrawer();
                           filterOffset = 0;
+                          clearController();
                           setState(() {});
                         },
                         child: Padding(
@@ -427,8 +431,9 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                     if (value != null) {
                                       notFormatedDDate = value;
                                       setState(() {
-                                        deliveryDate = DateFormat('dd/MM/yyyy')
-                                            .format(value);
+                                        deliveryDate =
+                                            DateFormat(showGlobalDateFormat)
+                                                .format(value);
                                       });
                                     }
                                   });
@@ -515,7 +520,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                         notFormatedToDDate = value;
                                         setState(() {
                                           toDeliveryDate =
-                                              DateFormat('dd/MM/yyyy')
+                                              DateFormat(showGlobalDateFormat)
                                                   .format(value);
                                         });
                                       }
@@ -569,7 +574,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                         alignment: Alignment.centerRight,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: primary2Color),
+                                primary: primary2Color),
                             onPressed: () {
                               myGetxController.orderLineFilteredTag.clear();
                               if (toDeliveryDate != "") {
@@ -723,7 +728,13 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                             child: myGetxController
                                     .filteredListOrderLine.isNotEmpty
                                 ? ListView.builder(
-                                    controller: filterScrollController,
+                                    controller: deliveryDate.isNotEmpty ||
+                                        orderNumberController
+                                            .text.isNotEmpty ||
+                                        deliveryDate.isNotEmpty ||
+                                        toDeliveryDate.isNotEmpty
+                                        ? null
+                                        : filterScrollController,
                                     padding: EdgeInsets.zero,
                                     scrollDirection: Axis.vertical,
                                     itemCount: myGetxController
@@ -843,8 +854,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     myGetxController.filteredListOrderLine.clear();
     String? domain;
     List datas = [];
-    String dDate = DateFormat('dd/MM/yyyy').format(notFormatedDDate);
-    String toDDate = DateFormat('dd/MM/yyyy').format(notFormatedToDDate);
+    String dDate = DateFormat(passApiGlobalDateFormat).format(notFormatedDDate);
+    String toDDate = DateFormat(passApiGlobalDateFormat).format(notFormatedToDDate);
     if (orderNumberController.text != "") {
       myGetxController.orderLineFilteredTag
           .add("Order : ${orderNumberController.text}");
@@ -891,13 +902,13 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     final finalUri = uri.replace(queryParameters: params);
     final response = await http.get(finalUri,
         headers: {'Access-Token': token, 'Content-Type': 'application/http'});
-
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['count'] != 0) {
         myGetxController.groupByList.clear();
         myGetxController.groupByDetailList.clear();
         myGetxController.filteredListOrderLine.addAll(data['results']);
+        print(myGetxController.filteredListOrderLine.length);
         myGetxController.isShowFilteredDataInOrderLine.value = true;
         setState(() {
           isShowGroupByData = false;
@@ -942,7 +953,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     newMap.forEach((key, value) {
       if (index == 10) {
         DateTime tempDDate = DateFormat("yyyy-MM-dd").parse(key);
-        String date = DateFormat("dd/MM/yyyy").format(tempDDate);
+        String date = DateFormat(passApiGlobalDateFormat).format(tempDDate);
         Map a = {'Name': date, 'data': value};
         myGetxController.groupByList.add(a);
       } else {
@@ -964,7 +975,8 @@ class _OrderLineScreenState extends State<OrderLineScreen>
     _key.currentState?.closeDrawer();
   }
 
-  setFilteredData(int? startDay, int? endDay, String apiUrl, String token) async {
+  setFilteredData(
+      int? startDay, int? endDay, String apiUrl, String token) async {
     String deliveryDate1 = "";
     String domain = "";
     if (endDay == 0) {
@@ -997,5 +1009,12 @@ class _OrderLineScreenState extends State<OrderLineScreen>
   Future<void> getAccessRight() async {
     ARManager = await getBoolPreference('ARManager');
     ARService = await getBoolPreference('ARService');
+  }
+
+  clearController() {
+    orderNumberController.clear();
+    orderCodeController.clear();
+    deliveryDate = "";
+    toDeliveryDate = "";
   }
 }

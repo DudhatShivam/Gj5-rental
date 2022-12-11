@@ -189,7 +189,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                       const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal.shade100),
+                          backgroundColor: primary2Color.withOpacity(0.3)),
                       onPressed: () {
                         showToast("Select Partner");
                       },

@@ -13,6 +13,7 @@ import 'package:gj5_rental/screen/cancel_order/cancel_order.dart';
 import 'package:gj5_rental/screen/delivery/delivery_detail.dart';
 import 'package:http/http.dart' as http;
 
+import '../../Utils/textfield_utils.dart';
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../../home/home.dart';
@@ -214,7 +215,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: primary2Color),
+                            shadowColor: primary2Color),
                         onPressed: () {
                           myGetxController.deliveryScreenFilteredOrderList
                               .clear();
@@ -248,7 +249,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list: myGetxController.deliveryScreenOrderList,
-                          backGroundColor: Colors.white,
+                          shadowColor: Colors.white,
                           index: index,
                           isDeliveryScreen: true,
                           onTap: () => pushMethod(
@@ -273,7 +274,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                         return OrderQuatationCommanCard(
                           list:
                               myGetxController.deliveryScreenFilteredOrderList,
-                          backGroundColor: Colors.white,
+                          shadowColor: Colors.white,
                           index: index,
                           isDeliveryScreen: true,
                           onTap: () => pushMethod(

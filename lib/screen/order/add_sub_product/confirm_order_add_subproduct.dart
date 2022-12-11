@@ -263,7 +263,7 @@ class _ConfirmOrderAddProductState extends State<ConfirmOrderAddSubProduct> {
                               margin: const EdgeInsets.symmetric(vertical: 25),
                               child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: primary2Color),
+                                      primary: primary2Color),
                                   onPressed: () {
                                     FocusScope.of(context).unfocus();
                                     updatedDictionary.clear();
@@ -328,7 +328,7 @@ class _ConfirmOrderAddProductState extends State<ConfirmOrderAddSubProduct> {
             updatedDictionary.add({
               'id': wholeSubProductList[i]['id'],
               'product_id': e['id'],
-              'remarks': remarkControllerList[i].text.toString() ?? ''
+              'remarks': remarkControllerList[i].text.toString()
             });
           }
         });
@@ -336,7 +336,7 @@ class _ConfirmOrderAddProductState extends State<ConfirmOrderAddSubProduct> {
         updatedDictionary.add({
           'id': wholeSubProductList[i]['id'],
           'product_id': 0,
-          'remarks': remarkControllerList[i].text.toString() ?? ''
+          'remarks': remarkControllerList[i].text.toString()
         });
       }
     }

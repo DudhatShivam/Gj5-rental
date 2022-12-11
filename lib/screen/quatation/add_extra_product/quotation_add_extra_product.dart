@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:searchfield/searchfield.dart';
 
+import '../../../Utils/textfield_utils.dart';
 import '../../../Utils/utils.dart';
 import '../../../constant/constant.dart';
 import '../../../getx/getx_controller.dart';
@@ -316,7 +317,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                           height: 43,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: primary2Color),
+                                primary: primary2Color),
                             onPressed: () {
                               FocusScope.of(context).unfocus();
                               checkWlanForGetProductData(true);
@@ -383,9 +384,9 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
   }
 
   addExtraProduct(String apiUrl, String accessToken) async {
-    String deliveryDate = DateFormat("dd/MM/yyyy").format(
+    String deliveryDate = DateFormat(passApiGlobalDateFormat).format(
         DateTime.parse(myGetxController.quotationOrder[0]['delivery_date']));
-    String returnDate = DateFormat("dd/MM/yyyy").format(
+    String returnDate = DateFormat(passApiGlobalDateFormat).format(
         DateTime.parse(myGetxController.quotationOrder[0]['return_date']));
     int originalProductId = 0;
     int rentalId = myGetxController.quotationOrder[0]['id'];
@@ -398,6 +399,8 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
         }
       });
     }
+    print(deliveryDate);
+    print(returnDate);
     var body = {
       'rental_id': rentalId,
       'product_type': selectedValue,
@@ -414,6 +417,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
               'Access-Token': accessToken,
             },
             body: jsonEncode(body));
+    print(response.body);
     if (response.statusCode == 200) {
       checkQuotationAndOrderDetailData(context, rentalId, false);
       Navigator.pop(context);

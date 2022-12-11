@@ -64,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
     getSavedTheme();
     setAccessRight();
+    setDateFormat();
     getData();
     _controller = FancyDrawerController(
         vsync: this, duration: Duration(milliseconds: 250))
@@ -143,6 +144,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         : CircleAvatar(
                             radius: 40,
                             backgroundColor: Colors.blue,
+                            child: Icon(Icons.person),
                           ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.015,
@@ -541,28 +543,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  void checkForBioMatrics() async {
-    final LocalAuthentication auth = LocalAuthentication();
-    bool isDeviceSupport = await auth.canCheckBiometrics;
-    bool isAvailableBioMetrics = await auth.isDeviceSupported();
-    if (isAvailableBioMetrics && isDeviceSupport) {
-      try {
-        final bool didAuthenticate = await auth.authenticate(
-          localizedReason: 'Please authenticate to Go Inside',
-          options:
-              AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),
-        );
-        if (didAuthenticate) {
-          pushMethod(context, ReceiveScreen());
-        }
-        // ···
-      } on PlatformException catch (e) {
-        pushMethod(context, ReceiveScreen());
-      }
-    } else {
-      pushMethod(context, ReceiveScreen());
-    }
-  }
+  // void checkForBioMatrics() async {
+  //   final LocalAuthentication auth = LocalAuthentication();
+  //   bool isDeviceSupport = await auth.canCheckBiometrics;
+  //   bool isAvailableBioMetrics = await auth.isDeviceSupported();
+  //   if (isAvailableBioMetrics && isDeviceSupport) {
+  //     try {
+  //       final bool didAuthenticate = await auth.authenticate(
+  //         localizedReason: 'Please authenticate to Go Inside',
+  //         options:
+  //             AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),
+  //       );
+  //       if (didAuthenticate) {
+  //         pushMethod(context, ReceiveScreen());
+  //       }
+  //       // ···
+  //     } on PlatformException catch (e) {
+  //       pushMethod(context, ReceiveScreen());
+  //     }
+  //   } else {
+  //     pushMethod(context, ReceiveScreen());
+  //   }
+  // }
 
   Future<void> setNewSyncData() async {
     myGetxController.isSyncData.value = true;

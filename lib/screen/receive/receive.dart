@@ -11,6 +11,7 @@ import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/cancel_order/cancel_order.dart';
 import 'package:gj5_rental/screen/receive/receive_detail.dart';
 import 'package:http/http.dart' as http;
+import '../../Utils/textfield_utils.dart';
 
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
@@ -211,7 +212,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: primary2Color),
+                            primary: primary2Color),
                         onPressed: () {
                           myGetxController.noDataInReceiveScreen.value = false;
                           myGetxController.receiveFilteredOrderList.clear();
@@ -242,7 +243,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list: myGetxController.receiveOrderList,
-                          backGroundColor: Colors.white,
+                          shadowColor: Colors.white,
                           index: index,
                           isDeliveryScreen: true,
                           onTap: () => pushMethod(
@@ -266,7 +267,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                       itemBuilder: (context, index) {
                         return OrderQuatationCommanCard(
                           list: myGetxController.receiveFilteredOrderList,
-                          backGroundColor: Colors.white,
+                          shadowColor: Colors.white,
                           index: index,
                           isDeliveryScreen: true,
                           onTap: () => pushMethod(

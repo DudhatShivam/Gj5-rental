@@ -14,8 +14,8 @@ import 'package:gj5_rental/login/account_model/account_model.dart';
 import 'package:gj5_rental/login/add_account.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Utils/textfield_utils.dart';
 import '../Utils/utils.dart';
 import '../constant/constant.dart';
 
@@ -57,7 +57,6 @@ class _LogInPageState extends State<LogInPage> {
   MyGetxController myGetxController = Get.put(MyGetxController());
   final form = GlobalKey<FormState>();
   List<dynamic> finalData = [];
-
 
   @override
   Widget build(BuildContext context) {
@@ -317,8 +316,9 @@ class _LogInPageState extends State<LogInPage> {
         branchName: branchName);
     await accountDatabase.dbInsert(accountModel);
   }
-   getAccountData() async {
-     finalData = await accountDatabase.dbSelect();
+
+  getAccountData() async {
+    finalData = await accountDatabase.dbSelect();
   }
 
   getAndSetData(String serverUrl, String username, String password) async {
@@ -351,12 +351,16 @@ class _LogInPageState extends State<LogInPage> {
                 data['branch_name'].toString());
             setLogInData(
                     serverUrl,
+                    username,
+                    password,
+                    DbListResponse.body,
                     data['access_token'],
                     data['uid'].toString(),
                     data['partner_id'].toString(),
                     data['name'].toString(),
                     data['image'].toString(),
                     data['branch_name'],
+                    data['date_format'],
                     data['past_day_order'].toString(),
                     data['next_day_order'].toString(),
                     data['is_user'] ?? true,
@@ -365,7 +369,7 @@ class _LogInPageState extends State<LogInPage> {
                     data['is_deliver'] ?? true,
                     data['change_product'] ?? true,
                     data['is_manager'] ?? true,
-            data['daily_cashbook'])
+                    data['daily_cashbook'])
                 .whenComplete(() {
               setLogIn(true);
               myGetxController.isLoggedIn.value = false;
@@ -387,6 +391,7 @@ class _LogInPageState extends State<LogInPage> {
           myGetxController.isLoggedIn.value = false;
           myGetxController.logInPageError.value = "user not found";
         } else {
+          print(response.body);
           myGetxController.isLoggedIn.value = false;
           myGetxController.logInPageError.value =
               "logIn response statusCode different then 200,400,401";

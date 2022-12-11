@@ -162,7 +162,7 @@ Future showConnectivity() async {
   return results;
 }
 
-Widget CenterCircularProgressIndicator() {
+Widget  CenterCircularProgressIndicator() {
   return Center(
     child: Container(
       height: 100,
@@ -462,12 +462,16 @@ Future deliverScreenOrderLineSelectionDialog(
 
 Future<void> setLogInData(
     String apiUrl,
+    String userName,
+    String password,
+    String dbName,
     String accessToken,
     String uid,
     String partnerId,
     String name,
     String image,
     String branchName,
+    String dateFormat,
     String pastDayOrder,
     String nextDayOder,
     bool ARUser,
@@ -494,6 +498,10 @@ Future<void> setLogInData(
   preferences.setBool('ARChangeProduct', ARChangeProduct);
   preferences.setBool('ARManager', ARManager);
   preferences.setBool("ARCashbook", ARCashbook);
+  preferences.setString('userName', userName);
+  preferences.setString('password', password);
+  preferences.setString('databaseName', dbName);
+  preferences.setString('dateFormat', dateFormat);
 }
 
 Future<void> removePreference() async {
@@ -517,6 +525,7 @@ Future<void> removePreference() async {
   preferences.remove('ARChangeProduct');
   preferences.remove('ARManager');
   preferences.remove('ARCashbook');
+  preferences.remove('dateFormat');
 }
 
 Future getStringPreference(String pref) async {

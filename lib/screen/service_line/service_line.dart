@@ -12,6 +12,7 @@ import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../../Utils/textfield_utils.dart';
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../cancel_order/cancel_order.dart';
@@ -326,7 +327,8 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                 if (value != null) {
                                   setState(() {
                                     deliveryDate =
-                                        DateFormat('dd/MM/yyyy').format(value);
+                                        DateFormat(showGlobalDateFormat)
+                                            .format(value);
                                   });
                                 }
                               });
@@ -716,12 +718,13 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
     try {
       List datas = [];
       String? domain;
+      String dDate=changeDateFormatTopPassApiDate(deliveryDate ?? "");
       if (productCodeSearchController.text.isNotEmpty) {
         datas.add(
             "('default_code', 'ilike', '${productCodeSearchController.text}')");
       }
       if (deliveryDate != "") {
-        datas.add("('delivery_date', '=', '${deliveryDate}')");
+        datas.add("('delivery_date', '=', '${dDate}')");
       }
       if (datas.length == 1) {
         domain = "[${datas[0]}]";

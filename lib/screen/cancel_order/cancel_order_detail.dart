@@ -54,7 +54,7 @@ class _CancelOrderDetailScreenState extends State<CancelOrderDetailScreen> {
                   ? OrderQuatationCommanCard(
                       list: myGetxController.cancelParticularOrderList,
                       isOrderScreen: false,
-                      backGroundColor: Colors.grey.withOpacity(0.1),
+                      shadowColor: Colors.grey.withOpacity(0.1),
                       index: 0,
                       isDeliveryScreen: false)
                   : Container(),
@@ -88,7 +88,7 @@ class _CancelOrderDetailScreenState extends State<CancelOrderDetailScreen> {
                                     productDetail: myGetxController
                                         .cancelParticularOrderProductList,
                                     isOrderScreen: true,
-                                    orderId: widget.orderId ?? 0,
+                                    orderId: widget.orderId,
                                     isDeliveryScreen: false,
                                     isReceiveScreen: false,
                                   );

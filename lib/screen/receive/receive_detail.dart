@@ -69,7 +69,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
               () => myGetxController.receiveParticularOrderList.isNotEmpty
                   ? OrderQuatationCommanCard(
                       list: myGetxController.receiveParticularOrderList,
-                      backGroundColor: Colors.grey.withOpacity(0.1),
+                      shadowColor: Colors.grey.withOpacity(0.1),
                       index: 0,
                       isDeliveryScreen: true,
                       isOrderScreen: false,
@@ -98,7 +98,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                                   productDetail:
                                       myGetxController.receiveSubProductList,
                                   isOrderScreen: false,
-                                  orderId: widget.orderId ?? 0,
+                                  orderId: widget.orderId,
                                   isDeliveryScreen: false,
                                   isReceiveScreen: true,
                                 );
@@ -159,7 +159,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                                     confirmationDialogForIsReceive();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: primary2Color),
+                                      primary: primary2Color),
                                   child: Text("RECEIVE")))
                           : Container()
                     ],
@@ -226,7 +226,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade300),
+                              shadowColor: Colors.green.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                             checkWlanForData(true);
@@ -237,7 +237,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.shade300),
+                              primary: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },

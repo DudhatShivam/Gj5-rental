@@ -99,7 +99,7 @@ class _QuatationDetailScreenState extends State<QuatationDetailScreen> {
                   ? OrderQuatationCommanCard(
                       list: myGetxController.quotationOrder,
                       isOrderScreen: false,
-                      backGroundColor: Colors.grey.withOpacity(0.1),
+                      shadowColor: Colors.grey.withOpacity(0.1),
                       index: 0,
                       isDeliveryScreen: false)
                   : Container(),
@@ -233,11 +233,9 @@ class CustomFABWidget extends StatelessWidget {
             ? CreateOrder()
             : isQuotationDetailAddProduct == true
                 ? QuotationDetailAddProduct(
-                    deliveryDate: DateFormat("dd/MM/yyyy").format(
-                        DateTime.parse(myGetxController.quotationOrder[0]
-                            ['delivery_date'])),
-                    returnDate: DateFormat("dd/MM/yyyy").format(DateTime.parse(
-                        myGetxController.quotationOrder[0]['return_date'])),
+                    deliveryDate: myGetxController.quotationOrder[0]
+                    ['delivery_date'],
+                    returnDate: myGetxController.quotationOrder[0]['return_date'],
                     orderId: myGetxController.quotationOrder[0]['id'],
                     confirmOrderScreen: false,
                   )
@@ -251,14 +249,10 @@ class CustomFABWidget extends StatelessWidget {
                                 .particularServiceList[0]['service_type'])
                         : isAddProductInConfirmOrder == true
                             ? QuotationDetailAddProduct(
-                                deliveryDate: DateFormat("dd/MM/yyyy").format(
-                                    DateTime.parse(
-                                        myGetxController.particularOrderData[0]
-                                            ['delivery_date'])),
-                                returnDate: DateFormat("dd/MM/yyyy").format(
-                                    DateTime.parse(
-                                        myGetxController.particularOrderData[0]
-                                            ['return_date'])),
+                                deliveryDate: myGetxController.particularOrderData[0]
+                                ['delivery_date'],
+                                returnDate: myGetxController.particularOrderData[0]
+                                ['return_date'],
                                 orderId: myGetxController.particularOrderData[0]
                                     ['id'],
                                 confirmOrderScreen: true,

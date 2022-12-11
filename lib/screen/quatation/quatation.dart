@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import '../../Utils/textfield_utils.dart';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/constant/order_quotation_comman_card.dart';
@@ -33,10 +35,10 @@ class _QuatationScreenState extends State<QuatationScreen> {
   ScrollController scrollController = ScrollController();
   bool isExpandSearch = false;
 
+
   @override
   void initState() {
     super.initState();
-
     clearList();
     getData(false);
     scrollController.addListener(() {
@@ -90,6 +92,8 @@ class _QuatationScreenState extends State<QuatationScreen> {
                             onTap: () {
                               clearList();
                               getData(false);
+                              nameController.clear();
+                              numberController.clear();
                             },
                             child: FadeInRight(
                                 child: Padding(
@@ -186,7 +190,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: primary2Color),
+                                  primary: primary2Color),
                               onPressed: () {
                                 myGetxController
                                     .isShowQuotationFilteredList.value = true;
@@ -226,7 +230,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                                   },
                                   child: OrderQuatationCommanCard(
                                     index: index,
-                                    backGroundColor: Colors.white,
+                                    shadowColor: Colors.white,
                                     isOrderScreen: false,
                                     isDeliveryScreen: false,
                                     list: myGetxController.quotationData,
@@ -256,7 +260,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                                   },
                                   child: OrderQuatationCommanCard(
                                     index: indexs,
-                                    backGroundColor: Colors.white,
+                                    shadowColor: Colors.white,
                                     isOrderScreen: false,
                                     isDeliveryScreen: false,
                                     list:
@@ -353,6 +357,8 @@ class _QuatationScreenState extends State<QuatationScreen> {
     myGetxController.noDataInQuotationScreen.value = false;
     myGetxController.filteredQuotationData.clear();
   }
+
+
 }
 
 Future<void> getDraftOrderData(

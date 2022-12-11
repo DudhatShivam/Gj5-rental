@@ -11,7 +11,7 @@ import 'constant.dart';
 
 class OrderQuatationCommanCard extends StatelessWidget {
   final List<dynamic> list;
-  final Color backGroundColor;
+  final Color shadowColor;
   final int index;
   final bool isDeliveryScreen;
   final VoidCallback? onTap;
@@ -20,7 +20,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
   OrderQuatationCommanCard({
     Key? key,
     required this.list,
-    required this.backGroundColor,
+    required this.shadowColor,
     required this.index,
     required this.isDeliveryScreen,
     this.onTap,
@@ -30,10 +30,6 @@ class OrderQuatationCommanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SwipeActionController controller = SwipeActionController();
-    String deliveryDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(list[index]['delivery_date']));
-    String returnDate = DateFormat("dd/MM/yyyy")
-        .format(DateTime.parse(list[index]['return_date']));
     return Builder(builder: (context) {
       return InkWell(
         onTap: onTap,
@@ -69,7 +65,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
             margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             width: double.infinity,
             decoration: BoxDecoration(
-                color: statusBackGroundColor(list, index),
+                color: statusshadowColor(list, index),
                 border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
                 borderRadius: BorderRadius.all(Radius.circular(5))),
             child: Column(
@@ -95,7 +91,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                       alignment: Alignment.center,
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: statusBackGroundColor(list, index),
+                        color: statusshadowColor(list, index),
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Text(list[index]['state'],
@@ -186,7 +182,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      list[index]['user_id']['name'],
+                      list[index]['user_id']['name'] ?? "",
                       style: allCardMainText,
                     ),
                   ],
@@ -237,7 +233,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                             style: primaryStyle,
                           ),
                           Text(
-                            deliveryDate,
+                            changeDateFormat(list[index]['delivery_date']),
                             style: deliveryDateStyle,
                           )
                         ],
@@ -249,7 +245,7 @@ class OrderQuatationCommanCard extends StatelessWidget {
                             style: primaryStyle,
                           ),
                           Text(
-                            returnDate,
+                            changeDateFormat(list[index]['return_date']),
                             style: returnDateStyle,
                           )
                         ],

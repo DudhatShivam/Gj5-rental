@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 
 import '../Utils/utils.dart';
 import '../getx/getx_controller.dart';
+import 'constant.dart';
 
 class ExtraProductCard extends StatelessWidget {
   final List extraProductList;
@@ -28,9 +29,9 @@ class ExtraProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SwipeActionController controller = SwipeActionController();
-    String deliveryDate = DateFormat("dd/MM/yyyy")
+    String deliveryDate = DateFormat(passApiGlobalDateFormat)
         .format(DateTime.parse(extraProductList[index]['delivery_date']));
-    String returnDate = DateFormat("dd/MM/yyyy")
+    String returnDate = DateFormat(passApiGlobalDateFormat)
         .format(DateTime.parse(extraProductList[index]['return_date']));
     return SwipeActionCell(
       controller: controller,

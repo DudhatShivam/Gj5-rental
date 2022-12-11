@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:ndialog/ndialog.dart';
 
+import '../../Utils/textfield_utils.dart';
 import '../../Utils/utils.dart';
 import '../../constant/constant.dart';
 import '../quatation/quotation_detail.dart';
@@ -53,8 +54,8 @@ class _BookOrderState extends State<BookOrder> {
     super.initState();
     deliveryDate = widget.deliveryDate ?? "";
     returnDate = widget.returnDate ?? "";
-    deliveryNotFormatedDate = new DateFormat("dd/MM/yyyy").parse(deliveryDate);
-    returnNotFormatedDate = DateFormat("dd/MM/yyyy").parse(returnDate);
+    deliveryNotFormatedDate = new DateFormat(passApiGlobalDateFormat).parse(deliveryDate);
+    returnNotFormatedDate = DateFormat(passApiGlobalDateFormat).parse(returnDate);
     rentController.text = widget.rent.toString();
   }
 
@@ -227,7 +228,7 @@ class _BookOrderState extends State<BookOrder> {
                               if (value != null) {
                                 deliveryNotFormatedDate = value;
                                 setState(() {
-                                  deliveryDate = DateFormat('dd/MM/yyyy')
+                                  deliveryDate = DateFormat(passApiGlobalDateFormat)
                                       .format(deliveryNotFormatedDate);
                                 });
                               }
@@ -280,8 +281,8 @@ class _BookOrderState extends State<BookOrder> {
                                 returnNotFormatedDate = value;
                                 setState(() {
                                   isValidRDate = true;
-                                  returnDate = DateFormat('dd/MM/yyyy')
-                                      .format(returnNotFormatedDate!);
+                                  returnDate = DateFormat(passApiGlobalDateFormat)
+                                      .format(returnNotFormatedDate);
                                 });
                               }
                             });
@@ -326,7 +327,7 @@ class _BookOrderState extends State<BookOrder> {
                     height: 45,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: primary2Color),
+                            primary: primary2Color),
                         onPressed: () {
                           if (_formKey.currentState?.validate() == true &&
                               nameController.text.isNotEmpty &&

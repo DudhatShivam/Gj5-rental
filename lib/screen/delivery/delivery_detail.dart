@@ -73,7 +73,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
               () => myGetxController.deliveryScreenParticularOrder.isNotEmpty
                   ? OrderQuatationCommanCard(
                       list: myGetxController.deliveryScreenParticularOrder,
-                      backGroundColor: Colors.grey.withOpacity(0.1),
+                      shadowColor: Colors.grey.withOpacity(0.1),
                       index: 0,
                       isDeliveryScreen: true,
                       isOrderScreen: false,
@@ -126,7 +126,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                               productDetail: myGetxController
                                   .deliveryScreenParticularOrderLineProductList,
                               isOrderScreen: false,
-                              orderId: widget.id ?? 0,
+                              orderId: widget.id ,
                               isDeliveryScreen: true,
                               isReceiveScreen: false,
                             );
@@ -191,7 +191,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                                 confirmationDialogForIsDeliverTrue();
                               },
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: primary2Color),
+                                  primary: primary2Color),
                               child: Text("DELIVER")))
                       : Container())
                 ],
@@ -231,7 +231,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade300),
+                              primary: Colors.green.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                             checkWlanForData(false);
@@ -242,7 +242,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.shade300),
+                              primary: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },

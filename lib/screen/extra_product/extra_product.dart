@@ -13,6 +13,7 @@ import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/booking_status.dart';
 import 'package:http/http.dart' as http;
 
+import '../../Utils/textfield_utils.dart';
 import '../../constant/extraproduct_screen_card.dart';
 import '../cancel_order/cancel_order.dart';
 
@@ -152,7 +153,7 @@ class _ExtraProductState extends State<ExtraProduct> {
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: primary2Color),
+                            primary: primary2Color),
                         onPressed: () {
                           myGetxController.noDataInExtraProductScreen.value = false;
                           setState(() {

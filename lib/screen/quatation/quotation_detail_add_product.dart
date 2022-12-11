@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import '../../Utils/textfield_utils.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -51,8 +52,8 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
     super.initState();
     orderId = widget.orderId;
     getPreferenceProductList();
-    deliveryDate = widget.deliveryDate ?? "";
-    returnDate = widget.returnDate ?? "";
+    deliveryDate = changeDateFormat(widget.deliveryDate ?? "");
+    returnDate = changeDateFormat(widget.returnDate ?? "");
   }
 
   @override
@@ -98,7 +99,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                         if (value != null) {
                           setState(() {
                             deliveryDate =
-                                DateFormat('dd/MM/yyyy').format(value);
+                                DateFormat(showGlobalDateFormat).format(value);
                           });
                         }
                       });
@@ -123,7 +124,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                       pickedDate(context).then((value) {
                         if (value != null) {
                           setState(() {
-                            returnDate = DateFormat('dd/MM/yyyy').format(value);
+                            returnDate = DateFormat(showGlobalDateFormat).format(value);
                           });
                         }
                       });
@@ -297,7 +298,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                                 height: 43,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      backgroundColor: primary2Color),
+                                      primary: primary2Color),
                                   onPressed: () {
                                     FocusScope.of(context).unfocus();
                                     checkWifiForAddProduct();
@@ -395,13 +396,15 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   Future<int> addProduct(String apiUrl, String token, bool navigatePop) async {
     String rent = rentController.text;
     String remark = remarkController.text;
+    String dDate=changeDateFormatTopPassApiDate(deliveryDate);
+    String rDate=changeDateFormatTopPassApiDate(returnDate);
     final response = await http.put(
         Uri.parse(
-            "http://$apiUrl/api/rental.rental/$orderId/add_product_from_api?product_id=$productId&delivery_date=$deliveryDate&return_date=$returnDate&rent=$rent&remarks=$remark"),
+            "http://$apiUrl/api/rental.rental/$orderId/add_product_from_api?product_id=$productId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark"),
         headers: {
           'Access-Token': token,
         });
-    final data = jsonDecode(response.body);
+    var data = jsonDecode(response.body);
     if (data['status'] == 1) {
       if (widget.confirmOrderScreen == false) {
         checkQuotationAndOrderDetailData(context, orderId ?? 0, false);
