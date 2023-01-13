@@ -1,5 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:gj5_rental/constant/binary_image_covert.dart';
+import 'package:gj5_rental/screen/quatation/create_order.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../../Utils/textfield_utils.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -39,13 +44,17 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   TextEditingController productSearchController = TextEditingController();
   TextEditingController rentController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
-  MyGetxController myGetxController = Get.find();
+  MyGetxController myGetxController = Get.put(MyGetxController());
   String returnDate = "";
   String deliveryDate = "";
   List<dynamic> responseOfApi = [];
   bool isDisplayResponseApiList = false;
   int? productId;
   int? orderId;
+  Uint8List? _bytesImage;
+  File? image1;
+  String? binaryImage1;
+  bool isSubmitLoad = false;
 
   @override
   void initState() {
@@ -72,7 +81,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
               screenName: "Add Product in Order",
             ),
             SizedBox(
-              height: 15,
+              height: 5,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -124,7 +133,8 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                       pickedDate(context).then((value) {
                         if (value != null) {
                           setState(() {
-                            returnDate = DateFormat(showGlobalDateFormat).format(value);
+                            returnDate =
+                                DateFormat(showGlobalDateFormat).format(value);
                           });
                         }
                       });
@@ -222,6 +232,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListView.builder(
                               scrollDirection: Axis.vertical,
@@ -234,7 +245,7 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                                     responseOfApi, index);
                               }),
                           SizedBox(
-                            height: 15,
+                            height: 10,
                           ),
                           Container(
                             margin: EdgeInsets.symmetric(
@@ -257,7 +268,8 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                                       TextInputType.number,
                                       0,
                                       Colors.greenAccent,
-                                      1),
+                                      1,
+                                      ""),
                                 )
                               ],
                             ),
@@ -286,26 +298,88 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
                                       TextInputType.text,
                                       0,
                                       Colors.greenAccent,
-                                      1),
+                                      1,
+                                      ""),
                                 )
                               ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: SizedBox(
-                                width: double.infinity,
-                                height: 43,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      primary: primary2Color),
-                                  onPressed: () {
-                                    FocusScope.of(context).unfocus();
-                                    checkWifiForAddProduct();
-                                  },
-                                  child: Text("ADD"),
-                                )),
+                          Row(
+                            children: [
+                              _bytesImage != null &&
+                                      _bytesImage?.isNotEmpty == true
+                                  ? Padding(
+                                      padding: EdgeInsets.only(left: 5),
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          Image.memory(
+                                            _bytesImage!,
+                                            height: getWidth(0.27, context),
+                                            width: getWidth(0.27, context),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              image1 == null
+                                  ? InkWell(
+                                      onTap: () {
+                                        showImageOption();
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(top: 10),
+                                        child: imageContainer(
+                                            context, "Select Image",
+                                            con_width: getWidth(0.33, context),
+                                            border_radius: 10),
+                                      ),
+                                    )
+                                  : Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      width: getWidth(0.64, context),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          binary_image_container(image1,
+                                              h: getWidth(0.27, context),
+                                              w: getWidth(0.27, context)),
+                                          InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                image1 = null;
+                                              });
+                                            },
+                                            child: cancelIcon,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                            ],
                           ),
+                          isSubmitLoad
+                              ? CenterCircularProgressIndicator()
+                              : Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: SizedBox(
+                                      width: double.infinity,
+                                      height: 43,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: primary2Color),
+                                        onPressed: () {
+                                          FocusScope.of(context).unfocus();
+                                          checkWifiForAddProduct();
+                                        },
+                                        child: Text("ADD"),
+                                      )),
+                                ),
                         ],
                       ),
                     ),
@@ -317,6 +391,46 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
     );
   }
 
+  void showImageOption() {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                height: 15,
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  _getFromGallery(ImageSource.gallery);
+                },
+                child: modelSheetContainer("Gallery"),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  _getFromGallery(ImageSource.camera);
+                },
+                child: modelSheetContainer("Camera"),
+              )
+            ],
+          );
+        });
+  }
+
+  _getFromGallery(ImageSource imageSource) async {
+    var pickedFile = await ImagePicker().pickImage(source: imageSource);
+    if (pickedFile != null) {
+      image1 = File(pickedFile.path);
+      Uint8List? imageBytes = await image1?.readAsBytes(); //convert to bytes
+      binaryImage1 = base64.encode(imageBytes!);
+      setState(() {});
+    }
+  }
+
   getResponseProductApiList() {
     String value =
         productSearchController.text.split('--').first.removeAllWhitespace;
@@ -324,6 +438,11 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
       if (element['default_code'] == value) {
         productId = element['id'];
         rentController.text = element['rent'].toString();
+        String s = element['image_medium'] ?? "";
+        if (s.isNotEmpty) {
+          _bytesImage = convert_image(s);
+        }
+        setState(() {});
       }
     });
     getStringPreference('apiUrl').then((value) async {
@@ -394,32 +513,47 @@ class _QuotationDetailAddProductState extends State<QuotationDetailAddProduct> {
   }
 
   Future<int> addProduct(String apiUrl, String token, bool navigatePop) async {
-    String rent = rentController.text;
-    String remark = remarkController.text;
-    String dDate=changeDateFormatTopPassApiDate(deliveryDate);
-    String rDate=changeDateFormatTopPassApiDate(returnDate);
-    final response = await http.put(
-        Uri.parse(
-            "http://$apiUrl/api/rental.rental/$orderId/add_product_from_api?product_id=$productId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark"),
-        headers: {
+    try {
+      isSubmitLoad = true;
+      setState(() {});
+      String rent = rentController.text;
+      String remark = remarkController.text;
+      String dDate = changeDateFormatTopPassApiDate(deliveryDate);
+      String rDate = changeDateFormatTopPassApiDate(returnDate);
+      final response;
+      String url =
+          "http://$apiUrl/api/rental.rental/$orderId/add_product_from_api?product_id=$productId&delivery_date=$dDate&return_date=$rDate&rent=$rent&remarks=$remark";
+      if (binaryImage1 != null) {
+        response = await http.put(Uri.parse(url),
+            body: jsonEncode({"customer_image": binaryImage1}),
+            headers: {
+              'Access-Token': token,
+            });
+      } else {
+        response = await http.put(Uri.parse(url), headers: {
           'Access-Token': token,
         });
-    var data = jsonDecode(response.body);
-    if (data['status'] == 1) {
-      if (widget.confirmOrderScreen == false) {
-        checkQuotationAndOrderDetailData(context, orderId ?? 0, false);
-        Navigator.pop(context);
-      } else {
-        checkWlanForOrderDetailScreen(context, orderId ?? 0);
-        if (navigatePop == true) {
-          Navigator.pop(context);
-        }
-        return data['id'];
       }
-    } else {
-      dialog(
-          context, data['msg'] ?? "Some thing went wrong", Colors.red.shade300);
+      var data = jsonDecode(response.body);
+      if (data['status'] == 1) {
+        if (widget.confirmOrderScreen == false) {
+          checkQuotationAndOrderDetailData(context, orderId ?? 0, false);
+          Navigator.pop(context);
+        } else {
+          checkWlanForOrderDetailScreen(context, orderId ?? 0);
+          if (navigatePop == true) {
+            Navigator.pop(context);
+          }
+          return data['id'];
+        }
+      } else {
+        dialog(context, data['msg'] ?? "Some thing went wrong",
+            Colors.red.shade300);
+      }
+    } catch (e) {
+      isSubmitLoad = false;
     }
+    setState(() {});
     return 0;
   }
 

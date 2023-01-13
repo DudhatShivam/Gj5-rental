@@ -113,7 +113,7 @@ class _ExtraProductState extends State<ExtraProduct> {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),
@@ -141,7 +141,7 @@ class _ExtraProductState extends State<ExtraProduct> {
                             TextInputType.text,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),

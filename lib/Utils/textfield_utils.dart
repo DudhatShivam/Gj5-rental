@@ -10,7 +10,8 @@ textFieldWidget(
     TextInputType textInputType,
     double horizontalPadding,
     Color focusedBorderColor,
-    int maxLine) {
+    int maxLine,
+    String validator_value) {
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
     child: TextFormField(
@@ -18,7 +19,7 @@ textFieldWidget(
       maxLines: maxLine,
       validator: (value) {
         if (value!.isEmpty) {
-          return "Enter Value";
+          return validator_value;
         }
       },
       keyboardType: textInputType,

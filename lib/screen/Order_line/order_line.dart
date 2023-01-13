@@ -377,7 +377,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                 TextInputType.number,
                                 0,
                                 Colors.greenAccent,
-                                1),
+                                1,""),
                           )
                         ],
                       ),
@@ -405,7 +405,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                                 TextInputType.text,
                                 0,
                                 Colors.greenAccent,
-                                1),
+                                1,""),
                           )
                         ],
                       ),

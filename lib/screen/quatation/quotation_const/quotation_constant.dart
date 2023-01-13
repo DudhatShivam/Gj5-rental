@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,8 +9,10 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import '../../../Utils/utils.dart';
+import '../edit_customer_image_dialog.dart';
 
 Future<void> checkQuotationAndOrderDetailData(
     BuildContext context, int orderId, bool isOrderScreenData) async {
@@ -84,3 +87,18 @@ Future<List> addWholeSubProductInList(int lineId) async {
   }
   return lst;
 }
+
+showQuotationEditCustomerImageDialog(
+    Uint8List image, int lineId, int orderId, BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditCustomerImageDialog(
+          image: image,
+          lineId: lineId,
+          orderId: orderId,
+        );
+      });
+}
+
+

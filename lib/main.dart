@@ -12,6 +12,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:gj5_rental/Utils/utils.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/notification/notification_database.dart';
+import 'package:gj5_rental/screen/quatation/quotation_detail_add_product.dart';
 import 'package:gj5_rental/splash.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;

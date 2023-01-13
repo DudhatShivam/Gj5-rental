@@ -221,7 +221,7 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                       TextInputType.text,
                       0,
                       Colors.greenAccent,
-                      1),
+                      1,""),
                 )
               ],
             ),

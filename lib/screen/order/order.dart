@@ -161,7 +161,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),
@@ -189,7 +189,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),
@@ -217,7 +217,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                             TextInputType.text,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),
@@ -230,7 +230,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                       children: [
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.white),
+                                backgroundColor: Colors.white),
                             onPressed: () {
                               clearController();
                               getData(true, isToday = true, isBook, false);

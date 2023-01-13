@@ -1,11 +1,14 @@
 import 'dart:math';
-
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:flutter_swipe_action_cell/core/controller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:gj5_rental/constant/binary_image_covert.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:intl/intl.dart';
 
@@ -216,243 +219,283 @@ class OrderQuotationDetailCard extends StatelessWidget {
                       },
                       color: Colors.red.shade400),
                 ]
-              : [],
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        padding: EdgeInsets.all(15),
-        width: double.infinity,
-        decoration: BoxDecoration(
-            color: statusshadowColor(orderDetailsList, index),
-            border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
-            borderRadius: BorderRadius.all(Radius.circular(5))),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            isDeliveryScreen == true
-                ? Obx(() => myGetxController.selectedOrderLineList
-                            .contains(orderDetailsList[index]['id']) ==
-                        true
-                    ? selectionIndicator()
-                    : Container())
-                : isReceiveScreen == true
-                    ? Obx(() => myGetxController.receiveSelectedOrderLineList
-                                    .contains(orderDetailsList[index]['id']) ==
-                                true ||
-                            orderDetailsList[index]['is_receive'] == true
-                        ? selectionIndicator()
-                        : Container())
-                    : Container(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "Code : ",
-                      style: allCardMainText,
-                    ),
-                    Text(
-                      orderDetailsList[index]['product_id']['default_code'],
-                      style: allCardSubText,
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.cyan.shade100,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Text(
-                    '\u{20B9}${double.parse(orderDetailsList[index]['rent'].toString()).toInt()}',
-                    style: TextStyle(
-                        color: Colors.cyan.shade700,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 17),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: statusshadowColor(orderDetailsList, index),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Text(
-                    orderDetailsList[index]['state'],
-                    style: TextStyle(
-                        color: statusColor(orderDetailsList, index),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 17),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Product : ",
-                  style: allCardMainText,
-                ),
-                Flexible(
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      orderDetailsList[index]['product_id']['name'],
-                      style: allCardSubText,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            orderDetailsList[index]['remarks'] == null
-                ? Container()
-                : Column(
-                    children: [
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Remark : ",
-                            style: allCardMainText,
-                          ),
-                          Expanded(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    orderDetailsList[index]['remarks'],
-                                    style: remarkTextStyle,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-            SizedBox(
-              height: 5,
-            ),
-            FittedBox(
-              child: Row(
+              : isDeliveryScreen == false &&
+                      isOrderScreen == false &&
+                      isReceiveScreen == false
+                  ? [
+                      SwipeAction(
+                          title: "Customer-Image",
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500),
+                          onTap: (CompletionHandler handler) async {
+                            controller.closeAllOpenCell();
+                            String? txt =
+                                orderDetailsList[index]['customer_image'];
+                            if (txt != null) {
+                              Uint8List _bytesImage = convert_image(
+                                  orderDetailsList[index]['customer_image']);
+                              showQuotationEditCustomerImageDialog(
+                                  _bytesImage,
+                                  orderDetailsList[index]['id'],
+                                  orderId,
+                                  context);
+                            } else {
+                              showToast("No Image in OrderLine");
+                            }
+                          },
+                          color: Colors.blue),
+                    ]
+                  : [],
+      child: InkWell(
+        onDoubleTap: () {
+          Uint8List _bytesImage = convert_image(
+              orderDetailsList[index]['product_id']['image_medium']);
+          if (_bytesImage.isNotEmpty) {
+            quotationDetailProductPhotoDialog(_bytesImage, context);
+          }
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          padding: EdgeInsets.all(15),
+          width: double.infinity,
+          decoration: BoxDecoration(
+              color: statusshadowColor(orderDetailsList, index),
+              border: Border.all(color: Color(0xffE6ECF2), width: 0.7),
+              borderRadius: BorderRadius.all(Radius.circular(5))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              isDeliveryScreen == true
+                  ? Obx(() => myGetxController.selectedOrderLineList
+                              .contains(orderDetailsList[index]['id']) ==
+                          true
+                      ? selectionIndicator()
+                      : Container())
+                  : isReceiveScreen == true
+                      ? Obx(() => myGetxController.receiveSelectedOrderLineList
+                                      .contains(
+                                          orderDetailsList[index]['id']) ==
+                                  true ||
+                              orderDetailsList[index]['is_receive'] == true
+                          ? selectionIndicator()
+                          : Container())
+                      : Container(),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Text(
-                        "D. Date : ",
+                        "Code : ",
                         style: allCardMainText,
                       ),
                       Text(
-                        changeDateFormat(orderDetailsList[index]['delivery_date']),
-                        style: deliveryDateStyle,
-                      )
+                        orderDetailsList[index]['product_id']['default_code'],
+                        style: allCardSubText,
+                      ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        "  R. Date : ",
-                        style: allCardMainText,
-                      ),
-                      Text(
-                        changeDateFormat(orderDetailsList[index]['return_date']),
-                        style: returnDateStyle,
-                      )
-                    ],
-                  )
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.cyan.shade100,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      '\u{20B9}${double.parse(orderDetailsList[index]['rent'].toString()).toInt()}',
+                      style: TextStyle(
+                          color: Colors.cyan.shade700,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 17),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: statusshadowColor(orderDetailsList, index),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      orderDetailsList[index]['state'],
+                      style: TextStyle(
+                          color: statusColor(orderDetailsList, index),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 17),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: productDetail.map((e) {
-                  return e['origin_product_id'] ==
-                          orderDetailsList[index]['product_id']['id']
-                      ? GestureDetector(
-                          onDoubleTap: () {
-                            orderDetailDialog(
-                                context,
-                                e['product_id']['default_code'],
-                                e['product_type'],
-                                e['remarks']);
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(right: 5, bottom: 5),
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.primaries[
-                                      Random().nextInt(Colors.primaries.length)]
-                                  .withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(30),
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Product : ",
+                    style: allCardMainText,
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        orderDetailsList[index]['product_id']['name'],
+                        style: allCardSubText,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              orderDetailsList[index]['remarks'] == null
+                  ? Container()
+                  : Column(
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Remark : ",
+                              style: allCardMainText,
                             ),
-                            child: IntrinsicWidth(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    e['product_id']['default_code'],
-                                    style: TextStyle(
-                                        color: ([...Colors.primaries]
-                                              ..shuffle())
-                                            .first,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15),
-                                  ),
-                                  isReceiveScreen == true
-                                      ? Obx(() => myGetxController
-                                                      .receiveSelectedSubProductList
-                                                      .contains(e['id']) ==
-                                                  true ||
-                                              e['is_receive'] == true
-                                          ? Container(
-                                              height: 3,
-                                              color: Colors.blue,
-                                            )
-                                          : Container())
-                                      : Container()
-                                ],
+                            Expanded(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      orderDetailsList[index]['remarks'],
+                                      style: remarkTextStyle,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
+                          ],
+                        ),
+                      ],
+                    ),
+              SizedBox(
+                height: 5,
+              ),
+              FittedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "D. Date : ",
+                          style: allCardMainText,
+                        ),
+                        Text(
+                          changeDateFormat(
+                              orderDetailsList[index]['delivery_date']),
+                          style: deliveryDateStyle,
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "  R. Date : ",
+                          style: allCardMainText,
+                        ),
+                        Text(
+                          changeDateFormat(
+                              orderDetailsList[index]['return_date']),
+                          style: returnDateStyle,
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: productDetail.map((e) {
+                    return e['origin_product_id'] ==
+                            orderDetailsList[index]['product_id']['id']
+                        ? GestureDetector(
+                            onDoubleTap: () {
+                              orderDetailDialog(
+                                  context,
+                                  e['product_id']['default_code'],
+                                  e['product_type'],
+                                  e['remarks']);
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(right: 5, bottom: 5),
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.primaries[Random()
+                                        .nextInt(Colors.primaries.length)]
+                                    .withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: IntrinsicWidth(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      e['product_id']['default_code'],
+                                      style: TextStyle(
+                                          color: ([...Colors.primaries]
+                                                ..shuffle())
+                                              .first,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15),
+                                    ),
+                                    isReceiveScreen == true
+                                        ? Obx(() => myGetxController
+                                                        .receiveSelectedSubProductList
+                                                        .contains(e['id']) ==
+                                                    true ||
+                                                e['is_receive'] == true
+                                            ? Container(
+                                                height: 3,
+                                                color: Colors.blue,
+                                              )
+                                            : Container())
+                                        : Container()
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container();
+                  }).toList(),
+                ),
+              ),
+              isOrderScreen == true &&
+                      orderDetailsList[index]['state'] == "waiting"
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Waiting Reason : ",
+                          style: allCardMainText,
+                        ),
+                        Expanded(
+                          child: Text(
+                            orderDetailsList[index]['reason'],
+                            style: allCardSubText,
                           ),
                         )
-                      : Container();
-                }).toList(),
-              ),
-            ),
-            isOrderScreen == true &&
-                    orderDetailsList[index]['state'] == "waiting"
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Waiting Reason : ",
-                        style: allCardMainText,
-                      ),
-                      Expanded(
-                        child: Text(
-                          orderDetailsList[index]['reason'],
-                          style: allCardSubText,
-                        ),
-                      )
-                    ],
-                  )
-                : Container()
-          ],
+                      ],
+                    )
+                  : Container()
+            ],
+          ),
         ),
       ),
     );
@@ -511,5 +554,29 @@ selectionIndicator() {
     height: 3,
     color: Colors.blue.shade400,
     margin: EdgeInsets.only(bottom: 10),
+  );
+}
+
+quotationDetailProductPhotoDialog(Uint8List image, BuildContext context) {
+  return showGeneralDialog(
+    transitionBuilder: (context, a1, a2, widget) {
+      return Transform.scale(
+        scale: a1.value,
+        child: Dialog(
+            backgroundColor: primaryColor,
+            child: Image.memory(
+              image,
+              fit: BoxFit.cover,
+            )),
+      );
+    },
+    transitionDuration: Duration(milliseconds: 300),
+    barrierDismissible: true,
+    barrierLabel: '',
+    context: context,
+    pageBuilder: (BuildContext context, Animation<double> animation,
+        Animation<double> secondaryAnimation) {
+      return Text("");
+    },
   );
 }

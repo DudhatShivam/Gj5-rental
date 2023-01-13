@@ -148,7 +148,7 @@ class _LogInPageState extends State<LogInPage> {
                                 TextInputType.text,
                                 25,
                                 Color(0xffFB578E).withOpacity(0.3),
-                                1),
+                                1,"Enter Server Url"),
                             SizedBox(
                               height: 20,
                             ),
@@ -161,7 +161,7 @@ class _LogInPageState extends State<LogInPage> {
                                 TextInputType.text,
                                 25,
                                 Color(0xffFB578E).withOpacity(0.3),
-                                1),
+                                1,"Enter Username"),
                             SizedBox(
                               height: 20,
                             ),
@@ -174,7 +174,7 @@ class _LogInPageState extends State<LogInPage> {
                                 TextInputType.text,
                                 25,
                                 Color(0xffFB578E).withOpacity(0.3),
-                                1),
+                                1,"Enter Password"),
                             SizedBox(
                               height: 30,
                             ),

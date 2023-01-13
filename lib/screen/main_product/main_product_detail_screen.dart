@@ -123,7 +123,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                               TextInputType.text,
                               0,
                               Colors.greenAccent,
-                              1),
+                              1,""),
                         )
                       ],
                     ),
@@ -151,7 +151,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                               TextInputType.text,
                               0,
                               Colors.greenAccent,
-                              1),
+                              1,""),
                         )
                       ],
                     ),

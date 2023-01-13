@@ -144,7 +144,7 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
                                       TextInputType.number,
                                       0,
                                       Colors.greenAccent,
-                                      1),
+                                      1,""),
                                 )
                               ],
                             ),
@@ -267,6 +267,7 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
         headers: {
           'Access-Token': token,
         });
+    print(response.body);
     if (response.statusCode == 200) {
       getDataOfServiceDetail(context, apiUrl, token, widget.serviceId)
           .whenComplete(() {

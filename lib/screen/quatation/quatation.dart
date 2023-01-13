@@ -150,7 +150,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                                   TextInputType.text,
                                   0,
                                   Colors.greenAccent,
-                                  1),
+                                  1,""),
                             )
                           ],
                         ),
@@ -178,7 +178,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                                   TextInputType.number,
                                   0,
                                   Colors.greenAccent,
-                                  1),
+                                  1,""),
                             )
                           ],
                         ),

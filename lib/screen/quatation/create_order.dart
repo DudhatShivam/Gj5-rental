@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:gj5_rental/constant/binary_image_covert.dart';
+
 import '../../Utils/textfield_utils.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -88,7 +90,7 @@ class _CreateOrderState extends State<CreateOrder> {
                                   TextInputType.text,
                                   0,
                                   Colors.greenAccent,
-                                  1),
+                                  1,"Enter Name"),
                             )
                           ],
                         ), //name
@@ -113,7 +115,7 @@ class _CreateOrderState extends State<CreateOrder> {
                                   TextInputType.text,
                                   0,
                                   Colors.greenAccent,
-                                  3),
+                                  3,"Enter Address"),
                             )
                           ],
                         ),
@@ -293,17 +295,7 @@ class _CreateOrderState extends State<CreateOrder> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border:
-                                            Border.all(color: primary2Color)),
-                                    child: Image.file(
-                                      image1!,
-                                      height: 100,
-                                      width: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                  binary_image_container(image1),
                                   InkWell(
                                       onTap: () {
                                         setState(() {
@@ -339,17 +331,7 @@ class _CreateOrderState extends State<CreateOrder> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border:
-                                            Border.all(color: primary2Color)),
-                                    child: Image.file(
-                                      image2!,
-                                      height: 100,
-                                      width: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                  binary_image_container(image2!),
                                   InkWell(
                                     onTap: () {
                                       setState(() {
@@ -570,14 +552,15 @@ modelSheetContainer(String text) {
   );
 }
 
-imageContainer(BuildContext context, String text) {
+imageContainer(BuildContext context, String text,{double? border_radius,double? con_width}) {
   return Container(
     alignment: Alignment.center,
-    width: getWidth(0.65, context),
+    width: con_width ?? getWidth(0.65, context),
     padding: EdgeInsets.symmetric(horizontal: 10),
     height: 45,
     decoration: BoxDecoration(
       color: Colors.grey.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(border_radius ?? 0)
     ),
     child: Text(text,
         style: TextStyle(

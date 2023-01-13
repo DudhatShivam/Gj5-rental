@@ -299,7 +299,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,"Enter Rent"),
                       )
                     ],
                   ),

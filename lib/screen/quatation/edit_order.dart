@@ -84,7 +84,7 @@ class _EditOrderState extends State<EditOrder> {
                           TextInputType.text,
                           0,
                           Colors.greenAccent,
-                          1),
+                          1,"Enter Name"),
                     )
                   ],
                 ),
@@ -109,7 +109,7 @@ class _EditOrderState extends State<EditOrder> {
                           TextInputType.number,
                           0,
                           Colors.greenAccent,
-                          1),
+                          1,"Enter Mobile"),
                     )
                   ],
                 ),
@@ -134,7 +134,7 @@ class _EditOrderState extends State<EditOrder> {
                           TextInputType.text,
                           0,
                           Colors.greenAccent,
-                          1),
+                          1,"Enter Remark"),
                     )
                   ],
                 ),

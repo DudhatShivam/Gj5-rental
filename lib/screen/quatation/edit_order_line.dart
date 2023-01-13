@@ -232,7 +232,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                           TextInputType.number,
                           0,
                           Colors.greenAccent,
-                          1),
+                          1,""),
                     )
                   ],
                 ),

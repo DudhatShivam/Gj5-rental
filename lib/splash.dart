@@ -11,6 +11,7 @@ import 'package:gj5_rental/screen/delivery/delivery_detail.dart';
 import 'package:gj5_rental/screen/order/order_detail.dart';
 import 'package:gj5_rental/screen/receive/receive_detail.dart';
 import 'package:gj5_rental/screen/service_line/notification_show_serviceline.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'Utils/utils.dart';
 import 'home/home.dart';
@@ -30,6 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   var init = InitializationSettings(android: androidInit, iOS: iosInit);
   FCM firebaseMessaging = FCM();
+  String? version;
 
   void initState() {
     // TODO: implement initState
@@ -46,6 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     });
     firebaseMessaging.setNotifications(context);
+    getVersinoOfApp();
   }
 
   @override
@@ -113,6 +116,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     letterSpacing: 0.5,
                     color: Colors.grey.shade700),
               ),
+              Text("version : ${version ?? ""}",style: TextStyle(fontWeight: FontWeight.w500),),
               SizedBox(
                 height: 10,
               )
@@ -121,6 +125,12 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+  }
+
+  getVersinoOfApp() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    version = packageInfo.version;
+    setState(() {});
   }
 
   Future<dynamic> notificationClick(payload) async {

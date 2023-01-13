@@ -7,7 +7,6 @@ import 'package:fancy_drawer/fancy_drawer.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -65,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     getSavedTheme();
     setAccessRight();
     setDateFormat();
-    getData();
+    getUserData();
     _controller = FancyDrawerController(
         vsync: this, duration: Duration(milliseconds: 250))
       ..addListener(() {
@@ -144,7 +143,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         : CircleAvatar(
                             radius: 40,
                             backgroundColor: Colors.blue,
-                            child: Icon(Icons.person),
+                            child: Icon(
+                              Icons.person,
+                              size: 50,
+                            ),
                           ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.015,
@@ -472,7 +474,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (isSetNewSyncData == false) {
       getStringPreference('ProductList').then((value) {
         if (value == null) {
-          setSyncData(accessToken, isSetNewSyncData);
+          myGetxController.isSyncData.value=true;
+          setSyncData(accessToken, false);
         }
       });
     } else {
@@ -505,14 +508,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     serviceController.serviceIsMainProductTrueList.clear();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString('ProductList', jsonEncode(data)).whenComplete(() {
+      myGetxController.isSyncData.value = false;
       if (isSetNewSyncData == true) {
-        myGetxController.isSyncData.value = false;
         dialog(context, "Product Sync SuccessFully", Colors.green.shade300);
       }
     });
   }
 
-  void getData() {
+  void getUserData() {
     getStringPreference('branchName').then((value) {
       myGetxController.branchName.value = value;
     });

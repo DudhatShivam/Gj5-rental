@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:gj5_rental/Utils/utils.dart';
+import 'package:gj5_rental/constant/binary_image_covert.dart';
 import 'package:gj5_rental/constant/constant.dart';
 import 'package:gj5_rental/getx/getx_controller.dart';
 import 'package:gj5_rental/screen/booking%20status/book_order.dart';
@@ -43,6 +45,7 @@ class _BookingStatusState extends State<BookingStatus> {
   String? returnDate;
   String? deliveryDate;
   double? productRent = 0;
+  Uint8List? _bytesImage;
 
   @override
   Widget build(BuildContext context) {
@@ -191,8 +194,9 @@ class _BookingStatusState extends State<BookingStatus> {
                                 pickedDate(context).then((value) {
                                   if (value != null) {
                                     setState(() {
-                                      returnDate = DateFormat(passApiGlobalDateFormat)
-                                          .format(value);
+                                      returnDate =
+                                          DateFormat(passApiGlobalDateFormat)
+                                              .format(value);
                                     });
                                   }
                                 });
@@ -218,20 +222,33 @@ class _BookingStatusState extends State<BookingStatus> {
                 : Container(),
             isDisplayResponseApiList == true && responseOfApi.isNotEmpty
                 ? Flexible(
-                    child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        padding: EdgeInsets.only(top: 15),
-                        physics: BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: responseOfApi.length,
-                        itemBuilder: (context, index) {
-                          return bookingStatusResponseCard(
-                              responseOfApi, index);
-                        }),
-                  )
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                        children: [
+                          ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              padding: EdgeInsets.only(top: 15, bottom: 10),
+                              physics: BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: responseOfApi.length,
+                              itemBuilder: (context, index) {
+                                return bookingStatusResponseCard(
+                                    responseOfApi, index);
+                              }),
+                          _bytesImage != null && _bytesImage?.isNotEmpty == true
+                              ? Image.memory(
+                                  _bytesImage!,
+                                  height: getWidth(0.27, context),
+                                  width: getWidth(0.27, context),
+                                )
+                              : Container()
+                        ],
+                      ),
+                  ),
+                )
                 : loading == true
-                    ? Expanded(
-                        child: CenterCircularProgressIndicator())
+                    ? Expanded(child: CenterCircularProgressIndicator())
                     : noData == true
                         ? Padding(
                             padding: const EdgeInsets.only(top: 15),
@@ -281,6 +298,11 @@ class _BookingStatusState extends State<BookingStatus> {
       if (element['default_code'] == value.trim()) {
         id = element['id'];
         productRent = element['rent'];
+        String s = element['image_medium'] ?? "";
+        if (s.isNotEmpty) {
+          _bytesImage = convert_image(s);
+          setState(() {});
+        }
       }
     });
     getStringPreference('apiUrl').then((value) async {

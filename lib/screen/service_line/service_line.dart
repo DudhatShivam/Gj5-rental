@@ -303,7 +303,7 @@ class _ServiceLineScreenState extends State<ServiceLineScreen>
                                 TextInputType.text,
                                 0,
                                 Colors.greenAccent,
-                                1),
+                                1,""),
                           )
                         ],
                       ),

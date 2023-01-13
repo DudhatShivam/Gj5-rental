@@ -113,7 +113,7 @@ class _BookOrderState extends State<BookOrder> {
                                   TextInputType.text,
                                   0,
                                   Colors.greenAccent,
-                                  1),
+                                  1,"Enter Name"),
                             )
                           ],
                         ), //name
@@ -139,7 +139,7 @@ class _BookOrderState extends State<BookOrder> {
                                     TextInputType.text,
                                     0,
                                     Colors.greenAccent,
-                                    3),
+                                    3,"Enter Address"),
                               ),
                             )
                           ],
@@ -206,7 +206,7 @@ class _BookOrderState extends State<BookOrder> {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),

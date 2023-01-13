@@ -147,7 +147,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),
@@ -175,7 +175,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),
@@ -203,7 +203,7 @@ class _DeliveryScreebState extends State<DeliveryScreen> {
                             TextInputType.text,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),

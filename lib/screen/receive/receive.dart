@@ -144,7 +144,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),
@@ -172,7 +172,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                             TextInputType.number,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),
@@ -200,7 +200,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                             TextInputType.text,
                             0,
                             Colors.greenAccent,
-                            1),
+                            1,""),
                       )
                     ],
                   ),

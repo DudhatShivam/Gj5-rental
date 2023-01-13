@@ -240,6 +240,7 @@ productDeleteDialog(lineId, int index, List orderDetails, BuildContext context,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: primary2Color),
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -248,6 +249,7 @@ productDeleteDialog(lineId, int index, List orderDetails, BuildContext context,
                       width: 5,
                     ),
                     ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: primary2Color),
                         onPressed: () {
                           checkWififorDeleteProduct(lineId, index, orderDetails,
                                   context, isDeleteOrder)
@@ -556,7 +558,7 @@ remarkContainer(
               TextInputType.text,
               0,
               Colors.greenAccent,
-              1),
+              1,"Enter Remark"),
         )
       ],
     ),
@@ -825,7 +827,7 @@ popUpForWaitingThumbInOrderScreen(
                                   TextInputType.text,
                                   0,
                                   Colors.greenAccent,
-                                  1))
+                                  1,""))
                         ],
                       ),
                       SizedBox(
@@ -963,7 +965,7 @@ Color statusColor(List list, int index) {
   return color;
 }
 
-String passApiGlobalDateFormat = "MM/dd/yyyy";
+String passApiGlobalDateFormat = "";
 String showGlobalDateFormat = "dd/MM/yyyy";
 
 String changeDateFormat(String unformatedDate) {
