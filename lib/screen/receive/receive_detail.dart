@@ -159,7 +159,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                                     confirmationDialogForIsReceive();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      primary: primary2Color),
+                                      backgroundColor: primary2Color),
                                   child: Text("RECEIVE")))
                           : Container()
                     ],
@@ -237,7 +237,7 @@ class _ReceiveDetailState extends State<ReceiveDetail> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red.shade300),
+                              backgroundColor: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },

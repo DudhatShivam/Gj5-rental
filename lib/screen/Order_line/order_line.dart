@@ -574,7 +574,7 @@ class _OrderLineScreenState extends State<OrderLineScreen>
                         alignment: Alignment.centerRight,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primary2Color),
+                                backgroundColor: primary2Color),
                             onPressed: () {
                               myGetxController.orderLineFilteredTag.clear();
                               if (toDeliveryDate != "") {

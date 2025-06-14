@@ -190,7 +190,7 @@ class _QuatationScreenState extends State<QuatationScreen> {
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary: primary2Color),
+                                  backgroundColor: primary2Color),
                               onPressed: () {
                                 myGetxController
                                     .isShowQuotationFilteredList.value = true;

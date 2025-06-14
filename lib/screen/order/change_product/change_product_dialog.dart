@@ -231,7 +231,7 @@ class _ChangeProductDialogState extends State<ChangeProductDialog> {
                     height: 45,
                     margin: const EdgeInsets.all(15),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: primary2Color),
+                        style: ElevatedButton.styleFrom(backgroundColor: primary2Color),
                         onPressed: () {
                           checkWlanForChangeProduct();
                         },

@@ -212,7 +212,7 @@ class _RceiveScreenState extends State<ReceiveScreen> {
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: primary2Color),
+                            backgroundColor: primary2Color),
                         onPressed: () {
                           myGetxController.noDataInReceiveScreen.value = false;
                           myGetxController.receiveFilteredOrderList.clear();

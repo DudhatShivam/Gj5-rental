@@ -191,7 +191,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                                 confirmationDialogForIsDeliverTrue();
                               },
                               style: ElevatedButton.styleFrom(
-                                  primary: primary2Color),
+                                  backgroundColor: primary2Color),
                               child: Text("DELIVER")))
                       : Container())
                 ],
@@ -231,7 +231,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.green.shade300),
+                              backgroundColor: Colors.green.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                             checkWlanForData(false);
@@ -242,7 +242,7 @@ class _DeliveryDetailScreenState extends State<DeliveryDetailScreen> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red.shade300),
+                              backgroundColor: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },

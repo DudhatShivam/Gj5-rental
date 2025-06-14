@@ -135,7 +135,7 @@ class _DialogSelectSubProductState extends State<DialogSelectSubProduct> {
                 children: [
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.green.shade300),
+                          backgroundColor: Colors.green.shade300),
                       onPressed: () {
                         addSubProductInSelectedReceiveList();
                         Navigator.pop(context);
@@ -146,7 +146,7 @@ class _DialogSelectSubProductState extends State<DialogSelectSubProduct> {
                   ),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.red.shade300),
+                          backgroundColor: Colors.red.shade300),
                       onPressed: () {
                         Navigator.pop(context);
                       },

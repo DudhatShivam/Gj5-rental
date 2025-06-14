@@ -116,31 +116,25 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                     decoration: BoxDecoration(
                         color: Colors.grey.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10)),
-                    height: 48,
                     width: getWidth(0.65, context),
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton2(
-                        buttonDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10)),
-                        dropdownDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10)),
-                        hint: Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Select Partner',
-                            style: TextStyle(
-                              color: Colors.grey.shade400,
-                            ),
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: Text(
+                          'Select Partner',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).hintColor,
                           ),
                         ),
                         items: serviceOrderLineDropDownList
-                            .map((item) => DropdownMenuItem<String>(
+                            .map<DropdownMenuItem<String>>((String item) => DropdownMenuItem<String>(
                                   value: item,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 15),
-                                    child: Text(
-                                      item,
-                                      style: primaryStyle,
+                                  child: Text(
+                                    item,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ))
@@ -148,11 +142,15 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         value: selectedValue,
                         onChanged: (value) {
                           setState(() {
-                            selectedValue = value as String;
+                            selectedValue = value;
                           });
                         },
-                        buttonHeight: 40,
-                        itemHeight: 40,
+                        buttonStyleData: const ButtonStyleData(
+                          height: 40,
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                        ),
                       ),
                     ),
                   ),

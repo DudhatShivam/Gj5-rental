@@ -379,7 +379,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                           horizontal: 15, vertical: 25),
                       child: ElevatedButton(
                           style:
-                              ElevatedButton.styleFrom(primary: primary2Color),
+                              ElevatedButton.styleFrom(backgroundColor: primary2Color),
                           onPressed: () {
                             FocusScope.of(context).unfocus();
                             updatedDictionary.clear();
@@ -578,7 +578,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                     children: [
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.green.shade300),
+                              backgroundColor: Colors.green.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                             updateDetail(value, token, mainId);
@@ -589,7 +589,7 @@ class _EditOrderLineState extends State<EditOrderLine> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.red.shade300),
+                              backgroundColor: Colors.red.shade300),
                           onPressed: () {
                             Navigator.pop(context);
                           },

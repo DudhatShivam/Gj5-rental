@@ -263,7 +263,7 @@ class _ConfirmOrderAddProductState extends State<ConfirmOrderAddSubProduct> {
                               margin: const EdgeInsets.symmetric(vertical: 25),
                               child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      primary: primary2Color),
+                                      backgroundColor: primary2Color),
                                   onPressed: () {
                                     FocusScope.of(context).unfocus();
                                     updatedDictionary.clear();

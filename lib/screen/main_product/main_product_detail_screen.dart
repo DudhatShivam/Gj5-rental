@@ -163,7 +163,7 @@ class _MainProductdetailScreenState extends State<MainProductdetailScreen> {
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: primary2Color),
+                              backgroundColor: primary2Color),
                           onPressed: () {
                             setState(() {
                               isExpandSearch=false;

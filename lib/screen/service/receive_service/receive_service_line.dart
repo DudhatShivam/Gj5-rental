@@ -75,7 +75,7 @@ class ReceiveServiceLine extends StatelessWidget {
               children: [
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.green.shade300),
+                        backgroundColor: Colors.green.shade300),
                     onPressed: () {
                       checkWlanForReceiveService(context);
                     },
@@ -85,7 +85,7 @@ class ReceiveServiceLine extends StatelessWidget {
                 ),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.red.shade300),
+                        backgroundColor: Colors.red.shade300),
                     onPressed: () {
                       Navigator.pop(context);
                     },

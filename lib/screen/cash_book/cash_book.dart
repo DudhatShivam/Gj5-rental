@@ -146,7 +146,7 @@ class _CashBookScreenState extends State<CashBookScreen> {
                                     height: 45,
                                     child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            primary: primary2Color),
+                                            backgroundColor: primary2Color),
                                         onPressed: () {
                                           checkWlanForServiceScreenData();
                                         },

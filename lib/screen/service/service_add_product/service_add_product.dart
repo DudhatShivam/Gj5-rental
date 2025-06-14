@@ -204,7 +204,7 @@ class _ServiceAddProductState extends State<ServiceAddProduct> {
                               height: 45,
                               child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                      primary: primary2Color),
+                                      backgroundColor: primary2Color),
                                   onPressed: () {
                                     FocusScope.of(context).unfocus();
                                     checkWlanForAddProduct();

@@ -202,7 +202,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: primary2Color),
+                              backgroundColor: primary2Color),
                           onPressed: () {
                             myGetxController.isShowCancelOrderScreenFilteredList
                                 .value = true;

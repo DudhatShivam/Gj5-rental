@@ -373,7 +373,7 @@ Future orderReadyConfirmationDialog(
                   children: [
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: Colors.green.shade300),
+                            backgroundColor: Colors.green.shade300),
                         onPressed: () {
                           confirmOrderThumb(
                               orderId,
@@ -392,7 +392,7 @@ Future orderReadyConfirmationDialog(
                     ),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: Colors.red.shade300),
+                            backgroundColor: Colors.red.shade300),
                         onPressed: () {
                           Navigator.pop(context);
                         },

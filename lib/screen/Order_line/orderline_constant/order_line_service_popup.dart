@@ -98,7 +98,8 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
               child: Container(
                 color: Colors.grey.shade100,
                 child: DropdownButtonHideUnderline(
-                  child: DropdownButton2(
+                  child: DropdownButton2<String>(
+                    isExpanded: true,
                     hint: Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Text(
@@ -110,26 +111,27 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                       ),
                     ),
                     items: serviceOrderLineDropDownList
-                        .map((item) => DropdownMenuItem<String>(
-                      value: item,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Text(
-                          item,
-                          style: primaryStyle,
-                        ),
-                      ),
-                    ))
+                        .map<DropdownMenuItem<String>>((String item) => DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(
+                                item,
+                                style: primaryStyle,
+                              ),
+                            ))
                         .toList(),
                     value: selectedValue,
                     onChanged: (value) {
                       setState(() {
-                        selectedValue = value as String;
+                        selectedValue = value;
                       });
+                      getResPartnerData(selectedValue ?? "");
                     },
-                    buttonHeight: 40,
-                    buttonWidth: getWidth(0.62, context),
-                    itemHeight: 40,
+                    buttonStyleData: const ButtonStyleData(
+                      height: 40,
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 40,
+                    ),
                   ),
                 ),
               ),
@@ -144,7 +146,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                     ? Container()
                     : ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.green.shade300),
+                        backgroundColor: Colors.green.shade300),
                     onPressed: () {
                       setService();
                     },
@@ -154,7 +156,7 @@ class _OrderLineServicePopUpState extends State<OrderLineServicePopUp> {
                 ),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.red.shade300),
+                        backgroundColor: Colors.red.shade300),
                     onPressed: () {
                       Navigator.pop(context);
                     },

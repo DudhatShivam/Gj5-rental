@@ -354,7 +354,7 @@ class _CreateOrderState extends State<CreateOrder> {
               margin: const EdgeInsets.all(15),
               child: ElevatedButton(
                   style:
-                      ElevatedButton.styleFrom(primary: primary2Color),
+                      ElevatedButton.styleFrom(backgroundColor: primary2Color),
                   onPressed: () {
                     if (_formKey.currentState?.validate() == true &&
                         nameController.text.isNotEmpty &&

@@ -246,7 +246,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         ),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.white),
+                                backgroundColor: Colors.white),
                             onPressed: () {
                               clearController();
                               getData(
@@ -259,7 +259,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                         ),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.white),
+                                backgroundColor: Colors.white),
                             onPressed: () {
                               clearController();
                               getData(
@@ -275,7 +275,7 @@ class _OrderState extends State<OrderScreen> with TickerProviderStateMixin {
                           width: 100,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary: primary2Color),
+                                  backgroundColor: primary2Color),
                               onPressed: () {
                                 setState(() {
                                   isSearchLoadData = true;

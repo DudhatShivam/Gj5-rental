@@ -327,7 +327,7 @@ class _BookOrderState extends State<BookOrder> {
                     height: 45,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: primary2Color),
+                            backgroundColor: primary2Color),
                         onPressed: () {
                           if (_formKey.currentState?.validate() == true &&
                               nameController.text.isNotEmpty &&

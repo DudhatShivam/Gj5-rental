@@ -270,7 +270,7 @@ class _BookingStatusState extends State<BookingStatus> {
                         height: 45,
                         child: ElevatedButton(
                           style:
-                              ElevatedButton.styleFrom(primary: primary2Color),
+                              ElevatedButton.styleFrom(backgroundColor: primary2Color),
                           onPressed: () {
                             setState(() {
                               isBtnLoading = true;

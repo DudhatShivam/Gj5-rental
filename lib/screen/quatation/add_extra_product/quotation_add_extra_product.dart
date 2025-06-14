@@ -82,11 +82,15 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                   borderRadius: BorderRadius.circular(10)),
                               height: 55,
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton2(
-                                  buttonDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  dropdownDecoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10)),
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  buttonStyleData: const ButtonStyleData(
+                                    height: 40,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10))),
                                   hint: Padding(
                                     padding: const EdgeInsets.only(left: 10),
                                     child: Text(
@@ -98,34 +102,23 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                   ),
                                   items: myGetxController.orginalProductList
                                       .map((item) => DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 15),
-                                              child: Container(
-                                                width: getWidth(0.52, context),
-                                                child: SingleChildScrollView(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  child: Text(
-                                                    item,
-                                                    style: primaryStyle,
-                                                  ),
-                                                ),
-                                              ),
+                                            value: item as String,
+                                            child: Text(
+                                              item as String,
+                                              style: primaryStyle,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ))
                                       .toList(),
                                   value: originalProductSelectedValue,
                                   onChanged: (value) {
                                     setState(() {
-                                      originalProductSelectedValue =
-                                          value as String;
+                                      originalProductSelectedValue = value;
                                     });
                                   },
-                                  buttonHeight: 40,
-                                  buttonWidth: getWidth(0.25, context),
-                                  itemHeight: 40,
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 40,
+                                  ),
                                 ),
                               ),
                             )),
@@ -149,11 +142,15 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                             height: 55,
                             width: getWidth(0.68, context),
                             child: DropdownButtonHideUnderline(
-                              child: DropdownButton2(
-                                buttonDecoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10)),
-                                dropdownDecoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10)),
+                              child: DropdownButton2<String>(
+                                isExpanded: true,
+                                buttonStyleData: const ButtonStyleData(
+                                  height: 40,
+                                ),
+                                dropdownStyleData: DropdownStyleData(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10))),
                                 hint: Padding(
                                   padding: const EdgeInsets.only(left: 10),
                                   child: Text(
@@ -166,14 +163,11 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                 items: myGetxController
                                     .quotationMainProductTypeList
                                     .map((item) => DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 15),
-                                            child: Text(
-                                              item,
-                                              style: primaryStyle,
-                                            ),
+                                          value: item as String,
+                                          child: Text(
+                                            item as String,
+                                            style: primaryStyle,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ))
                                     .toList(),
@@ -183,13 +177,13 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                                       .clear();
                                   setState(() {
                                     productSearchController.clear();
-                                    selectedValue = value as String;
+                                    selectedValue = value;
                                     checkWlanForGetProductData(false);
                                   });
                                 },
-                                buttonHeight: 40,
-                                buttonWidth: getWidth(0.25, context),
-                                itemHeight: 40,
+                                menuItemStyleData: const MenuItemStyleData(
+                                  height: 40,
+                                ),
                               ),
                             ),
                           )),
@@ -317,7 +311,7 @@ class _QuotationAddExtraProductState extends State<QuotationAddExtraProduct> {
                           height: 43,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primary2Color),
+                                backgroundColor: primary2Color),
                             onPressed: () {
                               FocusScope.of(context).unfocus();
                               checkWlanForGetProductData(true);

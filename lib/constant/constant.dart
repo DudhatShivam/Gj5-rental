@@ -835,7 +835,7 @@ popUpForWaitingThumbInOrderScreen(
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.green.shade300),
+                              backgroundColor: Colors.green.shade300),
                           onPressed: () {
                             checkWlanForConfirmOrderThumbAndWaiting(
                                 orderId,

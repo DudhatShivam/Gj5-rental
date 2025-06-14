@@ -186,10 +186,10 @@ class _AboutUsPageState extends State<AboutUsPage> {
                                             null
                                         ? Row(
                                             children: [
-                                              Icon(
-                                                Icons.whatsapp,
-                                                color: Color(0xff0CC253),
-                                              ),
+                                              // Icon(
+                                              //     Icons.whatsapp,
+                                              //     color: Color(0xff0CC253),
+                                              // ),
                                               Text(
                                                 " ${myGetxController.showRoomList[index]['mobile1']}",
                                                 style: allCardSubText,

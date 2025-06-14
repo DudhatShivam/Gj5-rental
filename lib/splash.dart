@@ -18,6 +18,20 @@ import 'home/home.dart';
 import 'main.dart';
 import 'notification/manage_notification.dart';
 
+@pragma('vm:entry-point')
+void _notificationTapBackgroundHandler(NotificationResponse notificationResponse) {
+  final String? payload = notificationResponse.payload;
+  if (payload != null) {
+    final aString = payload.substring(11, payload.length - 1);
+    final parts = aString.split(', ');
+    final keyword = parts[0];
+    final orderId = parts[1].substring(
+      10,
+    );
+    notificationClickNavigation(keyword, orderId);
+  }
+}
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -37,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
     flutterLocalNotificationsPlugin.initialize(init,
-        onSelectNotification: notificationClick);
+        onDidReceiveBackgroundNotificationResponse: _notificationTapBackgroundHandler);
     Timer(Duration(seconds: 2), () {
       getBoolPreference('LogIN').then((value) {
         if (value == true) {

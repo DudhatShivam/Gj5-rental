@@ -153,7 +153,7 @@ class _ExtraProductState extends State<ExtraProduct> {
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: primary2Color),
+                            backgroundColor: primary2Color),
                         onPressed: () {
                           myGetxController.noDataInExtraProductScreen.value = false;
                           setState(() {

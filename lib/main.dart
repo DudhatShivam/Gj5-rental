@@ -32,7 +32,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
     importance: Importance.max,
     playSound: true);
 var androidInit = AndroidInitializationSettings("@mipmap/ic_launcher");
-var iosInit = IOSInitializationSettings();
+var iosInit = DarwinInitializationSettings();
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
